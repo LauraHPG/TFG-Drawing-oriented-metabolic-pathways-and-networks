@@ -1,13 +1,38 @@
 import networkx as nx
 import sys
 
+def read_graph(graph):
+    reactions = []
+    nx.set_node_attributes(graph, {})
+    for line in open(sys.argv[1]):
+        reaction, substrates, products = line.rstrip().split(" : ")
+        
+        graph.add_node(reaction, node_type='reaction')
+        reactions.append(graph.nodes[reaction])
+
+        for substrate in substrates.split(" "):
+
+            graph.add_edge(substrate, reaction)
+            graph.add_node(substrate, node_type='component')
+
+            
+        for product in products.split(" "):
+            graph.add_edge(reaction, product)
+            graph.add_node(product, node_type='component')
+
+    return [node for node, data in graph.nodes(data=True) if data['node_type'] == 'reaction'], [node for node, data in graph.nodes(data=True) if data['node_type'] == 'component']
+
 def edges_cross_1D(r1,r2,c1,c2):
     return (r1 < r2 and c1 > c2) or (r2 < r1 and c2 > c1)
 
-def determinant(px,py,qx,qy,rx,ry):
-	return ((qx-px)*(ry-py) - (rx-px)*(qy-py))
+def edges_cross_1D_2(r1,r2,c1,c2, c_y1, c_y2, r_y1, r_y2):
+    return r_y1 == r_y2 and c_y1 == c_y2 and ((r1 < r2 and c1 > c2) or (r2 < r1 and c2 > c1))
+
+def are_not_coincident(r1, r2, c1, c2):
+    return (r1 != r2) and (r1 != c1) and (r1 != c2) and (r2 != c1) and (r2 != c2) and (c1 != c2)
 
 def edges_cross_2D(r1,r2,c1,c2):
+
     d_e1_e2_1 = determinant(r1[0],r1[1],c1[0],c1[1],r2[0],r2[1])
     d_e1_e2_2 = determinant(r1[0],r1[1],c1[0],c1[1],c2[0],c2[1])
 
@@ -17,9 +42,16 @@ def edges_cross_2D(r1,r2,c1,c2):
 
     return d_e1_e2_1*d_e1_e2_2 < 0 and d_e2_e1_1*d_e2_e1_2 < 0
 
+def determinant(px,py,qx,qy,rx,ry):
+	return ((qx-px)*(ry-py) - (rx-px)*(qy-py))
+
 def count_edge_crossings(graph, positions, reactions):
     crosses = 0
+    num_crosses_edge = {}
+    edge_crossing_edges = {}
     for edge1 in graph.edges():
+        num_crosses_edge[edge1] = 0
+        edge_crossing_edges[edge1] = set()
         for edge2 in graph.edges():
             if edge1 != edge2:
 
@@ -47,32 +79,14 @@ def count_edge_crossings(graph, positions, reactions):
                     r2_pos = positions[node4]
                     c2_pos = positions[node3]
                 
-                if edges_cross_1D(r1_pos[0],r2_pos[0],c1_pos[0],c2_pos[0]):
+                if edges_cross_1D_2(r1_pos[0],r2_pos[0],c1_pos[0],c2_pos[0], c1_pos[1],c2_pos[1], r1_pos[1], r2_pos[1]):
+                # if edges_cross_1D(r1_pos,r2_pos,c1_pos,c2_pos) and are_not_coincident(r1_pos, r2_pos, c1_pos, c2_pos): 
+                #     print(f"Nodes: {node1} {node2} {node3} {node4}")
                     crosses += 1
-
-
-    return crosses // 2
-
-def read_graph(graph):
-    reactions = []
-    nx.set_node_attributes(graph, {})
-    for line in open(sys.argv[1]):
-        reaction, substrates, products = line.rstrip().split(" : ")
-        
-        graph.add_node(reaction, node_type='reaction')
-        reactions.append(graph.nodes[reaction])
-
-        for substrate in substrates.split(" "):
-
-            graph.add_edge(substrate, reaction)
-            graph.add_node(substrate, node_type='component')
-
-            
-        for product in products.split(" "):
-            graph.add_edge(reaction, product)
-            graph.add_node(product, node_type='component')
-
-    return [node for node, data in graph.nodes(data=True) if data['node_type'] == 'reaction']
+                    num_crosses_edge[edge1] += 1
+                    edge_crossing_edges[edge1].add(edge2)
+                    
+    return crosses // 2, dict(sorted(edge_crossing_edges.items(), key=lambda item: len(item[1]), reverse=True))
 
 def get_color(node_type):
     if node_type == 'reaction':
@@ -105,3 +119,49 @@ def nodes_ordered_by_degree(graph, nodes=None):
 
     return nodes_sorted_by_degree
 
+def split_components_1(graph, pos, components):
+    new_pos = pos.copy()
+
+    for node in graph.nodes():
+        if graph.degree(node) <= 2 and node in components:
+            new_pos[node] = (pos[node][0], 3)
+
+    return new_pos
+
+def flatten_list(nested_list):
+    flat_list = []
+    for item in nested_list:
+        if isinstance(item, list):
+            flat_list.extend(flatten_list(item))
+        else:
+            flat_list.append(item)
+    return flat_list
+
+def split_reactions_1(graph, pos, reactions):
+    new_pos = pos.copy()
+
+    for node in graph.nodes():
+        if node in reactions:
+            # adjacent_nodes_iterator = graph.neighbors(node)
+            # adjacent_nodes = list(adjacent_nodes_iterator)
+            in_nodes = flatten_list(list(graph.predecessors(node)))
+            out_nodes = flatten_list(list(graph.successors(node)))
+
+            adjacent_nodes = in_nodes + out_nodes
+
+            first_node = adjacent_nodes[0]
+
+            all_in_one_side = True
+
+            for adjacent_node in adjacent_nodes:
+                if not pos[first_node][1] == pos[adjacent_node][1]:
+                    all_in_one_side = False
+                    break
+
+            if all_in_one_side:
+                if pos[node][1] < pos[first_node][1]:
+                    new_pos[node] = (pos[node][0], pos[first_node][1] + 2)
+                else:
+                    new_pos[node] = (pos[node][0], pos[first_node][1] - 2)
+
+    return new_pos
