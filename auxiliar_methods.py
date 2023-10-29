@@ -123,7 +123,7 @@ def split_components_1(graph, pos, components):
     new_pos = pos.copy()
 
     for node in graph.nodes():
-        if graph.degree(node) <= 2 and node in components:
+        if graph.degree(node) <= 3 and node in components:
             new_pos[node] = (pos[node][0], 3)
 
     return new_pos
@@ -137,7 +137,7 @@ def flatten_list(nested_list):
             flat_list.append(item)
     return flat_list
 
-def split_reactions_1(graph, pos, reactions):
+def split_reactions_1(graph, pos, reactions):    
     new_pos = pos.copy()
 
     for node in graph.nodes():
@@ -165,3 +165,29 @@ def split_reactions_1(graph, pos, reactions):
                     new_pos[node] = (pos[node][0], pos[first_node][1] - 2)
 
     return new_pos
+
+def add_element_to_set(positions, key, element):
+    if key not in positions:
+        positions[key] = set()
+    positions[key].add(element)
+
+def computeStep(size_small, size_big):
+    return size_big/size_small
+
+def rearange_positions(positions):
+    new_positions = positions.copy()
+    nodes_per_y = {}
+
+    for pos in positions:
+        add_element_to_set(nodes_per_y,positions[pos][1],pos)
+    
+    max_size = max(nodes_per_y, key=lambda key: len(nodes_per_y[key]))
+    
+    for y in nodes_per_y:
+        x = 0
+        step = computeStep(len(nodes_per_y[y]), max_size)
+        for node in nodes_per_y[y]:         
+            new_positions[node] = (x,y)
+            x += step
+
+    return new_positions

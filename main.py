@@ -26,16 +26,16 @@ def main():
     n_crossings, _ = funcs.count_edge_crossings(G, pos, reactions)
     print(f"Initial number of crossings: {n_crossings}")
 
-    subax1 = plt.subplot(131)    
-    nx.draw(G, pos, node_color=colors)
+    # subax1 = plt.subplot(131)    
+    # nx.draw(G, pos, node_color=colors)
 
     pos = funcs.split_components_1(G,pos,components)
     n_crossings, _ = funcs.count_edge_crossings(G, pos, reactions)
 
     print(f"Number of crossings split components: {n_crossings}")
 
-    subax3 = plt.subplot(132)
-    nx.draw(G, pos, node_color=colors)
+    # subax3 = plt.subplot(132)
+    # nx.draw(G, pos, node_color=colors)
 
     pos = funcs.split_reactions_1(G,pos,reactions)
     n_crossings, _ = funcs.count_edge_crossings(G, pos, reactions)
@@ -43,7 +43,10 @@ def main():
     print(f"Number of crossings split reactions: {n_crossings}")
 
     print(f"Final number of crossings: {n_crossings}")
-    subax3 = plt.subplot(133)
+    
+    # subax3 = plt.subplot(133)
+
+    pos = funcs.rearange_positions(pos)
 
     nx.draw(G, pos, node_color=colors)
 
