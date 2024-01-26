@@ -82,8 +82,22 @@ def randomLayout(graph):
 
     return positions
 
+def layeredDigraph(graph):
+    positions = {}
+    source, sink = fnc.get_source_and_sink_nodes(graph)
+    x_r = 0
+    x_c = 0
+
+    adjacent_reactions = []
+    for node in source:
+        positions[node] = (x_c, 0)
+        x_c += 1
+        graph[node].neighbors()
+        
+    return positions
+
 def selectInitialLayout(graph):
-    layout = input("Select layout:\n     0: Initial\n     1: Trivial Greedy\n     2: Random\n")
+    layout = input("Select layout:\n     0: Initial\n     1: Trivial Greedy\n     2: Random\n     3: Layered Digraph\n")
     match layout:
         case '0':
             return initialLayout(graph)
@@ -91,5 +105,7 @@ def selectInitialLayout(graph):
             return trivialGreedyLayout(graph)
         case '2': 
             return randomLayout(graph)
+        case '3':
+            return layeredDigraph(graph)
         case _:
             return None

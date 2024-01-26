@@ -29,6 +29,7 @@ def main():
     # subax1 = plt.subplot(131)    
     # nx.draw(G, pos, node_color=colors)
 
+
     pos = funcs.split_components_1(G,pos,components)
     n_crossings, _ = funcs.count_edge_crossings(G, pos, reactions)
 
@@ -43,7 +44,13 @@ def main():
     print(f"Number of crossings split reactions: {n_crossings}")
 
     print(f"Final number of crossings: {n_crossings}")
-    
+
+    source, sink = funcs.get_source_and_sink_nodes(G)
+
+    print(f"Number of source nodes: {len(source)}")
+    print(source)
+    print(f"Number of sink nodes: {len(sink)}")
+    print(sink)
     # subax3 = plt.subplot(133)
 
     pos = funcs.rearange_positions(pos)

@@ -119,6 +119,21 @@ def nodes_ordered_by_degree(graph, nodes=None):
 
     return nodes_sorted_by_degree
 
+def get_source_and_sink_nodes(graph):
+    nodes = graph.nodes()
+    in_degree_list = [(node, degree) for node, degree in graph.in_degree(nodes)]
+    out_degree_list = [(node, degree) for node, degree in graph.out_degree(nodes)]
+    sink_nodes, source_nodes = [], []
+    for in_deg, out_deg in  zip(in_degree_list, out_degree_list):
+        if in_deg[0] == out_deg[0]:
+            if in_deg[1] == 0: #source
+                source_nodes.append(in_deg[0])
+            if out_deg[1] == 0: #source
+                sink_nodes.append(in_deg[0])
+
+
+    return source_nodes, sink_nodes
+
 def split_components_1(graph, pos, components):
     new_pos = pos.copy()
 
