@@ -206,3 +206,21 @@ def rearange_positions(positions):
             x += step
 
     return new_positions
+
+def splitNodes(G, components, reactions, pos):
+
+    doSplit = input("Do you want to split the components? (Y/n)")
+    if doSplit == "Y" or doSplit == "y":
+        pos = split_components_1(G,pos,components)
+        n_crossings, _ = count_edge_crossings(G, pos, reactions)
+
+        print(f"Number of crossings split components: {n_crossings}")
+
+        # subax3 = plt.subplot(132)
+        # nx.draw(G, pos, node_color=colors)
+
+        pos = split_reactions_1(G,pos,reactions)
+        n_crossings, _ = count_edge_crossings(G, pos, reactions)
+
+        print(f"Number of crossings split reactions: {n_crossings}")
+    return pos

@@ -19,7 +19,6 @@ def initialLayout(graph):
         else:
             x_c += 1
             positions[node] = (x_c,1)
-
     return positions
 
 def trivialGreedyLayout(graph):
@@ -84,15 +83,49 @@ def randomLayout(graph):
 
 def layeredDigraph(graph):
     positions = {}
-    source, sink = fnc.get_source_and_sink_nodes(graph)
-    x_r = 0
-    x_c = 0
+    jList = []
+    lastLayer = []
+    source, lastLayer = fnc.get_source_and_sink_nodes(graph) #final layer are the sink nodes
+    assignedNodes = set()
+    numNodes = graph.number_of_nodes()
+    # Initialize all source nodes to layer 0
+    jList.append(source) 
 
-    adjacent_reactions = []
     for node in source:
-        positions[node] = (x_c, 0)
-        x_c += 1
-        graph[node].neighbors()
+        assignedNodes.add(node)
+
+    for node in lastLayer:
+        assignedNodes.add(node)
+
+    allNodesInALayer = False
+    i = 0
+    while not allNodesInALayer:
+        for node in jList[i]:
+            neighbors = graph.neighbors(node)
+            for neigh in neighbors:
+                if not neigh in assignedNodes:
+                    if len(jList) == i + 1:
+                        jList.append([])
+                    jList[i + 1].append(neigh)
+                    assignedNodes.add(neigh)
+                    if numNodes == len(assignedNodes):
+                        allNodesInALayer = True
+
+        i += 1
+
+    jList.append(lastLayer)
+    print("Jlist: ", jList)
+
+    for j, layer in enumerate(jList):
+        for i, node in enumerate(layer):
+            positions[node] = (i, j)
+
+    # x_r = 0
+    # x_c = 0
+    # for node in source:
+    #     positions[node] = (x_c, 0)
+    #     x_c += 1
+    #     graph[node].neighbors()
         
     return positions
 
