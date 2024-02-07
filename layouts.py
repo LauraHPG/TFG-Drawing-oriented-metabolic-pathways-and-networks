@@ -22,7 +22,7 @@ def initialLayout(graph):
     return positions
 
 def trivialGreedyLayout(graph):
-    ordered_nodes = fnc.nodes_ordered_by_degree(graph)
+    ordered_nodes, _ = fnc.nodes_ordered_by_degree(graph)
     positions = {}
     x_r = 0
     x_c = 0
@@ -43,7 +43,7 @@ def trivialGreedyLayout(graph):
                 positions[node] = (x_c,1)
 
             neighbours = graph.neighbors(node)
-            ordered_neighbours = fnc.nodes_ordered_by_degree(graph,neighbours)
+            ordered_neighbours, _ = fnc.nodes_ordered_by_degree(graph,neighbours)
             for neighbour in ordered_neighbours:
                 if neighbour in ordered_nodes:
                     if not neighbour in positions:
@@ -85,7 +85,7 @@ def layeredDigraph(graph):
     positions = {}
     jList = []
     lastLayer = []
-    source, lastLayer = fnc.get_source_and_sink_nodes(graph) #final layer are the sink nodes
+    source, _ = fnc.get_source_and_sink_nodes(graph) #final layer are the sink nodes
     assignedNodes = set()
     numNodes = graph.number_of_nodes()
     # Initialize all source nodes to layer 0
@@ -94,8 +94,8 @@ def layeredDigraph(graph):
     for node in source:
         assignedNodes.add(node)
 
-    for node in lastLayer:
-        assignedNodes.add(node)
+    # for node in lastLayer:
+    #     assignedNodes.add(node)
 
     allNodesInALayer = False
     i = 0
@@ -113,19 +113,12 @@ def layeredDigraph(graph):
 
         i += 1
 
-    jList.append(lastLayer)
-    print("Jlist: ", jList)
+    # jList.append(lastLayer)
+    # print("Jlist: ", jList)
 
     for j, layer in enumerate(jList):
         for i, node in enumerate(layer):
             positions[node] = (i, j)
-
-    # x_r = 0
-    # x_c = 0
-    # for node in source:
-    #     positions[node] = (x_c, 0)
-    #     x_c += 1
-    #     graph[node].neighbors()
         
     return positions
 
