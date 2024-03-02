@@ -144,11 +144,21 @@ def count_edge_crossings(graph, positions, reactions):
                     
     return crosses // 2, dict(sorted(edge_crossing_edges.items(), key=lambda item: len(item[1]), reverse=True))
 
+def changeSourceAndSinkNodeType(graph):
+    for node in graph.nodes():
+        if graph.in_degree(node) == 0:
+            graph.nodes[node]['node_type'] = 'source'
+        elif graph.out_degree(node) == 0:
+            graph.nodes[node]['node_type'] = 'sink'
+
 def get_color(node_type):
     if node_type == 'reaction':
-        return 'blue'
-    else:
-        return 'red'
+        return 'blue'   
+    if node_type == 'source':
+        return 'orange'
+    if node_type == 'sink':
+        return 'green'
+    return 'red'
     
 def nodes_ordered_by_degree(graph, nodes=None):
     """
@@ -298,7 +308,7 @@ def removeCyclesByNodeInMostCycles(graph):
     print(f"Number of nodes in a cycle: {len(appearances)}")
 
     while True:
-        print(sortedAppearances)
+        print("(Node in most cycles, number of cycles it appears in): ", sortedAppearances[0])
         node = next(iter(sortedAppearances))[0]
         duplicateNode = input(f"Do you want to duplicate {node}? (Y/n)")
         if duplicateNode == "y" or duplicateNode == "Y":
@@ -403,10 +413,47 @@ def removeCyclesBySourceOrSink(graph):
             H = graph.to_undirected()
             print(f"Number of connected components: {nx.number_connected_components(H)}")
 
-
 def analyzeCycles(graph):
 
     cycles = nx.recursive_simple_cycles(graph)
     print(f"Number of cycles: {len(cycles)}")
     
     removeCyclesBySourceOrSink(graph)
+
+def numberLevels(pos):
+    levels = set()
+    for node in pos:
+        levels.add(pos[node])
+    return len(levels)
+        
+def rearangeSources(graph, pos):
+    for node in pos:
+        if graph.in_degree(node) == 0:
+            print("source node:", node, "out degree:", graph.out_degree(node))
+            [neighbor] = graph.neighbors(node)
+            posNeigh = pos[neighbor]
+            print("Neighbor:", neighbor, "NPosition:", posNeigh)
+            newPosX = 0
+            if pos[node][0] < posNeigh[0]:
+                newPosX = posNeigh[0]-40
+            else:
+                newPosX = posNeigh[0]+40
+            
+            # si lunic veí de neighbor més petit que té és node, posar node a mateixa x
+            belowNeighbors = 0
+            for neigh in graph.predecessors(neighbor):
+                print(neigh, pos[neigh])
+                if pos[neigh][1] < posNeigh[1]:
+                    belowNeighbors += 1
+
+            for neigh in graph.successors(neighbor):
+                print(neigh, pos[neigh])
+                if pos[neigh][1] < posNeigh[1]:
+                    belowNeighbors += 1
+
+
+            print(belowNeighbors)
+            if belowNeighbors == 1:
+                newPosX = posNeigh[0]
+
+            pos[node] = (newPosX, posNeigh[1] - 40)

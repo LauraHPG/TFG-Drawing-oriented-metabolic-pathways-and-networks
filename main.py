@@ -11,6 +11,8 @@ import hill_climbing as hc
 import grandalf
 from grandalf.layouts import SugiyamaLayout
 
+import matplotlib.pyplot as plt
+
 
 G = nx.DiGraph()
 reactions = []
@@ -20,16 +22,17 @@ def main():
 
     reactions, components = funcs.read_graph(G)
 
-    funcs.analyzeCycles(G)
+    funcs.removeCyclesByNodeInMostCycles(G)
     funcs.splitHighDegreeComponents(G)
-    
+    funcs.changeSourceAndSinkNodeType(G)
+
     node_colors = {node: funcs.get_color(data['node_type']) for node, data in G.nodes(data=True)}
     nx.set_node_attributes(G, node_colors, 'color')
 
     colors = [data['color'] for _, data in G.nodes(data=True)]
 
 
-    mode = input("Select mode:\n     1: Lau\n     2: Sugiyama\n     3: DAG\n")
+    mode = input("Select mode:\n     1: Lau\n     2: Sugiyama\n     3: DAG\n     4: CCs\n")
     match mode:
         case "1": 
             lau(colors)
@@ -37,6 +40,8 @@ def main():
             sugiyama(colors)
         case "3":
             dag(colors)
+        case "4":
+            connectedComponents(colors)
 
 def lau(colors):        
     pos = lyts.selectInitialLayout(G)
@@ -86,12 +91,12 @@ def sugiyama(colors):
     sug.init_all()  # roots = [V[0]])
     sug.draw()  # Calculate positions
 
-
-
     poses = {v.data: (v.view.xy[0], v.view.xy[1]) for v in g.C[0].sV}  # Extract positions
-    nx.draw(G, pos=poses, with_labels=True, node_color=colors)
-    import matplotlib.pyplot as plt
 
+    funcs.rearangeSources(G, poses)
+
+    nx.draw(G, pos=poses, with_labels=True, node_color=colors)
+    
     plt.show()
 
 def dag(colors):
@@ -110,5 +115,13 @@ def dag(colors):
     fig.tight_layout()
     plt.show()
 
+
+def connectedComponents(colors):
+    H = G.to_undirected()
+    S = [H.subgraph(c).copy() for c in nx.connected_components(H)]
+    for subGraph in S:
+        nx.draw(subGraph, with_labels=True)
+        plt.show()
+    
 if __name__ == "__main__":
     main()
