@@ -46,10 +46,16 @@ def sugiyama(colors):
     poses = {v.data: (v.view.xy[0], v.view.xy[1]) for v in g.C[0].sV}  # Extract positions
 
     funcs.rearangeSources(G, poses)
+    funcs.countCrossings(G,poses)
 
-    nx.draw(G, pos=poses, with_labels=True, node_color=colors)
+    # nx.draw(G, pos=poses, with_labels=True, node_color=colors)
     
-    plt.show()
-    
+    # plt.show()
+
+    nt = Network(directed=True)
+    nt.from_nx(G)
+    nt.show_buttons(filter_=['layout'])
+    nt.show('nx.html', notebook=False)
+
 if __name__ == "__main__":
     main()

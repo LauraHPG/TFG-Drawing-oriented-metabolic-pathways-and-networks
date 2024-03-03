@@ -207,3 +207,6 @@ def rearangeSources(graph, pos):
                 newPosX = posNeigh[0]
 
             pos[node] = (newPosX, posNeigh[1] - 40)
+
+def countCrossings(graph,pos):
+   pass
