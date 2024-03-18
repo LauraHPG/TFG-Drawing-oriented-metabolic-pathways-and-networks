@@ -12,13 +12,22 @@ from grandalf.layouts import SugiyamaLayout
 import matplotlib.pyplot as plt
 
 
-G = nx.DiGraph()
 reactions = []
 
 def main():
 
+    G = nx.DiGraph()    
+
     reactions, components = funcs.read_graph(G)
 
+    isConnected = funcs.isConnected(G)
+
+    S = nx.Graph()
+    if not isConnected:
+        H = G.to_undirected()
+        S = [G.subgraph(c).copy() for c in nx.connected_components(H)]
+    
+    G = S
     funcs.removeCyclesByNodeInMostCycles(G)
     funcs.changeSourceAndSinkNodeType(G)
 
@@ -48,14 +57,14 @@ def sugiyama(colors):
     funcs.rearangeSources(G, poses)
     funcs.countCrossings(G,poses)
 
-    # nx.draw(G, pos=poses, with_labels=True, node_color=colors)
+    nx.draw(G, pos=poses, with_labels=True, node_color=colors)
     
-    # plt.show()
+    plt.show()
 
-    nt = Network(directed=True)
-    nt.from_nx(G)
-    nt.show_buttons(filter_=['layout'])
-    nt.show('nx.html', notebook=False)
+    # nt = Network(directed=True)
+    # nt.from_nx(G)
+    # nt.show_buttons(filter_=['layout'])
+    # nt.show('nx.html', notebook=False)
 
 if __name__ == "__main__":
     main()

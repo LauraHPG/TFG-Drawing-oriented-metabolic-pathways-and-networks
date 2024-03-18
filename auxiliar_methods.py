@@ -20,9 +20,6 @@ def read_graph(graph):
     
     
     splitHighDegreeComponents(graph)
-    
-    H = graph.to_undirected()
-    print(f"Number of connected components: {nx.number_connected_components(H)}")
 
     return [node for node, data in graph.nodes(data=True) if data['node_type'] == 'reaction'], [node for node, data in graph.nodes(data=True) if data['node_type'] == 'component']
 
@@ -210,3 +207,13 @@ def rearangeSources(graph, pos):
 
 def countCrossings(graph,pos):
    pass
+
+def isConnected(graph):
+    H = graph.to_undirected()
+    numCC = nx.number_connected_components(H)
+    print(f"Number of connected components: {numCC}")
+    
+    if numCC > 1:
+        return False
+
+    return True
