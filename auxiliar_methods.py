@@ -1,6 +1,13 @@
 import networkx as nx
 import sys
 
+import grandalf
+from grandalf.layouts import SugiyamaLayout
+
+import matplotlib.pyplot as plt
+
+import poly_point_isect as bent
+
 def read_graph(graph):
     nx.set_node_attributes(graph, {})
     for line in open(sys.argv[1]):
@@ -87,6 +94,7 @@ def nodes_ordered_by_degree(graph, nodes=None):
 def removeCyclesByNodeInMostCycles(graph):
 
     cycles = nx.recursive_simple_cycles(graph)
+    print(f"Number of cycles: {len(cycles)}")
 
     appearances = {}
     for cycle in cycles:
@@ -100,7 +108,7 @@ def removeCyclesByNodeInMostCycles(graph):
 
     sortedAppearances = sorted(appearances.items(), key=lambda x:x[1],reverse=True)
 
-    print(f"Number of nodes in a cycle: {len(appearances)}")
+    print(f"{len(appearances)} nodes from {len(graph.nodes())} appear in a cycle")
 
     while True:
         print("(Node in most cycles, number of cycles it appears in): ", sortedAppearances[0])
@@ -148,6 +156,12 @@ def removeCyclesByNodeInMostCycles(graph):
         H = graph.to_undirected()
         print(f"Number of connected components: {nx.number_connected_components(H)}")
 
+
+        poses = sugiyama(graph)
+        rearangeSources(graph, poses)
+        countCrossings(graph, poses)
+
+
 def get_color(node_type):
     if node_type == 'reaction':
         return 'blue'   
@@ -176,10 +190,10 @@ def changeSourceAndSinkNodeType(graph):
 def rearangeSources(graph, pos):
     for node in pos:
         if graph.in_degree(node) == 0:
-            print("source node:", node, "out degree:", graph.out_degree(node))
+            # print("source node:", node, "out degree:", graph.out_degree(node))
             [neighbor] = graph.neighbors(node)
             posNeigh = pos[neighbor]
-            print("Neighbor:", neighbor, "NPosition:", posNeigh)
+            # print("Neighbor:", neighbor, "NPosition:", posNeigh)
             newPosX = 0
             if pos[node][0] < posNeigh[0]:
                 newPosX = posNeigh[0]-40
@@ -189,24 +203,34 @@ def rearangeSources(graph, pos):
             # if the only neighbor lower of neighbor is node, put node at same x as neighbor
             belowNeighbors = 0
             for neigh in graph.predecessors(neighbor):
-                print(neigh, pos[neigh])
+                # print(neigh, pos[neigh])
                 if pos[neigh][1] < posNeigh[1]:
                     belowNeighbors += 1
 
             for neigh in graph.successors(neighbor):
-                print(neigh, pos[neigh])
+                # print(neigh, pos[neigh])
                 if pos[neigh][1] < posNeigh[1]:
                     belowNeighbors += 1
 
 
-            print(belowNeighbors)
-            if belowNeighbors == 1:
-                newPosX = posNeigh[0]
+            # print(belowNeighbors)
+                    
+            # it is the only under neigh, we put it under the upper one
+            # if belowNeighbors == 1:
+            #     newPosX = posNeigh[0]
 
             pos[node] = (newPosX, posNeigh[1] - 40)
 
 def countCrossings(graph,pos):
-   pass
+    numCrossings = 0
+
+    segments = []
+    for edge in graph.edges():
+        segments.append((pos[edge[0]], pos[edge[1]]))
+
+    numCrossings = bent.isect_segments(segments, validate=True)
+    print("Number of crossings:", len(numCrossings))
+    return numCrossings
 
 def isConnected(graph):
     H = graph.to_undirected()
@@ -217,3 +241,71 @@ def isConnected(graph):
         return False
 
     return True
+
+def printGraphInfo(graph):
+    print("Num Nodes:", len(graph.nodes()))
+    print("Num Edges:", len(graph.edges()))
+
+def prova(graph):
+
+    H = graph.to_undirected()
+    S = [H.subgraph(c).copy() for c in nx.connected_components(H)]
+    # subGraph = S[0]
+
+    for c in nx.connected_components(H):
+        subGraph = graph.subgraph(c).copy()
+        printGraphInfo(subGraph)
+
+        graph.to_directed()
+        
+        removeCyclesByNodeInMostCycles(subGraph)
+        
+        changeSourceAndSinkNodeType(subGraph)
+
+        colors = setColorNodeType(subGraph)
+        
+        sugiyama(colors)
+
+    # undirectedToDirected(graph,subGraph,edges)
+    
+
+    isConnected(graph)
+
+    # G = subGraph.copy()
+
+
+def sugiyama(graph):
+
+    g = grandalf.utils.convert_nextworkx_graph_to_grandalf(graph)
+
+
+    class defaultview(object):
+        w, h = 20, 20
+
+
+    for v in g.C[0].sV:
+        v.view = defaultview()
+
+    sug = SugiyamaLayout(g.C[0])
+    sug.init_all()  # roots = [V[0]])
+    sug.draw()  # Calculate positions
+
+    poses = {v.data: (v.view.xy[0], v.view.xy[1]) for v in g.C[0].sV}  # Extract positions
+
+    return poses
+
+def getLargestCC(graph):
+    connected = isConnected(graph)
+    edges = graph.edges()
+
+    if not connected:
+        H = graph.to_undirected()
+        largest_cc = max(nx.connected_components(H), key=len)
+        subGraph = graph.subgraph(largest_cc).copy() 
+        subGraph.to_directed()
+
+        return subGraph
+    return -1
+
+
+        
