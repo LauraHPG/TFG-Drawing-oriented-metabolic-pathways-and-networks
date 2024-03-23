@@ -1,0 +1,118 @@
+<html>
+<head>
+    
+    <script type="text/javascript" src="graphInfo.json.js"></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+    <style type="text/css">
+        #mynetwork {
+            width: 98vw;
+            height: 98vh;
+            border: 1px solid lightgray;
+        }
+    </style>
+</head>
+<body>
+    <h1>Drawing Metabolic Pathways and Networks</h1>
+
+    <label for="cars">Choose a metabolic pathway/network:</label>
+
+    <select id="fileList"></select>
+
+<div id="mynetwork"></div>
+
+<script type="text/javascript">
+    
+    var fileNames = [
+        "map00010.oriented",
+        "map00040.oriented",
+        "map00053.oriented",
+        "map00562.oriented",
+        "map00640.oriented",
+        "map01100.oriented",
+        "map01200.oriented",
+        "map01220.oriented",
+        "map01240.oriented",
+        "map00020.oriented",
+        "map00051.oriented",
+        "map00500.oriented",
+        "map00620.oriented",
+        "map00650.oriented",
+        "map01110.oriented",
+        "map01210.oriented",
+        "map01230.oriented",
+        "map01250.oriented",
+        "map00030.oriented",
+        "map00052.oriented",
+        "map00520.oriented",
+        "map00630.oriented",
+        "map00660.oriented",
+        "map01120.oriented",
+        "map01212.oriented",
+        "map01232.oriented"
+    ];
+
+    fileNames.sort();
+
+    var selectElement = document.getElementById('fileList');
+    var optgroup = document.createElement('optgroup');
+    optgroup.label = 'Files';
+
+    fileNames.forEach(function(fileName) {
+        var option = document.createElement('option');
+        option.textContent = fileName;
+        optgroup.appendChild(option);
+    });
+
+    selectElement.appendChild(optgroup);
+    
+    console.log(inputGraph.nodes);
+    console.log()
+    // create an array with nodes
+    
+    var nodes = new vis.DataSet(
+        // 
+        inputGraph.nodes
+    );
+
+    // create an array with edges
+    var edges = new vis.DataSet(
+        inputGraph.edges
+        
+    );
+    // create a network
+    var container = document.getElementById('mynetwork');
+
+    // provide the data in the vis format
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+    var width = 98 + 'vw';
+    var height = 98 + 'vw';
+
+    var options = {
+    width: width + 'vw',
+    height: height + 'vh',
+    nodes: {
+        shape: 'dot'
+    },
+    edges: {
+        smooth: false
+    },
+    physics: false,
+    interaction: {
+        // dragNodes: false,// do not allow dragging nodes
+        // zoomView: false, // do not allow zooming
+        // dragView: false  // do not allow dragging
+    }
+};
+
+    // initialize your network!
+    var network = new vis.Network(container, data, options);
+</script>
+</body>
+</html>
