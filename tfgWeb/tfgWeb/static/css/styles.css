@@ -1,0 +1,14 @@
+#mynetwork {
+    width: 80vw;
+    height: 85vh;
+    border: 1px solid lightgray;
+    display: inline-block;
+}
+
+#infoConfig {
+    width: 18vw;
+    height: 85vh;
+    display: inline-block;
+    border: 1px solid lightgray;
+}
+  

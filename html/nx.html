@@ -1,0 +1,265 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 600px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+             #config {
+                 float: left;
+                 width: 400px;
+                 height: 600px;
+             }
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+            <div id="config"></div>
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "blue", "id": "R00014", "label": "R00014", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "red", "id": "C00011", "label": "C00011", "node_type": "component", "shape": "box", "size": 10}, {"color": "red", "id": "C05125", "label": "C05125", "node_type": "component", "shape": "box", "size": 10}, {"color": "red", "id": "C00022", "label": "C00022", "node_type": "component", "shape": "box", "size": 10}, {"color": "blue", "id": "R00199", "label": "R00199", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R00200", "label": "R00200", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "red", "id": "C00068", "label": "C00068", "node_type": "component", "shape": "box", "size": 10}, {"color": "blue", "id": "R00755", "label": "R00755", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R00431", "label": "R00431", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R00726", "label": "R00726", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R01196", "label": "R01196", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R03270", "label": "R03270", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "red", "id": "C00074", "label": "C00074", "node_type": "component", "shape": "box", "size": 10}, {"color": "red", "id": "C00020", "label": "C00020", "node_type": "component", "shape": "box", "size": 10}, {"color": "green", "id": "D2_C00009", "label": "D2_C00009", "node_type": "sink", "shape": "box", "size": 10}, {"color": "blue", "id": "R00206", "label": "R00206", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "green", "id": "D3_C00008", "label": "D3_C00008", "node_type": "sink", "shape": "box", "size": 10}, {"color": "green", "id": "D9_C00002", "label": "D9_C00002", "node_type": "sink", "shape": "box", "size": 10}, {"color": "green", "id": "D3_C00009", "label": "D3_C00009", "node_type": "sink", "shape": "box", "size": 10}, {"color": "blue", "id": "R00229", "label": "R00229", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "red", "id": "C00024", "label": "C00024", "node_type": "component", "shape": "box", "size": 10}, {"color": "green", "id": "D4_C00009", "label": "D4_C00009", "node_type": "sink", "shape": "box", "size": 10}, {"color": "green", "id": "D4_C00008", "label": "D4_C00008", "node_type": "sink", "shape": "box", "size": 10}, {"color": "red", "id": "C00010", "label": "C00010", "node_type": "component", "shape": "box", "size": 10}, {"color": "blue", "id": "R00235", "label": "R00235", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R02569", "label": "R02569", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "red", "id": "C00033", "label": "C00033", "node_type": "component", "shape": "box", "size": 10}, {"color": "green", "id": "D2_C00013", "label": "D2_C00013", "node_type": "sink", "shape": "box", "size": 10}, {"color": "blue", "id": "R00341", "label": "R00341", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "green", "id": "D5_C00008", "label": "D5_C00008", "node_type": "sink", "shape": "box", "size": 10}, {"color": "red", "id": "C00036", "label": "C00036", "node_type": "component", "shape": "box", "size": 10}, {"color": "green", "id": "C00044", "label": "C00044", "node_type": "sink", "shape": "box", "size": 10}, {"color": "orange", "id": "C00035", "label": "C00035", "node_type": "source", "shape": "box", "size": 10}, {"color": "blue", "id": "R00658", "label": "R00658", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "green", "id": "D11_C00001", "label": "D11_C00001", "node_type": "sink", "shape": "box", "size": 10}, {"color": "red", "id": "C00631", "label": "C00631", "node_type": "component", "shape": "box", "size": 10}, {"color": "blue", "id": "R01518", "label": "R01518", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R00703", "label": "R00703", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "green", "id": "D5_C00080", "label": "D5_C00080", "node_type": "sink", "shape": "box", "size": 10}, {"color": "green", "id": "D1_C00004", "label": "D1_C00004", "node_type": "sink", "shape": "box", "size": 10}, {"color": "orange", "id": "C00186", "label": "C00186", "node_type": "source", "shape": "box", "size": 10}, {"color": "red", "id": "C00003", "label": "C00003", "node_type": "component", "shape": "box", "size": 10}, {"color": "blue", "id": "R00710", "label": "R00710", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R01061", "label": "R01061", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R07618", "label": "R07618", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R10860", "label": "R10860", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "green", "id": "D6_C00080", "label": "D6_C00080", "node_type": "sink", "shape": "box", "size": 10}, {"color": "green", "id": "D2_C00004", "label": "D2_C00004", "node_type": "sink", "shape": "box", "size": 10}, {"color": "red", "id": "C00084", "label": "C00084", "node_type": "component", "shape": "box", "size": 10}, {"color": "blue", "id": "R00711", "label": "R00711", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R00746", "label": "R00746", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R00754", "label": "R00754", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R05198", "label": "R05198", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R09127", "label": "R09127", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "red", "id": "C00005", "label": "C00005", "node_type": "component", "shape": "box", "size": 10}, {"color": "green", "id": "D7_C00080", "label": "D7_C00080", "node_type": "sink", "shape": "box", "size": 10}, {"color": "red", "id": "C00006", "label": "C00006", "node_type": "component", "shape": "box", "size": 10}, {"color": "blue", "id": "R01058", "label": "R01058", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R01063", "label": "R01063", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "green", "id": "C00081", "label": "C00081", "node_type": "sink", "shape": "box", "size": 10}, {"color": "orange", "id": "C00104", "label": "C00104", "node_type": "source", "shape": "box", "size": 10}, {"color": "red", "id": "C00469", "label": "C00469", "node_type": "component", "shape": "box", "size": 10}, {"color": "blue", "id": "R09479", "label": "R09479", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R00756", "label": "R00756", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "red", "id": "C00354", "label": "C00354", "node_type": "component", "shape": "box", "size": 10}, {"color": "green", "id": "D6_C00008", "label": "D6_C00008", "node_type": "sink", "shape": "box", "size": 10}, {"color": "red", "id": "C00085", "label": "C00085", "node_type": "component", "shape": "box", "size": 10}, {"color": "blue", "id": "R00764", "label": "R00764", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R05805", "label": "R05805", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R00762", "label": "R00762", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R01068", "label": "R01068", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "green", "id": "D5_C00009", "label": "D5_C00009", "node_type": "sink", "shape": "box", "size": 10}, {"color": "green", "id": "D6_C00009", "label": "D6_C00009", "node_type": "sink", "shape": "box", "size": 10}, {"color": "blue", "id": "R00947", "label": "R00947", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "red", "id": "C00267", "label": "C00267", "node_type": "component", "shape": "box", "size": 10}, {"color": "green", "id": "D7_C00009", "label": "D7_C00009", "node_type": "sink", "shape": "box", "size": 10}, {"color": "red", "id": "C00103", "label": "C00103", "node_type": "component", "shape": "box", "size": 10}, {"color": "blue", "id": "R01602", "label": "R01602", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R01786", "label": "R01786", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R02189", "label": "R02189", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R09085", "label": "R09085", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R00959", "label": "R00959", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "red", "id": "C00668", "label": "C00668", "node_type": "component", "shape": "box", "size": 10}, {"color": "blue", "id": "R01788", "label": "R01788", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R02738", "label": "R02738", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R02739", "label": "R02739", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R13199", "label": "R13199", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R01015", "label": "R01015", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "red", "id": "C00118", "label": "C00118", "node_type": "component", "shape": "box", "size": 10}, {"color": "red", "id": "C00111", "label": "C00111", "node_type": "component", "shape": "box", "size": 10}, {"color": "blue", "id": "R07159", "label": "R07159", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "red", "id": "C00197", "label": "C00197", "node_type": "component", "shape": "box", "size": 10}, {"color": "green", "id": "D8_C00080", "label": "D8_C00080", "node_type": "sink", "shape": "box", "size": 10}, {"color": "blue", "id": "R01512", "label": "R01512", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R01516", "label": "R01516", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "red", "id": "C00236", "label": "C00236", "node_type": "component", "shape": "box", "size": 10}, {"color": "green", "id": "D9_C00080", "label": "D9_C00080", "node_type": "sink", "shape": "box", "size": 10}, {"color": "green", "id": "D3_C00004", "label": "D3_C00004", "node_type": "sink", "shape": "box", "size": 10}, {"color": "blue", "id": "R01662", "label": "R01662", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "green", "id": "D10_C00080", "label": "D10_C00080", "node_type": "sink", "shape": "box", "size": 10}, {"color": "red", "id": "C00139", "label": "C00139", "node_type": "component", "shape": "box", "size": 10}, {"color": "red", "id": "C00138", "label": "C00138", "node_type": "component", "shape": "box", "size": 10}, {"color": "green", "id": "D7_C00008", "label": "D7_C00008", "node_type": "sink", "shape": "box", "size": 10}, {"color": "red", "id": "C01159", "label": "C01159", "node_type": "component", "shape": "box", "size": 10}, {"color": "red", "id": "C00615", "label": "C00615", "node_type": "component", "shape": "box", "size": 10}, {"color": "orange", "id": "C04262", "label": "C04262", "node_type": "source", "shape": "box", "size": 10}, {"color": "blue", "id": "R09532", "label": "R09532", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R05132", "label": "R05132", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R01600", "label": "R01600", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "red", "id": "C01172", "label": "C01172", "node_type": "component", "shape": "box", "size": 10}, {"color": "green", "id": "D8_C00008", "label": "D8_C00008", "node_type": "sink", "shape": "box", "size": 10}, {"color": "red", "id": "C00221", "label": "C00221", "node_type": "component", "shape": "box", "size": 10}, {"color": "blue", "id": "R02187", "label": "R02187", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R09086", "label": "R09086", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "blue", "id": "R05133", "label": "R05133", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "green", "id": "D9_C00008", "label": "D9_C00008", "node_type": "sink", "shape": "box", "size": 10}, {"color": "green", "id": "D8_C00009", "label": "D8_C00009", "node_type": "sink", "shape": "box", "size": 10}, {"color": "red", "id": "C00404", "label": "C00404", "node_type": "component", "shape": "box", "size": 10}, {"color": "red", "id": "C15973", "label": "C15973", "node_type": "component", "shape": "box", "size": 10}, {"color": "red", "id": "C16255", "label": "C16255", "node_type": "component", "shape": "box", "size": 10}, {"color": "green", "id": "C00031", "label": "C00031", "node_type": "sink", "shape": "box", "size": 10}, {"color": "red", "id": "C04261", "label": "C04261", "node_type": "component", "shape": "box", "size": 10}, {"color": "blue", "id": "R04394", "label": "R04394", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "red", "id": "C15972", "label": "C15972", "node_type": "component", "shape": "box", "size": 10}, {"color": "red", "id": "C06188", "label": "C06188", "node_type": "component", "shape": "box", "size": 10}, {"color": "orange", "id": "C01451", "label": "C01451", "node_type": "source", "shape": "box", "size": 10}, {"color": "blue", "id": "R05134", "label": "R05134", "node_type": "reaction", "shape": "box", "size": 10}, {"color": "green", "id": "C06186", "label": "C06186", "node_type": "sink", "shape": "box", "size": 10}, {"color": "red", "id": "C06187", "label": "C06187", "node_type": "component", "shape": "box", "size": 10}, {"color": "green", "id": "D12_C00001", "label": "D12_C00001", "node_type": "sink", "shape": "box", "size": 10}, {"color": "orange", "id": "C00530", "label": "C00530", "node_type": "source", "shape": "box", "size": 10}, {"color": "green", "id": "C02323", "label": "C02323", "node_type": "sink", "shape": "box", "size": 10}, {"color": "green", "id": "C00125", "label": "C00125", "node_type": "sink", "shape": "box", "size": 10}, {"color": "orange", "id": "C00126", "label": "C00126", "node_type": "source", "shape": "box", "size": 10}, {"color": "green", "id": "D11_C00080", "label": "D11_C00080", "node_type": "sink", "shape": "box", "size": 10}, {"color": "green", "id": "D12_C00080", "label": "D12_C00080", "node_type": "sink", "shape": "box", "size": 10}, {"color": "green", "id": "D4_C00004", "label": "D4_C00004", "node_type": "sink", "shape": "box", "size": 10}, {"color": "green", "id": "C18233", "label": "C18233", "node_type": "sink", "shape": "box", "size": 10}, {"color": "orange", "id": "C18234", "label": "C18234", "node_type": "source", "shape": "box", "size": 10}, {"color": "green", "id": "C00390", "label": "C00390", "node_type": "sink", "shape": "box", "size": 10}, {"color": "orange", "id": "C00399", "label": "C00399", "node_type": "source", "shape": "box", "size": 10}, {"color": "green", "id": "D9_C00009", "label": "D9_C00009", "node_type": "sink", "shape": "box", "size": 10}, {"color": "green", "id": "D13_C00080", "label": "D13_C00080", "node_type": "sink", "shape": "box", "size": 10}, {"color": "green", "id": "D5_C00004", "label": "D5_C00004", "node_type": "sink", "shape": "box", "size": 10}, {"color": "orange", "id": "D0_C00080", "label": "D0_C00080", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D1_C00080", "label": "D1_C00080", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D2_C00080", "label": "D2_C00080", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D3_C00080", "label": "D3_C00080", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D4_C00080", "label": "D4_C00080", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D0_C00001", "label": "D0_C00001", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D1_C00001", "label": "D1_C00001", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D2_C00001", "label": "D2_C00001", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D3_C00001", "label": "D3_C00001", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D4_C00001", "label": "D4_C00001", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D5_C00001", "label": "D5_C00001", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D6_C00001", "label": "D6_C00001", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D7_C00001", "label": "D7_C00001", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D8_C00001", "label": "D8_C00001", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D9_C00001", "label": "D9_C00001", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D10_C00001", "label": "D10_C00001", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D0_C00002", "label": "D0_C00002", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D1_C00002", "label": "D1_C00002", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D2_C00002", "label": "D2_C00002", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D3_C00002", "label": "D3_C00002", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D4_C00002", "label": "D4_C00002", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D5_C00002", "label": "D5_C00002", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D6_C00002", "label": "D6_C00002", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D7_C00002", "label": "D7_C00002", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D8_C00002", "label": "D8_C00002", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D0_C00009", "label": "D0_C00009", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D1_C00009", "label": "D1_C00009", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D0_C00008", "label": "D0_C00008", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D1_C00008", "label": "D1_C00008", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D2_C00008", "label": "D2_C00008", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D0_C00013", "label": "D0_C00013", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D1_C00013", "label": "D1_C00013", "node_type": "source", "shape": "box", "size": 10}, {"color": "orange", "id": "D0_C00004", "label": "D0_C00004", "node_type": "source", "shape": "box", "size": 10}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "R00014", "to": "C00011", "width": 1}, {"arrows": "to", "from": "R00014", "to": "C05125", "width": 1}, {"arrows": "to", "from": "C00022", "to": "R00014", "width": 1}, {"arrows": "to", "from": "C00022", "to": "R00199", "width": 1}, {"arrows": "to", "from": "C00022", "to": "R00200", "width": 1}, {"arrows": "to", "from": "C00068", "to": "R00014", "width": 1}, {"arrows": "to", "from": "C00068", "to": "R00755", "width": 1}, {"arrows": "to", "from": "C00011", "to": "R00431", "width": 1}, {"arrows": "to", "from": "C00011", "to": "R00726", "width": 1}, {"arrows": "to", "from": "C00011", "to": "R01196", "width": 1}, {"arrows": "to", "from": "C05125", "to": "R03270", "width": 1}, {"arrows": "to", "from": "R00199", "to": "C00074", "width": 1}, {"arrows": "to", "from": "R00199", "to": "C00020", "width": 1}, {"arrows": "to", "from": "R00199", "to": "D2_C00009", "width": 1}, {"arrows": "to", "from": "C00074", "to": "R00206", "width": 1}, {"arrows": "to", "from": "C00074", "to": "R00431", "width": 1}, {"arrows": "to", "from": "C00074", "to": "R00726", "width": 1}, {"arrows": "to", "from": "C00020", "to": "R00206", "width": 1}, {"arrows": "to", "from": "R00200", "to": "C00074", "width": 1}, {"arrows": "to", "from": "R00200", "to": "D3_C00008", "width": 1}, {"arrows": "to", "from": "R00206", "to": "C00022", "width": 1}, {"arrows": "to", "from": "R00206", "to": "D9_C00002", "width": 1}, {"arrows": "to", "from": "R00206", "to": "D3_C00009", "width": 1}, {"arrows": "to", "from": "R00229", "to": "C00024", "width": 1}, {"arrows": "to", "from": "R00229", "to": "D4_C00009", "width": 1}, {"arrows": "to", "from": "R00229", "to": "D4_C00008", "width": 1}, {"arrows": "to", "from": "C00010", "to": "R00229", "width": 1}, {"arrows": "to", "from": "C00010", "to": "R00235", "width": 1}, {"arrows": "to", "from": "C00010", "to": "R02569", "width": 1}, {"arrows": "to", "from": "C00033", "to": "R00229", "width": 1}, {"arrows": "to", "from": "C00033", "to": "R00235", "width": 1}, {"arrows": "to", "from": "C00024", "to": "R01196", "width": 1}, {"arrows": "to", "from": "R00235", "to": "C00020", "width": 1}, {"arrows": "to", "from": "R00235", "to": "C00024", "width": 1}, {"arrows": "to", "from": "R00235", "to": "D2_C00013", "width": 1}, {"arrows": "to", "from": "R00341", "to": "C00074", "width": 1}, {"arrows": "to", "from": "R00341", "to": "C00011", "width": 1}, {"arrows": "to", "from": "R00341", "to": "D5_C00008", "width": 1}, {"arrows": "to", "from": "C00036", "to": "R00341", "width": 1}, {"arrows": "to", "from": "R00431", "to": "C00036", "width": 1}, {"arrows": "to", "from": "R00431", "to": "C00044", "width": 1}, {"arrows": "to", "from": "C00035", "to": "R00431", "width": 1}, {"arrows": "to", "from": "R00658", "to": "C00074", "width": 1}, {"arrows": "to", "from": "R00658", "to": "D11_C00001", "width": 1}, {"arrows": "to", "from": "C00631", "to": "R00658", "width": 1}, {"arrows": "to", "from": "C00631", "to": "R01518", "width": 1}, {"arrows": "to", "from": "R00703", "to": "C00022", "width": 1}, {"arrows": "to", "from": "R00703", "to": "D5_C00080", "width": 1}, {"arrows": "to", "from": "R00703", "to": "D1_C00004", "width": 1}, {"arrows": "to", "from": "C00186", "to": "R00703", "width": 1}, {"arrows": "to", "from": "C00003", "to": "R00703", "width": 1}, {"arrows": "to", "from": "C00003", "to": "R00710", "width": 1}, {"arrows": "to", "from": "C00003", "to": "R01061", "width": 1}, {"arrows": "to", "from": "C00003", "to": "R07618", "width": 1}, {"arrows": "to", "from": "C00003", "to": "R10860", "width": 1}, {"arrows": "to", "from": "R00710", "to": "C00033", "width": 1}, {"arrows": "to", "from": "R00710", "to": "D6_C00080", "width": 1}, {"arrows": "to", "from": "R00710", "to": "D2_C00004", "width": 1}, {"arrows": "to", "from": "C00084", "to": "R00710", "width": 1}, {"arrows": "to", "from": "C00084", "to": "R00711", "width": 1}, {"arrows": "to", "from": "C00084", "to": "R00746", "width": 1}, {"arrows": "to", "from": "C00084", "to": "R00754", "width": 1}, {"arrows": "to", "from": "C00084", "to": "R00755", "width": 1}, {"arrows": "to", "from": "C00084", "to": "R05198", "width": 1}, {"arrows": "to", "from": "C00084", "to": "R09127", "width": 1}, {"arrows": "to", "from": "R00711", "to": "C00005", "width": 1}, {"arrows": "to", "from": "R00711", "to": "C00033", "width": 1}, {"arrows": "to", "from": "R00711", "to": "D7_C00080", "width": 1}, {"arrows": "to", "from": "C00006", "to": "R00711", "width": 1}, {"arrows": "to", "from": "C00006", "to": "R01058", "width": 1}, {"arrows": "to", "from": "C00006", "to": "R01063", "width": 1}, {"arrows": "to", "from": "C00005", "to": "R00746", "width": 1}, {"arrows": "to", "from": "R00726", "to": "C00081", "width": 1}, {"arrows": "to", "from": "R00726", "to": "C00036", "width": 1}, {"arrows": "to", "from": "C00104", "to": "R00726", "width": 1}, {"arrows": "to", "from": "R00746", "to": "C00469", "width": 1}, {"arrows": "to", "from": "R00746", "to": "C00006", "width": 1}, {"arrows": "to", "from": "C00469", "to": "R09479", "width": 1}, {"arrows": "to", "from": "R00754", "to": "C00003", "width": 1}, {"arrows": "to", "from": "R00754", "to": "C00469", "width": 1}, {"arrows": "to", "from": "R00755", "to": "C05125", "width": 1}, {"arrows": "to", "from": "R00756", "to": "C00354", "width": 1}, {"arrows": "to", "from": "R00756", "to": "D6_C00008", "width": 1}, {"arrows": "to", "from": "C00085", "to": "R00756", "width": 1}, {"arrows": "to", "from": "C00085", "to": "R00764", "width": 1}, {"arrows": "to", "from": "C00085", "to": "R05805", "width": 1}, {"arrows": "to", "from": "C00354", "to": "R00762", "width": 1}, {"arrows": "to", "from": "C00354", "to": "R01068", "width": 1}, {"arrows": "to", "from": "R00762", "to": "C00085", "width": 1}, {"arrows": "to", "from": "R00762", "to": "D5_C00009", "width": 1}, {"arrows": "to", "from": "R00764", "to": "C00354", "width": 1}, {"arrows": "to", "from": "R00764", "to": "D6_C00009", "width": 1}, {"arrows": "to", "from": "R00947", "to": "C00267", "width": 1}, {"arrows": "to", "from": "R00947", "to": "D7_C00009", "width": 1}, {"arrows": "to", "from": "C00103", "to": "R00947", "width": 1}, {"arrows": "to", "from": "C00267", "to": "R01602", "width": 1}, {"arrows": "to", "from": "C00267", "to": "R01786", "width": 1}, {"arrows": "to", "from": "C00267", "to": "R02189", "width": 1}, {"arrows": "to", "from": "C00267", "to": "R09085", "width": 1}, {"arrows": "to", "from": "R00959", "to": "C00103", "width": 1}, {"arrows": "to", "from": "C00668", "to": "R00959", "width": 1}, {"arrows": "to", "from": "C00668", "to": "R01788", "width": 1}, {"arrows": "to", "from": "C00668", "to": "R02738", "width": 1}, {"arrows": "to", "from": "C00668", "to": "R02739", "width": 1}, {"arrows": "to", "from": "C00668", "to": "R13199", "width": 1}, {"arrows": "to", "from": "R01015", "to": "C00118", "width": 1}, {"arrows": "to", "from": "C00111", "to": "R01015", "width": 1}, {"arrows": "to", "from": "C00118", "to": "R01058", "width": 1}, {"arrows": "to", "from": "C00118", "to": "R01061", "width": 1}, {"arrows": "to", "from": "C00118", "to": "R01063", "width": 1}, {"arrows": "to", "from": "C00118", "to": "R07159", "width": 1}, {"arrows": "to", "from": "C00118", "to": "R10860", "width": 1}, {"arrows": "to", "from": "R01058", "to": "C00197", "width": 1}, {"arrows": "to", "from": "R01058", "to": "C00005", "width": 1}, {"arrows": "to", "from": "R01058", "to": "D8_C00080", "width": 1}, {"arrows": "to", "from": "C00197", "to": "R01512", "width": 1}, {"arrows": "to", "from": "C00197", "to": "R01516", "width": 1}, {"arrows": "to", "from": "R01061", "to": "C00236", "width": 1}, {"arrows": "to", "from": "R01061", "to": "D9_C00080", "width": 1}, {"arrows": "to", "from": "R01061", "to": "D3_C00004", "width": 1}, {"arrows": "to", "from": "C00236", "to": "R01662", "width": 1}, {"arrows": "to", "from": "R01063", "to": "C00236", "width": 1}, {"arrows": "to", "from": "R01063", "to": "C00005", "width": 1}, {"arrows": "to", "from": "R01063", "to": "D10_C00080", "width": 1}, {"arrows": "to", "from": "R01068", "to": "C00118", "width": 1}, {"arrows": "to", "from": "R01068", "to": "C00111", "width": 1}, {"arrows": "to", "from": "R01196", "to": "C00022", "width": 1}, {"arrows": "to", "from": "R01196", "to": "C00139", "width": 1}, {"arrows": "to", "from": "R01196", "to": "C00010", "width": 1}, {"arrows": "to", "from": "C00138", "to": "R01196", "width": 1}, {"arrows": "to", "from": "C00139", "to": "R07159", "width": 1}, {"arrows": "to", "from": "R01512", "to": "C00236", "width": 1}, {"arrows": "to", "from": "R01512", "to": "D7_C00008", "width": 1}, {"arrows": "to", "from": "R01516", "to": "C01159", "width": 1}, {"arrows": "to", "from": "R01516", "to": "C00615", "width": 1}, {"arrows": "to", "from": "C04262", "to": "R01516", "width": 1}, {"arrows": "to", "from": "C01159", "to": "R09532", "width": 1}, {"arrows": "to", "from": "C00615", "to": "R02738", "width": 1}, {"arrows": "to", "from": "C00615", "to": "R05132", "width": 1}, {"arrows": "to", "from": "R01518", "to": "C00197", "width": 1}, {"arrows": "to", "from": "R01600", "to": "C01172", "width": 1}, {"arrows": "to", "from": "R01600", "to": "D8_C00008", "width": 1}, {"arrows": "to", "from": "C00221", "to": "R01600", "width": 1}, {"arrows": "to", "from": "C00221", "to": "R02187", "width": 1}, {"arrows": "to", "from": "C00221", "to": "R09086", "width": 1}, {"arrows": "to", "from": "C01172", "to": "R05133", "width": 1}, {"arrows": "to", "from": "R01602", "to": "C00221", "width": 1}, {"arrows": "to", "from": "R01662", "to": "C01159", "width": 1}, {"arrows": "to", "from": "R01786", "to": "C00668", "width": 1}, {"arrows": "to", "from": "R01786", "to": "D9_C00008", "width": 1}, {"arrows": "to", "from": "R01788", "to": "C00267", "width": 1}, {"arrows": "to", "from": "R01788", "to": "D8_C00009", "width": 1}, {"arrows": "to", "from": "R02187", "to": "C00404", "width": 1}, {"arrows": "to", "from": "R02187", "to": "C01172", "width": 1}, {"arrows": "to", "from": "C00404", "to": "R02187", "width": 1}, {"arrows": "to", "from": "C00404", "to": "R02189", "width": 1}, {"arrows": "to", "from": "R02189", "to": "C00668", "width": 1}, {"arrows": "to", "from": "R02189", "to": "C00404", "width": 1}, {"arrows": "to", "from": "R02569", "to": "C15973", "width": 1}, {"arrows": "to", "from": "R02569", "to": "C00024", "width": 1}, {"arrows": "to", "from": "C16255", "to": "R02569", "width": 1}, {"arrows": "to", "from": "C15973", "to": "R07618", "width": 1}, {"arrows": "to", "from": "R02738", "to": "C00031", "width": 1}, {"arrows": "to", "from": "R02738", "to": "C04261", "width": 1}, {"arrows": "to", "from": "C04261", "to": "R04394", "width": 1}, {"arrows": "to", "from": "R02739", "to": "C01172", "width": 1}, {"arrows": "to", "from": "R03270", "to": "C00068", "width": 1}, {"arrows": "to", "from": "R03270", "to": "C16255", "width": 1}, {"arrows": "to", "from": "C15972", "to": "R03270", "width": 1}, {"arrows": "to", "from": "R04394", "to": "C06188", "width": 1}, {"arrows": "to", "from": "R04394", "to": "C00615", "width": 1}, {"arrows": "to", "from": "C01451", "to": "R04394", "width": 1}, {"arrows": "to", "from": "C06188", "to": "R05134", "width": 1}, {"arrows": "to", "from": "R05132", "to": "C06186", "width": 1}, {"arrows": "to", "from": "R05132", "to": "C04261", "width": 1}, {"arrows": "to", "from": "C06187", "to": "R05132", "width": 1}, {"arrows": "to", "from": "R05133", "to": "C06187", "width": 1}, {"arrows": "to", "from": "R05133", "to": "D12_C00001", "width": 1}, {"arrows": "to", "from": "C00530", "to": "R05133", "width": 1}, {"arrows": "to", "from": "R05134", "to": "C02323", "width": 1}, {"arrows": "to", "from": "R05134", "to": "C01172", "width": 1}, {"arrows": "to", "from": "R05198", "to": "C00469", "width": 1}, {"arrows": "to", "from": "R05198", "to": "C00125", "width": 1}, {"arrows": "to", "from": "C00126", "to": "R05198", "width": 1}, {"arrows": "to", "from": "R05805", "to": "C00354", "width": 1}, {"arrows": "to", "from": "R05805", "to": "C00020", "width": 1}, {"arrows": "to", "from": "R07159", "to": "C00197", "width": 1}, {"arrows": "to", "from": "R07159", "to": "C00138", "width": 1}, {"arrows": "to", "from": "R07159", "to": "D11_C00080", "width": 1}, {"arrows": "to", "from": "R07618", "to": "C15972", "width": 1}, {"arrows": "to", "from": "R07618", "to": "D12_C00080", "width": 1}, {"arrows": "to", "from": "R07618", "to": "D4_C00004", "width": 1}, {"arrows": "to", "from": "R09085", "to": "C00668", "width": 1}, {"arrows": "to", "from": "R09085", "to": "C00020", "width": 1}, {"arrows": "to", "from": "R09086", "to": "C00020", "width": 1}, {"arrows": "to", "from": "R09086", "to": "C01172", "width": 1}, {"arrows": "to", "from": "R09127", "to": "C18233", "width": 1}, {"arrows": "to", "from": "R09127", "to": "C00469", "width": 1}, {"arrows": "to", "from": "C18234", "to": "R09127", "width": 1}, {"arrows": "to", "from": "R09479", "to": "C00084", "width": 1}, {"arrows": "to", "from": "R09479", "to": "C00390", "width": 1}, {"arrows": "to", "from": "C00399", "to": "R09479", "width": 1}, {"arrows": "to", "from": "R09532", "to": "C00631", "width": 1}, {"arrows": "to", "from": "R09532", "to": "D9_C00009", "width": 1}, {"arrows": "to", "from": "R10860", "to": "C00197", "width": 1}, {"arrows": "to", "from": "R10860", "to": "D13_C00080", "width": 1}, {"arrows": "to", "from": "R10860", "to": "D5_C00004", "width": 1}, {"arrows": "to", "from": "R13199", "to": "C00085", "width": 1}, {"arrows": "to", "from": "D0_C00080", "to": "R00746", "width": 1}, {"arrows": "to", "from": "D1_C00080", "to": "R00754", "width": 1}, {"arrows": "to", "from": "D2_C00080", "to": "R01196", "width": 1}, {"arrows": "to", "from": "D3_C00080", "to": "R05198", "width": 1}, {"arrows": "to", "from": "D4_C00080", "to": "R09127", "width": 1}, {"arrows": "to", "from": "D0_C00001", "to": "R00199", "width": 1}, {"arrows": "to", "from": "D1_C00001", "to": "R00710", "width": 1}, {"arrows": "to", "from": "D2_C00001", "to": "R00711", "width": 1}, {"arrows": "to", "from": "D3_C00001", "to": "R00762", "width": 1}, {"arrows": "to", "from": "D4_C00001", "to": "R00947", "width": 1}, {"arrows": "to", "from": "D5_C00001", "to": "R01058", "width": 1}, {"arrows": "to", "from": "D6_C00001", "to": "R01788", "width": 1}, {"arrows": "to", "from": "D7_C00001", "to": "R05134", "width": 1}, {"arrows": "to", "from": "D8_C00001", "to": "R07159", "width": 1}, {"arrows": "to", "from": "D9_C00001", "to": "R09532", "width": 1}, {"arrows": "to", "from": "D10_C00001", "to": "R10860", "width": 1}, {"arrows": "to", "from": "D0_C00002", "to": "R00199", "width": 1}, {"arrows": "to", "from": "D1_C00002", "to": "R00200", "width": 1}, {"arrows": "to", "from": "D2_C00002", "to": "R00229", "width": 1}, {"arrows": "to", "from": "D3_C00002", "to": "R00235", "width": 1}, {"arrows": "to", "from": "D4_C00002", "to": "R00341", "width": 1}, {"arrows": "to", "from": "D5_C00002", "to": "R00756", "width": 1}, {"arrows": "to", "from": "D6_C00002", "to": "R01512", "width": 1}, {"arrows": "to", "from": "D7_C00002", "to": "R01600", "width": 1}, {"arrows": "to", "from": "D8_C00002", "to": "R01786", "width": 1}, {"arrows": "to", "from": "D0_C00009", "to": "R01061", "width": 1}, {"arrows": "to", "from": "D1_C00009", "to": "R01063", "width": 1}, {"arrows": "to", "from": "D0_C00008", "to": "R05805", "width": 1}, {"arrows": "to", "from": "D1_C00008", "to": "R09085", "width": 1}, {"arrows": "to", "from": "D2_C00008", "to": "R09086", "width": 1}, {"arrows": "to", "from": "D0_C00013", "to": "R00206", "width": 1}, {"arrows": "to", "from": "D1_C00013", "to": "R00764", "width": 1}, {"arrows": "to", "from": "D0_C00004", "to": "R00754", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": true,
+        "filter": [
+            "layout"
+        ]
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+                  // if this network requires displaying the configure window,
+                  // put it in its div
+                  options.configure["container"] = document.getElementById("config");
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

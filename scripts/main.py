@@ -41,7 +41,7 @@ def main():
     
 
     funcs.rearangeSources(G, poses)
-    # funcs.countCrossings(G,poses)
+    funcs.countCrossings(G,poses)
 
     funcs.parseGraph(G, poses)
 

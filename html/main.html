@@ -18,13 +18,14 @@
 <body>
     <h1>Drawing Metabolic Pathways and Networks</h1>
 
-    <label for="cars">Choose a metabolic pathway/network:</label>
+    <label>Choose a metabolic pathway/network:</label>
 
     <select id="fileList"></select>
 
-<div id="mynetwork"></div>
+    <div id="mynetwork"></div>
 
 <script type="text/javascript">
+
     
     var fileNames = [
         "map00010.oriented",
@@ -113,6 +114,12 @@
 
     // initialize your network!
     var network = new vis.Network(container, data, options);
+
+    network.on("click", function (params) {
+    if (params.nodes[0] == 'C06186') {
+      console.log('click event on 2!');
+    }
+  });
 </script>
 </body>
 </html>
