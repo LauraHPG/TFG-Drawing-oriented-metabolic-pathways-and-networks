@@ -15,7 +15,11 @@
 
 </head>
 <body>
-
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="run_script">Run script</button>
+    </form>
+    
     <h1>Drawing Metabolic Pathways and Networks</h1>
 
     <label>Choose a metabolic pathway/network:</label>
@@ -28,7 +32,29 @@
     <br><br>
     <div id="container">
         <div id="mynetwork"></div>
-        <div id="infoConfig"></div>
+        <div id="infoConfig">
+
+            <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'Information')">Information</button>
+                <button class="tablinks" onclick="openTab(event, 'Configuration')">Configuration</button>
+                <button class="tablinks" onclick="openTab(event, 'Actions')">Actions</button>
+            </div>
+              
+             
+            <div id="Information" class="tabcontent">
+                <h3 id="nodeId"></h3>
+                <p>Predecesors:</p>
+                <p>Succesors:</p>
+                <p>Degree:</p>
+            </div>
+            
+            <div id="Configuration" class="tabcontent">
+            </div>
+            
+            <div id="Actions" class="tabcontent">
+            </div>
+
+        </div>
     </div>
     <script src="{% static 'js/main.js' %}"></script>
 </body>

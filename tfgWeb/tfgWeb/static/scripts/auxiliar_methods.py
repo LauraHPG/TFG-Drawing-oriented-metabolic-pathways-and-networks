@@ -26,44 +26,37 @@ def read_graph(graph):
         for product in products.split(" "):
             graph.add_edge(reaction, product)
             graph.add_node(product, node_type='component')
-    
-    
-    splitHighDegreeComponents(graph)
 
     return [node for node, data in graph.nodes(data=True) if data['node_type'] == 'reaction'], [node for node, data in graph.nodes(data=True) if data['node_type'] == 'component']
 
-def splitHighDegreeComponents(graph):
+def splitHighDegreeComponents(graph, threshhold):
 
-    doSplit = input("Do you want to split the high degree components? (Y/n)")
+    ordered_nodes = nodes_ordered_by_degree(graph)
+    print(f"Initial number of nodes: {graph.number_of_nodes()}")
+    for node, degree in ordered_nodes:
+        if degree >= threshhold and graph.nodes[node]['node_type'] != 'reaction':
+                duplicateNode(graph, node)
+    
+    print(f"Final number of nodes: {graph.number_of_nodes()}")  
 
-    if doSplit == "Y" or doSplit == "y":
-
-        ordered_nodes = nodes_ordered_by_degree(graph)
-        print(f"Initial number of nodes: {graph.number_of_nodes()}")
-        for node, degree in ordered_nodes:
-            if degree >= 10 and graph.nodes[node]['node_type'] == 'component':
-                 duplicateNode(graph, node)
-        
-        print(f"Final number of nodes: {graph.number_of_nodes()}")  
-    else:
-        return
 
 def duplicateNode(graph, node):
     out_edges = graph.out_edges([node])
     in_edges = graph.in_edges([node])
+    node_type = graph.nodes[node]['node_type']
 
     i = 0
     for out_edge in out_edges:
         new_node = "D" + str(i) + '_' + node
         i += 1
         graph.add_edge(new_node, out_edge[1])
-        graph.add_node(new_node, node_type='component')
+        graph.add_node(new_node, node_type=node_type)
     
     for in_edge in in_edges:
         new_node = "D" + str(i) + '_'  + node
         i += 1
         graph.add_edge(in_edge[0], new_node)
-        graph.add_node(new_node, node_type='component')
+        graph.add_node(new_node, node_type=node_type)
 
     graph.remove_node(node) 
 
@@ -218,8 +211,8 @@ def rearangeSources(graph, pos):
             # print(belowNeighbors)
                     
             # it is the only under neigh, we put it under the upper one
-            # if belowNeighbors == 1:
-            #     newPosX = posNeigh[0]
+            if belowNeighbors == 1:
+                newPosX = posNeigh[0]
 
             pos[node] = (newPosX, posNeigh[1] - 40)
 
@@ -341,3 +334,13 @@ def parseGraph(graph, node_positions):
 
     with open("graphInfo.json", "w") as outfile: 
         json.dump(graphInfo, outfile)
+    
+
+def printNodeInfo(graph, node):
+    print("Predecessors:")
+    for pred in graph.predecessors(node):
+        print("- ", pred)
+    print("Successors")
+    for suc in graph.successors(node):
+        print("- ", suc)
+    
