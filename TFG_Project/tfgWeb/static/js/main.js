@@ -19,62 +19,11 @@ function openTab(evt, tabName) {
     evt.currentTarget.className += " active";
   } 
 
-  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-$('#loadPathway').on('click',function () {
-
-  console.log("LOADING PATHWAY")
-  $.ajax({
-      url: 'add_pathway/',//{% url "add_pathway" %}',
-      type: 'POST',
-      data: { 
-          name: $("#pathwaysList option:selected").text()
-      },
-      success: function(response) {
-          console.log(response);
-      },
-      error: function(xhr, status, error) {
-          console.error(xhr.responseText);
-      }
-  });
-
-  // // Obtain the CSRF token from the hidden input field
-  // var csrfToken = $('[name="csrfmiddlewaretoken"]').val();
-
-  // // Get the data from the form
-  // var formData = {
-  //     'name': $("#pathwaysList option:selected").text()
-  // };
-
-  // // Send AJAX request
-  // $.ajax({
-  //     type: 'POST',
-  //     url: '/tfgWeb/add_pathway/',  // Adjust the URL as per your project structure
-  //     data: formData,
-  //     headers: {
-  //         'X-CSRFToken': csrfToken
-  //     },
-  //     success: function (response) {
-  //         if (response.status === 'success') {
-
-  //             console.log(formData.name)
-
-  //         } else {
-  //             alert('Error adding pathway');
-  //         }
-  //     },
-  //     error: function () {
-  //         alert('Error adding pathway');
-  //     }
-  // });
-
-});
 
 console.log(inputGraph.nodes);
 // create an array with nodes
 
 var nodes = new vis.DataSet(
-    // 
     inputGraph.nodes
 );
 

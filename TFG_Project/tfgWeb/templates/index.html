@@ -20,14 +20,15 @@
 
     <label>Choose a metabolic pathway/network:</label>
 
-    <form id="submitForm" method="post">
+    <form id="pathwayForm">
         {% csrf_token %}
         <select id="pathwaysList" name="pathwayNames">
             {% for filename in filenames %}
                 <option value="{{filename}}">{{ filename }}</option>
             {% endfor %}
         </select>
-        <button type="button" id="loadPathway">Load Pathway</button>
+        <input type="submit" value="Load Pathways" />
+        <!-- <button type="button" id="loadPathway">Load Pathway</button> -->
     </form>
     
     <br><br>
@@ -63,5 +64,37 @@
         </div>
     </div>
     <script src="{% static 'js/main.js' %}"></script>
+
+    {% block javascript %}
+    <script>
+        /*
+            On submiting the form, send the POST ajax
+            request to server and after successfull submission
+            display the object.
+        */
+        $("#pathwayForm").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'add_pathway' %}",
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    alert('Success');
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error');
+                }
+            })
+        })
+    </script>
+    {% endblock javascript %}
 </body>
 </html>
