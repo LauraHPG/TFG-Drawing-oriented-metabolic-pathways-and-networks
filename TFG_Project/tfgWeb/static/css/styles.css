@@ -1,4 +1,4 @@
-#mynetwork {
+/* #mynetwork {
     width: 80vw;
     height: 85vh;
     border: 1px solid lightgray;
@@ -11,6 +11,40 @@
     display: inline-block;
     border: 1px solid lightgray;
     vertical-align: top;
+} */
+
+.container {
+    display: flex;
+
+    /* Misc */
+    border: 1px solid #cbd5e0;
+    height: 80vh;
+    width: 100%;
+}
+#mynetwork  {
+    /* Initially, the left takes 3/4 width */
+    width: 75%;
+
+    /* Misc */
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+.resizer {
+    background-color: #cbd5e0;
+    cursor: ew-resize;
+    height: 100%;
+    width: 5px;
+}
+#infoConfig {
+    /* Take the remaining width */
+    flex: 1;
+
+    /* Misc */
+    /* align-items: center; */
+    vertical-align: top;
+    display: inline-block;
+    justify-content: center;
 }
 
 /* Style the tab */

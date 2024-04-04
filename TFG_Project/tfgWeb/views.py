@@ -2,6 +2,7 @@ from django.template import loader
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from .models import Pathway
+from .static.scripts.auxiliar_methods import read_graph
 import os
 
 def index(request):
@@ -16,6 +17,12 @@ def add_pathway(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         print(name)
-        Pathway.objects.create(name=name)
+        try:
+          Pathway.objects.create(name=name)
+        except:
+          pathway = Pathway.objects.get(name=name)    
+          print(pathway)      
+          return JsonResponse({'status': 'error'})
+        
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'})
