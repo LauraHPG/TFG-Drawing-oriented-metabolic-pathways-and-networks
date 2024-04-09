@@ -19,12 +19,12 @@ def read_graph(graph):
 
         for substrate in substrates.split(" "):
 
-            graph.add_edge(substrate, reaction)
+            graph.add_edge(substrate, reaction, relationship='substrate-reaction')
             graph.add_node(substrate, node_type='component')
 
 
         for product in products.split(" "):
-            graph.add_edge(reaction, product)
+            graph.add_edge(reaction, product, relationship='reaction-substrate')
             graph.add_node(product, node_type='component')
 
     return [node for node, data in graph.nodes(data=True) if data['node_type'] == 'reaction'], [node for node, data in graph.nodes(data=True) if data['node_type'] == 'component']
@@ -49,15 +49,16 @@ def duplicateNode(graph, node):
     for out_edge in out_edges:
         new_node = "D" + str(i) + '_' + node
         i += 1
-        graph.add_edge(new_node, out_edge[1])
+        graph.add_edge(new_node, out_edge[1], relationship='substrate-reaction')
         graph.add_node(new_node, node_type=node_type)
 
     for in_edge in in_edges:
         new_node = "D" + str(i) + '_'  + node
         i += 1
-        graph.add_edge(in_edge[0], new_node)
+        graph.add_edge(in_edge[0], new_node, relationship='reaction-substrate')
         graph.add_node(new_node, node_type=node_type)
-
+    
+    linkSameNode(graph,node,i)
     graph.remove_node(node)
 
 def nodes_ordered_by_degree(graph, nodes=None):
@@ -86,9 +87,13 @@ def nodes_ordered_by_degree(graph, nodes=None):
     #return nodes_sorted_by_degree
     return degree_list
 
+
+
 def removeCyclesByNodeInMostCycles(graph):
 
-    cycles = nx.recursive_simple_cycles(graph)
+    cleanGraph = getCleanGraph(graph)
+    cycles = nx.recursive_simple_cycles(cleanGraph)
+
     print(f"Number of cycles: {len(cycles)}")
 
     appearances = {}
@@ -103,37 +108,50 @@ def removeCyclesByNodeInMostCycles(graph):
 
     sortedAppearances = sorted(appearances.items(), key=lambda x:x[1],reverse=True)
 
-    print(f"{len(appearances)} nodes from {len(graph.nodes())} appear in a cycle")
+    print(f"{len(appearances)} nodes from {len(cleanGraph.nodes())} appear in a cycle")
 
     while True:
         print("(Node in most cycles, number of cycles it appears in): ", sortedAppearances[0])
         node = next(iter(sortedAppearances))[0]
         duplicateNode = input(f"Do you want to duplicate {node}? (Y/n)")
         if duplicateNode == "y" or duplicateNode == "Y":
-            print(f"Initial number of nodes: {graph.number_of_nodes()}")
+            print(f"Initial number of nodes: {cleanGraph.number_of_nodes()}")
 
-            out_edges = graph.out_edges([node])
-            in_edges = graph.in_edges([node])
+            out_edges = cleanGraph.out_edges([node])
+            in_edges = cleanGraph.in_edges([node])
 
             i = 0
             for out_edge in out_edges:
                 new_node = "D" + str(i) + '_' + node
                 i += 1
-                graph.add_edge(new_node, out_edge[1])
+                # cleanGraph.add_edge(new_node, out_edge[1], relationship='substrate-reaction')
+                # cleanGraph.add_node(new_node, node_type='component')
+
+                graph.add_edge(new_node, out_edge[1], relationship='substrate-reaction')
                 graph.add_node(new_node, node_type='component')
 
             for in_edge in in_edges:
                 new_node = "D" + str(i) + '_'  + node
                 i += 1
-                graph.add_edge(in_edge[0], new_node)
+                # cleanGraph.add_edge(in_edge[0], new_node, relationship='reaction-substrate')
+                # cleanGraph.add_node(new_node, node_type='component')
+
+                graph.add_edge(in_edge[0], new_node, relationship='reaction-substrate')
                 graph.add_node(new_node, node_type='component')
 
+            # linkSameNode(cleanGraph, node, i)
+            linkSameNode(graph, node, i)
+
+            # cleanGraph.remove_node(node)
             graph.remove_node(node)
+            
+            cleanGraph = getCleanGraph(graph)
+            
         else:
             return
 
-        print(f"Final number of nodes: {graph.number_of_nodes()}")
-        cycles = nx.recursive_simple_cycles(graph)
+        print(f"Final number of nodes: {cleanGraph.number_of_nodes()}")
+        cycles = nx.recursive_simple_cycles(cleanGraph)
         print(f"Number of cycles: {len(cycles)}")
         if len(cycles) == 0 : return
 
@@ -152,8 +170,9 @@ def removeCyclesByNodeInMostCycles(graph):
         print(f"Number of connected components: {nx.number_connected_components(H)}")
 
         # Measure
-        poses = sugiyama(graph)
-        countCrossings(graph, poses)
+        cleanGraph = getCleanGraph(graph)
+        poses = sugiyama(cleanGraph)
+        countCrossings(cleanGraph, poses)
 
 
 def get_color(node_type):
@@ -174,11 +193,26 @@ def setColorNodeType(graph):
 
     return colors
 
+def flipEdges(edges):
+    flippedEdges = []
+    for edge in edges:
+        flippedEdges.append((edge[1],edge[0]))
+    return flippedEdges
+
 def changeSourceAndSinkNodeType(graph):
     for node in graph.nodes():
-        if graph.in_degree(node) == 0:
+        in_edges = graph.in_edges(node)
+        out_edges = graph.out_edges(node)
+        
+        flipped_in_edges = flipEdges(in_edges)
+        flipped_out_edges = flipEdges(out_edges)
+        
+        real_in_edges = list(set(in_edges) - set(flipped_out_edges))
+        real_out_edges = list(set(out_edges) - set(flipped_in_edges))
+
+        if len(real_in_edges) == 0:
             graph.nodes[node]['node_type'] = 'source'
-        elif graph.out_degree(node) == 0:
+        elif len(real_out_edges) == 0:
             graph.nodes[node]['node_type'] = 'sink'
 
 def rearangeSources(graph, pos):
@@ -221,28 +255,28 @@ def rearangeSources(graph, pos):
     return new_positions 
 
 def countCrossings(graph,pos):
-    numCrossings = 0
+    # numCrossings = 0
 
-    segments_x = []
-    segments_y = []
+    segments = []
     for edge in graph.edges():
         # bentley ottman does not cover vertial lines -> change x by y, no two adjacent nodes will be at the same height 
         try:
-            segments_y.append(((pos[edge[0]][1],pos[edge[0]][0]), (pos[edge[1]][1],pos[edge[1]][0])))
+            segments.append((pos[edge[0]][1],pos[edge[0]][0]), (pos[edge[1]][1],pos[edge[1]][0]))      
+                              
         except:
             # print("Could not compute number of crossings inverted")
 
             try:
-                segments_x.append(((pos[edge[0]][0],pos[edge[0]][1]), (pos[edge[1]][0],pos[edge[1]][1])))
+            
+                segments = []
+                segments.append(((pos[edge[0]][0],pos[edge[0]][1]), (pos[edge[1]][0],pos[edge[1]][1])))
+
             except:
                 print("Could not compute number of crossings")
                 return
-
-    numCrossings = bent.isect_segments(segments_x, validate=True)
-    print("Number of crossings normal:", len(numCrossings))
-    numCrossings = bent.isect_segments(segments_y, validate=True)
-    print("Number of crossings inverted:", len(numCrossings))
-
+            
+    numCrossings = bent.isect_segments(segments, validate=True)
+    print("Number of crossings:", len(numCrossings))    
     return numCrossings
 
 def isConnected(graph):
@@ -261,37 +295,37 @@ def printGraphInfo(graph,poses):
     countCrossings(graph,poses)
     isConnected(graph)
 
-def prova(graph):
+def linkSameNode(graph, nodeName, iMax):
+    for i in range(0,iMax):
+        nodeI = "D" + str(i) + '_' + nodeName
+        for j in range(0,iMax):
+            nodeJ = "D" + str(j) + '_' + nodeName
+            if i != j:
+                graph.add_edge(nodeI, nodeJ, relationship='sameNode')
+                graph.add_edge(nodeJ, nodeI, relationship='sameNode')
+    
+def remove_edges_with_attribute(graph, attribute_key, attribute_value):
+    edges_to_remove = []
+    edges = graph.edges()
+    for edge in edges:
+        if graph.edges[edge][attribute_key] == attribute_value:
+            edges_to_remove.append(edge)
+    graph.remove_edges_from(edges_to_remove)
 
-    H = graph.to_undirected()
-    S = [H.subgraph(c).copy() for c in nx.connected_components(H)]
-    # subGraph = S[0]
+    return graph
 
-    for c in nx.connected_components(H):
-        subGraph = graph.subgraph(c).copy()
-        printGraphInfo(subGraph)
+def getCleanGraph(graph):
 
-        graph.to_directed()
+    cleanGraph = nx.DiGraph(graph)
 
-        removeCyclesByNodeInMostCycles(subGraph)
-
-        changeSourceAndSinkNodeType(subGraph)
-
-        colors = setColorNodeType(subGraph)
-
-        sugiyama(colors)
-
-    # undirectedToDirected(graph,subGraph,edges)
-
-
-    isConnected(graph)
-
-    # G = subGraph.copy()
-
+    cleanGraph = remove_edges_with_attribute(cleanGraph,'relationship','sameNode')
+    return cleanGraph
 
 def sugiyama(graph):
 
-    g = grandalf.utils.convert_nextworkx_graph_to_grandalf(graph)
+    cleanGraph = getCleanGraph(graph)
+
+    g = grandalf.utils.convert_nextworkx_graph_to_grandalf(cleanGraph)
 
 
     class defaultview(object):
@@ -306,29 +340,32 @@ def sugiyama(graph):
     sug.draw()  # Calculate positions
 
     poses = {v.data: (v.view.xy[0], v.view.xy[1]) for v in g.C[0].sV}  # Extract positions
-    poses = rearangeSources(graph, poses)
+    poses = rearangeSources(cleanGraph, poses)
     
     return poses
 
 def getLargestCC(graph):
-    connected = isConnected(graph)
-    edges = graph.edges()
+    cleanGraph = getCleanGraph(graph)
+    connected = isConnected(cleanGraph)
+    edges = cleanGraph.edges()
 
     if not connected:
-        H = graph.to_undirected()
+        H = cleanGraph.to_undirected()
         largest_cc = max(nx.connected_components(H), key=len)
-        subGraph = graph.subgraph(largest_cc).copy()
+        subGraph = cleanGraph.subgraph(largest_cc).copy()
         subGraph.to_directed()
 
         return subGraph
     return -1
+
 def getConnectedComponents(graph):
-    H = graph.to_undirected()
+    cleanGraph = getCleanGraph(graph)
+    H = cleanGraph.to_undirected()
     # S = [H.subgraph(c).copy() for c in nx.connected_components(H)]
     S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
     nth = input("Select nth CC:\n")
     n = int(nth)
-    subGraph = graph.subgraph(S[n]).copy()
+    subGraph = cleanGraph.subgraph(S[n]).copy()
     subGraph.to_directed()
 
     return subGraph
@@ -353,6 +390,7 @@ def parseGraph(graph, node_positions):
         graphInfo['nodes'].append(nodeInfo)
 
     graphInfo['edges'] = []
+    edge_relationships = nx.get_edge_attributes(graph, "relationship")
     for edge in graph.edges():
         # {"arrows": "to", "from": "C00668", "to": "R02739", "width": 1}
         edgeInfo = {}
@@ -360,6 +398,7 @@ def parseGraph(graph, node_positions):
         edgeInfo['from'] = edge[0]
         edgeInfo['to'] = edge[1]
         edgeInfo['width'] = 1
+        edgeInfo['relationship'] = edge_relationships[edge]
 
         graphInfo['edges'].append(edgeInfo)
 
