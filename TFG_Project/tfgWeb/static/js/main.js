@@ -1,138 +1,89 @@
 function openTab(evt, tabName) {
-    // Declare all variables
-    var i, tabcontent, tablinks;
-  
-    // Get all elements with class="tabcontent" and hide them
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].style.display = "none";
-    }
-  
-    // Get all elements with class="tablinks" and remove the class "active"
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-  
-    // Show the current tab, and add an "active" class to the button that opened the tab
-    document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " active";
-  } 
+	// Declare all variables
+	var i, tabcontent, tablinks;
 
-  document.addEventListener('DOMContentLoaded', function () {
-    // Query the element
-    const resizer = document.getElementById('dragMe');
-    const leftSide = resizer.previousElementSibling;
-    const rightSide = resizer.nextElementSibling;
+	// Get all elements with class="tabcontent" and hide them
+	tabcontent = document.getElementsByClassName("tabcontent");
+	for (i = 0; i < tabcontent.length; i++) {
+		tabcontent[i].style.display = "none";
+	}
 
-    // The current position of mouse
-    let x = 0;
-    let y = 0;
-    let leftWidth = 0;
+	// Get all elements with class="tablinks" and remove the class "active"
+	tablinks = document.getElementsByClassName("tablinks");
+	for (i = 0; i < tablinks.length; i++) {
+		tablinks[i].className = tablinks[i].className.replace(" active", "");
+	}
 
-    // Handle the mousedown event
-    // that's triggered when user drags the resizer
-    const mouseDownHandler = function (e) {
-        // Get the current mouse position
-        x = e.clientX;
-        y = e.clientY;
-        leftWidth = leftSide.getBoundingClientRect().width;
-
-        // Attach the listeners to document
-        document.addEventListener('mousemove', mouseMoveHandler);
-        document.addEventListener('mouseup', mouseUpHandler);
-    };
-
-    const mouseMoveHandler = function (e) {
-        // How far the mouse has been moved
-        const dx = e.clientX - x;
-        const dy = e.clientY - y;
-
-        const newLeftWidth = ((leftWidth + dx) * 100) / resizer.parentNode.getBoundingClientRect().width;
-        leftSide.style.width = newLeftWidth + '%';
-
-        resizer.style.cursor = 'col-resize';
-        document.body.style.cursor = 'col-resize';
-
-        leftSide.style.userSelect = 'none';
-        leftSide.style.pointerEvents = 'none';
-
-        rightSide.style.userSelect = 'none';
-        rightSide.style.pointerEvents = 'none';
-    };
-
-    const mouseUpHandler = function () {
-        resizer.style.removeProperty('cursor');
-        document.body.style.removeProperty('cursor');
-
-        leftSide.style.removeProperty('user-select');
-        leftSide.style.removeProperty('pointer-events');
-
-        rightSide.style.removeProperty('user-select');
-        rightSide.style.removeProperty('pointer-events');
-
-        // Remove the handlers of mousemove and mouseup
-        document.removeEventListener('mousemove', mouseMoveHandler);
-        document.removeEventListener('mouseup', mouseUpHandler);
-    };
-
-    // Attach the handler
-    resizer.addEventListener('mousedown', mouseDownHandler);
-});
-
-
-console.log(inputGraph.nodes);
-// create an array with nodes
-
-var nodes = new vis.DataSet(
-    inputGraph.nodes
-);
-
-// create an array with edges
-var edges = new vis.DataSet(
-    inputGraph.edges
-    
-);
-// create a network
-var container = document.getElementById('mynetwork');
-
-// provide the data in the vis format
-var data = {
-    nodes: nodes,
-    edges: edges
-};
-
-var options = {
-nodes: {
-    shape: 'box'
-},
-edges: {
-    smooth: false
-},
-physics: false,
-interaction: {
-    // dragNodes: false,// do not allow dragging nodes
-    // zoomView: false, // do not allow zooming
-    // dragView: false  // do not allow dragging
+	// Show the current tab, and add an "active" class to the button that opened the tab
+	document.getElementById(tabName).style.display = "block";
+	evt.currentTarget.className += " active";
 }
-};
 
-// initialize your network!
-var network = new vis.Network(container, data, options);
+document.addEventListener('DOMContentLoaded', function() {
+	// Query the element
+	const resizer = document.getElementById('dragMe');
+	const leftSide = resizer.previousElementSibling;
+	const rightSide = resizer.nextElementSibling;
 
-network.on("click", function (params) {
-    console.log(params.nodes.length)
-    if (params.nodes.length != 0) {
+	// The current position of mouse
+	let x = 0;
+	let y = 0;
+	let leftWidth = 0;
 
-        var nodeIdHeader = document.getElementById("nodeId");
-        nodeIdHeader.textContent = params.nodes[0];
-    }
-// deleteEdgeMode(params.nodes[0]);
-// console.log(params)
+	// Handle the mousedown event
+	// that's triggered when user drags the resizer
+	const mouseDownHandler = function(e) {
+		// Get the current mouse position
+		x = e.clientX;
+		y = e.clientY;
+		leftWidth = leftSide.getBoundingClientRect().width;
+
+		// Attach the listeners to document
+		document.addEventListener('mousemove', mouseMoveHandler);
+		document.addEventListener('mouseup', mouseUpHandler);
+	};
+
+	const mouseMoveHandler = function(e) {
+		// How far the mouse has been moved
+		const dx = e.clientX - x;
+		const dy = e.clientY - y;
+
+		const newLeftWidth = ((leftWidth + dx) * 100) / resizer.parentNode.getBoundingClientRect().width;
+		leftSide.style.width = newLeftWidth + '%';
+
+		resizer.style.cursor = 'col-resize';
+		document.body.style.cursor = 'col-resize';
+
+		leftSide.style.userSelect = 'none';
+		leftSide.style.pointerEvents = 'none';
+
+		rightSide.style.userSelect = 'none';
+		rightSide.style.pointerEvents = 'none';
+	};
+
+	const mouseUpHandler = function() {
+		resizer.style.removeProperty('cursor');
+		document.body.style.removeProperty('cursor');
+
+		leftSide.style.removeProperty('user-select');
+		leftSide.style.removeProperty('pointer-events');
+
+		rightSide.style.removeProperty('user-select');
+		rightSide.style.removeProperty('pointer-events');
+
+		// Remove the handlers of mousemove and mouseup
+		document.removeEventListener('mousemove', mouseMoveHandler);
+		document.removeEventListener('mouseup', mouseUpHandler);
+	};
+
+	// Attach the handler
+	resizer.addEventListener('mousedown', mouseDownHandler);
 });
 
-function deleteEdgeMode(nodeId){
-    network.deleteSelected();
+
+
+function deleteEdgeMode(nodeId) {
+	network.deleteSelected();
 }
 
 

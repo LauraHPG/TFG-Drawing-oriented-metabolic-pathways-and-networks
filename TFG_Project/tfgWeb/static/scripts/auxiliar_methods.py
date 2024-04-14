@@ -6,13 +6,17 @@ from grandalf.layouts import SugiyamaLayout
 
 import matplotlib.pyplot as plt
 
-import poly_point_isect as bent
+# import poly_point_isect as bent
 
 import json
 
 def read_graph(graph):
     nx.set_node_attributes(graph, {})
-    for line in open(sys.argv[1]):
+    path = sys.argv[1]
+    return read_graph_from_txt(graph, path)
+
+def read_graph_from_txt(graph, path):
+    for line in open(path):
         reaction, substrates, products = line.rstrip().split(" : ")
 
         graph.add_node(reaction, node_type='reaction')
@@ -255,29 +259,30 @@ def rearangeSources(graph, pos):
     return new_positions 
 
 def countCrossings(graph,pos):
-    # numCrossings = 0
+    # # numCrossings = 0
 
-    segments = []
-    for edge in graph.edges():
-        # bentley ottman does not cover vertial lines -> change x by y, no two adjacent nodes will be at the same height 
-        try:
-            segments.append((pos[edge[0]][1],pos[edge[0]][0]), (pos[edge[1]][1],pos[edge[1]][0]))      
+    # segments = []
+    # for edge in graph.edges():
+    #     # bentley ottman does not cover vertial lines -> change x by y, no two adjacent nodes will be at the same height 
+    #     try:
+    #         segments.append((pos[edge[0]][1],pos[edge[0]][0]), (pos[edge[1]][1],pos[edge[1]][0]))      
                               
-        except:
-            # print("Could not compute number of crossings inverted")
+    #     except:
+    #         # print("Could not compute number of crossings inverted")
 
-            try:
+    #         try:
             
-                segments = []
-                segments.append(((pos[edge[0]][0],pos[edge[0]][1]), (pos[edge[1]][0],pos[edge[1]][1])))
+    #             segments = []
+    #             segments.append(((pos[edge[0]][0],pos[edge[0]][1]), (pos[edge[1]][0],pos[edge[1]][1])))
 
-            except:
-                print("Could not compute number of crossings")
-                return
+    #         except:
+    #             print("Could not compute number of crossings")
+    #             return
             
-    numCrossings = bent.isect_segments(segments, validate=True)
-    print("Number of crossings:", len(numCrossings))    
-    return numCrossings
+    # numCrossings = bent.isect_segments(segments, validate=True)
+    # print("Number of crossings:", len(numCrossings))    
+    # return numCrossings
+    pass
 
 def isConnected(graph):
     H = graph.to_undirected()
@@ -289,11 +294,17 @@ def isConnected(graph):
 
     return True
 
-def printGraphInfo(graph,poses):
-    print("Num Nodes:", len(graph.nodes()))
-    print("Num Edges:", len(graph.edges()))
-    countCrossings(graph,poses)
+def getGraphInfo(graph,poses):
+    numNodes = len(graph.nodes())
+    print("Num Nodes:", numNodes)
+    numEdges = len(graph.edges())
+    print("Num Edges:", numEdges)
+    numCrossings = countCrossings(graph,poses)
+    H = graph.to_undirected()
+    numCCs = nx.number_connected_components(H)
     isConnected(graph)
+    
+    return numNodes, numEdges, numCrossings, numCCs
 
 def linkSameNode(graph, nodeName, iMax):
     for i in range(0,iMax):
@@ -370,6 +381,9 @@ def getConnectedComponents(graph):
 
     return subGraph
 
+def getNodeLabel(name):
+    return name.split("_")[-1]
+
 def parseGraph(graph, node_positions):
     graphInfo = {}
 
@@ -380,12 +394,12 @@ def parseGraph(graph, node_positions):
     for node in graph.nodes():
         nodeInfo = {}
         nodeInfo['id'] = node
-        nodeInfo['label'] = node
+        nodeInfo['label'] = getNodeLabel(node)
         nodeInfo['x'] = node_positions[node][0]
         nodeInfo['y'] = node_positions[node][1]
         nodeInfo['color'] = node_colors[node]
         nodeInfo['type'] = node_types[node]
-        nodeInfo['shape'] = 'box'
+        # nodeInfo['shape'] = 'box'
 
         graphInfo['nodes'].append(nodeInfo)
 
@@ -402,16 +416,47 @@ def parseGraph(graph, node_positions):
 
         graphInfo['edges'].append(edgeInfo)
 
+
+    return str(graphInfo)
+
+def parseJsonToNx(graphInfo):
     print(graphInfo)
-    # return graphInfo
-    # with open("graphInfo.json", "w") as outfile:
-    #     json.dump(graphInfo, outfile)
+    json_data = json.loads(graphInfo)
+    graph = nx.DiGraph()
 
+    # Add nodes
+    for node_info in json_data['nodes']:
+        node_id = node_info['id']
+        node_label = node_info['label']
+        node_color = node_info['color']
+        node_type = node_info['type']
+        node_position = (node_info['x'], node_info['y'])
+        graph.add_node(node_id, label=node_label, color=node_color, node_type=node_type, position=node_position)
 
-def printNodeInfo(graph, node):
+    # Add edges
+    for edge_info in json_data['edges']:
+        from_node = edge_info['from']
+        to_node = edge_info['to']
+        relationship = edge_info['relationship']
+        graph.add_edge(from_node, to_node, relationship=relationship)
+
+    return graph
+
+def getNodeInfo(graph, node):
+    predecessors, successors = [],[]
+    print(node)
     print("Predecessors:")
     for pred in graph.predecessors(node):
         print("- ", pred)
+        predecessors.append(pred)
     print("Successors")
     for suc in graph.successors(node):
         print("- ", suc)
+        successors.append(suc)
+    
+    if len(predecessors) == 0:
+        predecessors.append("None")
+    if len(successors) == 0:
+        successors.append("None")
+
+    return predecessors, successors

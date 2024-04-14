@@ -58,15 +58,15 @@ def main():
                                     xMax = new_poses[pos][0]
                             poses.update(new_poses)
                             currentMaxX = xMax + 200
-
-                nx.draw(G, pos=poses, with_labels=True, node_color=colors)
+                graph = funcs.getCleanGraph(G)
+                nx.draw(graph, pos=poses, with_labels=True, node_color=colors)
                 
                 plt.show()
 
             case '1':
                 poses = funcs.sugiyama(G)
 
-                funcs.printGraphInfo(G, poses)
+                funcs.getGraphInfo(G, poses)
 
             case '2':
 
@@ -84,7 +84,7 @@ def main():
             case '4':
                 
                 node = input("Write node id:")
-                funcs.printNodeInfo(G, node)
+                funcs.getNodeInfo(G, node)
 
             case '5':
                 node = input("Write node id:")
@@ -112,7 +112,6 @@ def main():
             case 'p':
 
                 funcs.changeSourceAndSinkNodeType(G)
-                colors = funcs.setColorNodeType(G)   
                 poses = funcs.sugiyama(G)
 
                 funcs.parseGraph(G,poses)

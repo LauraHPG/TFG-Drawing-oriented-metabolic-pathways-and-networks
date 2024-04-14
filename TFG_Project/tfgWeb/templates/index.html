@@ -27,7 +27,7 @@
                 <option value="{{filename}}">{{ filename }}</option>
             {% endfor %}
         </select>
-        <input type="submit" value="Load Pathways" />
+        <input type="submit" value="Load Pathway" />
         <!-- <button type="button" id="loadPathway">Load Pathway</button> -->
     </form>
     
@@ -45,15 +45,25 @@
               
              
             <div id="Information" class="tabcontent">
-                <h3 id="nodeId"></h3>
-                <p>Predecesors:</p>
-                <ul>
-                    <!-- {% for pred in predecessors %}
-                        <li>{pred}</li>
-                    {% endfor %} -->
-                </ul>
-                <p>Succesors:</p>
-                <p>Degree:</p>
+                <div id="graphInfo">
+                    <h3>Graph Information</h3>
+                    <p id="numNodes"></p>
+                    <p id="numEdges"></p>
+                    <p id="numCrossings"></p>
+                    <p id="numCCs"></p>
+                </div>
+
+                <div id="nodeInfo" hidden>
+                    <hr>
+                    <h3>Node Information</h3>
+                    <h4 id="nodeId"></h4>
+                    <p>Predecesors:</p>
+                    <ul id="predList"></ul>
+                    <p>Succesors:</p>
+                    <ul id="succList"></ul>
+                    <p>Degree:</p>
+                </div>
+                
             </div>
             
             <div id="Configuration" class="tabcontent">
@@ -64,15 +74,147 @@
 
         </div>
     </div>
-    <script src="{% static 'js/main.js' %}"></script>
-
     {% block javascript %}
+    <script>var csrf_token_value = "{{ csrf_token }}";</script>
+    <script src="{% static 'js/main.js' %}"></script>
+    
     <script>
-        /*
-            On submiting the form, send the POST ajax
-            request to server and after successfull submission
-            display the object.
-        */
+        function loadGraph(inputNodes, inputEdges)
+        {
+
+            var nodes = new vis.DataSet(
+                inputNodes
+            );
+
+            // create an array with edges
+            var edges = new vis.DataSet(
+                inputEdges
+                
+            );
+            // create a network
+            var container = document.getElementById('mynetwork');
+
+            // provide the data in the vis format
+            var data = {
+                nodes: nodes,
+                edges: edges
+            };
+
+            var options = {
+                nodes: {
+                    shape: 'box'
+                },
+                edges: {
+                    smooth: false
+                },
+                physics: false,
+                interaction: {
+                    // dragNodes: false,// do not allow dragging nodes
+                    // zoomView: false, // do not allow zooming
+                    // dragView: false  // do not allow dragging
+                }
+        
+            };
+
+            // initialize your network!
+            var network = new vis.Network(container, data, options);
+
+            $.ajax({
+                type: "POST",
+                url: "/get_graph_info/",
+                data:{
+                    pathwayName: $("#pathwaysList option:selected").text(),
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: (data) => {
+                    console.log(data);
+
+                    var numNodesElement = document.getElementById("numNodes");
+                    numNodesElement.innerHTML = "Number of Nodes: ";
+                    numNodesElement.appendChild(document.createTextNode(data.numNodes));
+
+                    var numEdgesElement = document.getElementById("numEdges");
+                    numEdgesElement.innerHTML = "Number of Edges: ";
+                    numEdgesElement.appendChild(document.createTextNode(data.numEdges));
+
+                    var numCrossingsElement = document.getElementById("numCrossings");
+                    numCrossingsElement.innerHTML = "Number of Crossings: ";
+                    numCrossingsElement.appendChild(document.createTextNode(data.numCrossings));
+
+                    var numCCsElement = document.getElementById("numCCs");
+                    numCCsElement.innerHTML = "Number of Connected Components: ";
+                    numCCsElement.appendChild(document.createTextNode(data.numCCs));
+
+
+                    
+                },
+                error: (error) => {
+                    alert('Error');
+                }
+            });
+
+            network.on("click", function(params) {
+                console.log(params)
+                if (params.nodes.length != 0) {
+                    document.getElementById('nodeInfo').hidden = false;
+
+                    var nodeIdHeader = document.getElementById("nodeId");
+                    nodeIdHeader.textContent = params.nodes[0];
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/get_node_info/",
+                        data:{
+                            pathwayName: $("#pathwaysList option:selected").text(),
+                            nodeName: params.nodes[0],
+                            csrfmiddlewaretoken: csrf_token_value
+                        },
+                        success: (data) => {
+                            console.log(data);
+
+                            var predList = document.getElementById("predList");
+                            predList.innerHTML = "";
+                            
+                            var predecessors = data.predecessors;
+
+                            for(var i = 0; i < predecessors.length; ++i)
+                            {
+                                var li = document.createElement("li");
+                                li.appendChild(document.createTextNode(predecessors[i]));
+                                predList.appendChild(li);
+
+                            }  
+                            
+                            var succList = document.getElementById("succList");
+                            succList.innerHTML = "";
+
+                            var successors = data.successors;
+
+                            for(var i = 0; i < successors.length; ++i)
+                            {
+                                var li = document.createElement("li");
+                                li.appendChild(document.createTextNode(successors[i]));
+                                succList.appendChild(li);
+
+                            } 
+
+                        },
+                        error: (error) => {
+                            alert('Error');
+                        }
+                    });
+
+                }
+                else
+                {
+                    document.getElementById('nodeInfo').hidden = true;
+                }
+
+                
+
+            });
+        }
+
         $("#pathwayForm").submit(function (e) {
             // preventing from page reload and default actions
             e.preventDefault();
@@ -81,13 +223,14 @@
             // make POST ajax call
             $.ajax({
                 type: 'POST',
-                url: "{% url 'add_pathway' %}",
+                url: '/add_pathway/',
                 data: {
                     name: $("#pathwaysList option:selected").text(),
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                    csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {
-                    alert('Success');
+                    const graphInfo = JSON.parse(response.graphInfo)
+                    loadGraph(graphInfo.nodes, graphInfo.edges)
                 },
                 error: function (response) {
                     // alert the error if any error occured
