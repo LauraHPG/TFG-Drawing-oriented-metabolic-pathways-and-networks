@@ -6,9 +6,15 @@ from grandalf.layouts import SugiyamaLayout
 
 import matplotlib.pyplot as plt
 
-# import poly_point_isect as bent
+try:
+    from . import poly_point_isect as bent
+except:
+    import poly_point_isect as bent
 
 import json
+
+import requests
+
 
 def read_graph(graph):
     nx.set_node_attributes(graph, {})
@@ -91,6 +97,28 @@ def nodes_ordered_by_degree(graph, nodes=None):
     #return nodes_sorted_by_degree
     return degree_list
 
+def getNodeInMostCycles(graph):
+
+    cleanGraph = getCleanGraph(graph)
+    cycles = nx.recursive_simple_cycles(cleanGraph)
+
+    print(f"Number of cycles: {len(cycles)}")
+
+    appearances = {}
+    for cycle in cycles:
+        for node in cycle:
+            if node[0] == 'C':
+                if node in appearances:
+                    appearances[node] += 1
+                else:
+                    appearances[node] = 1
+
+
+    sortedAppearances = sorted(appearances.items(), key=lambda x:x[1],reverse=True)
+
+    print("(Node in most cycles, number of cycles it appears in): ", sortedAppearances[0])
+
+    return sortedAppearances[0][0]
 
 
 def removeCyclesByNodeInMostCycles(graph):
@@ -259,29 +287,27 @@ def rearangeSources(graph, pos):
     return new_positions 
 
 def countCrossings(graph,pos):
-    # # numCrossings = 0
+    numCrossings = 0
 
-    # segments = []
-    # for edge in graph.edges():
-    #     # bentley ottman does not cover vertial lines -> change x by y, no two adjacent nodes will be at the same height 
-    #     try:
-    #         segments.append((pos[edge[0]][1],pos[edge[0]][0]), (pos[edge[1]][1],pos[edge[1]][0]))      
-                              
-    #     except:
-    #         # print("Could not compute number of crossings inverted")
+    segments_x = []
+    segments_y = []
+    for edge in graph.edges():
+        # bentley ottman does not cover vertial lines -> change x by y, no two adjacent nodes will be at the same height 
+            segments_x.append(((pos[edge[0]][1],pos[edge[0]][0]), (pos[edge[1]][1],pos[edge[1]][0])))      
+            segments_y.append(((pos[edge[0]][0],pos[edge[0]][1]), (pos[edge[1]][0],pos[edge[1]][1])))
 
-    #         try:
+    try:
+        numCrossings = bent.isect_segments(segments_x, validate=True)
+    except:
+        try:
+            numCrossings = bent.isect_segments(segments_y, validate=True)
+        except:
+            numCrossings = []
+            print("Could not compute number of crossings")    
             
-    #             segments = []
-    #             segments.append(((pos[edge[0]][0],pos[edge[0]][1]), (pos[edge[1]][0],pos[edge[1]][1])))
-
-    #         except:
-    #             print("Could not compute number of crossings")
-    #             return
-            
-    # numCrossings = bent.isect_segments(segments, validate=True)
-    # print("Number of crossings:", len(numCrossings))    
-    # return numCrossings
+    print("Number of crossings:", len(numCrossings))    
+    return len(numCrossings)
+    return 0
     pass
 
 def isConnected(graph):
@@ -303,18 +329,22 @@ def getGraphInfo(graph,poses):
     H = graph.to_undirected()
     numCCs = nx.number_connected_components(H)
     isConnected(graph)
-    
-    return numNodes, numEdges, numCrossings, numCCs
+
+    numCycles = len(nx.recursive_simple_cycles(graph))
+    nodeInMostCycles = getNodeInMostCycles(graph)
+
+    return numNodes, numEdges, numCrossings, numCCs, numCycles, nodeInMostCycles
 
 def linkSameNode(graph, nodeName, iMax):
-    for i in range(0,iMax):
-        nodeI = "D" + str(i) + '_' + nodeName
-        for j in range(0,iMax):
-            nodeJ = "D" + str(j) + '_' + nodeName
-            if i != j:
-                graph.add_edge(nodeI, nodeJ, relationship='sameNode')
-                graph.add_edge(nodeJ, nodeI, relationship='sameNode')
-    
+    # for i in range(0,iMax):
+    #     nodeI = "D" + str(i) + '_' + nodeName
+    #     for j in range(0,iMax):
+    #         nodeJ = "D" + str(j) + '_' + nodeName
+    #         if i != j:
+    #             graph.add_edge(nodeI, nodeJ, relationship='sameNode')
+    #             graph.add_edge(nodeJ, nodeI, relationship='sameNode')
+    pass
+
 def remove_edges_with_attribute(graph, attribute_key, attribute_value):
     edges_to_remove = []
     edges = graph.edges()
@@ -382,19 +412,43 @@ def getConnectedComponents(graph):
     return subGraph
 
 def getNodeLabel(name):
-    return name.split("_")[-1]
+    return name.split("_")[-1]   
 
-def parseGraph(graph, node_positions):
+def retrieveNodeNames():
+    url = "https://rest.kegg.jp/list/compound"
+
+    response = requests.get(url)
+    compounds = dict()
+
+    if response.status_code == 200:
+        lines = response.text.split("\n")
+        for compound in lines:
+            info = compound.split("\t")
+            if len(info) > 1:
+                compoundId = info[0]            
+                compoundName = info[1].split(';')[0]
+                compounds[compoundId] = compoundName
+
+    else:
+        print("Failed to retrieve data. Status code:", response.status_code)
+    
+    return compounds
+
+def parseGraph(graph, node_positions, compounds):
     graphInfo = {}
 
     node_colors = nx.get_node_attributes(graph, "color")
     node_types = nx.get_node_attributes(graph, "node_type")
-
+    print(compounds)
     graphInfo['nodes'] = []
     for node in graph.nodes():
         nodeInfo = {}
         nodeInfo['id'] = node
-        nodeInfo['label'] = getNodeLabel(node)
+        if graph.nodes[node]['node_type'] != 'reaction':
+            nodeInfo['label'] = compounds[getNodeLabel(node)]
+        else:
+            nodeInfo['label'] = node
+
         nodeInfo['x'] = node_positions[node][0]
         nodeInfo['y'] = node_positions[node][1]
         nodeInfo['color'] = node_colors[node]
@@ -460,3 +514,29 @@ def getNodeInfo(graph, node):
         successors.append("None")
 
     return predecessors, successors
+
+def getGraphPositions(graph):
+    connected = isConnected(graph)
+    poses = {}
+    changeSourceAndSinkNodeType(graph)
+    setColorNodeType(graph)  
+
+    if connected:
+        poses = sugiyama(graph)
+    else:
+            H = graph.to_undirected()
+            S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+
+            xMax = 0
+            currentMaxX = 0
+            for c in S:
+                subGraph = graph.subgraph(c).copy()
+                subGraph.to_directed()
+                new_poses = sugiyama(subGraph)
+                for pos in new_poses:
+                    new_poses[pos] = (currentMaxX + new_poses[pos][0], new_poses[pos][1])
+                    if new_poses[pos][0] > xMax:
+                        xMax = new_poses[pos][0]
+                poses.update(new_poses)
+                currentMaxX = xMax + 200
+    return poses

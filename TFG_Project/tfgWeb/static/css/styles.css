@@ -45,7 +45,7 @@
     vertical-align: top;
     display: inline-block;
     justify-content: center;
-    overflow: hidden;
+    overflow-y: scroll;
 }
 
 /* Style the tab */
@@ -83,5 +83,4 @@
     padding: 6px 12px;
     border: 1px solid #ccc;
     border-top: none;
-    overflow-y: hidden;
 }

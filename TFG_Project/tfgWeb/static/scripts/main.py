@@ -35,29 +35,10 @@ def main():
 
         match op:
             case '0':
-                isConnected = funcs.isConnected(G)
-                poses = {}
-                funcs.changeSourceAndSinkNodeType(G)
+            
+                poses = funcs.getGraphPositions(G)
                 colors = funcs.setColorNodeType(G)  
 
-                if isConnected:
-                    poses = funcs.sugiyama(G)
-                else:
-                        H = G.to_undirected()
-                        S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
-
-                        xMax = 0
-                        currentMaxX = 0
-                        for c in S:
-                            subGraph = G.subgraph(c).copy()
-                            subGraph.to_directed()
-                            new_poses = funcs.sugiyama(subGraph)
-                            for pos in new_poses:
-                                new_poses[pos] = (currentMaxX + new_poses[pos][0], new_poses[pos][1])
-                                if new_poses[pos][0] > xMax:
-                                    xMax = new_poses[pos][0]
-                            poses.update(new_poses)
-                            currentMaxX = xMax + 200
                 graph = funcs.getCleanGraph(G)
                 nx.draw(graph, pos=poses, with_labels=True, node_color=colors)
                 
@@ -115,7 +96,8 @@ def main():
                 poses = funcs.sugiyama(G)
 
                 funcs.parseGraph(G,poses)
-                
+            case 'x':
+                funcs.retrieveNodeNames()
             case 'q':
                 return
             

@@ -81,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-
 function deleteEdgeMode(nodeId) {
 	network.deleteSelected();
 }

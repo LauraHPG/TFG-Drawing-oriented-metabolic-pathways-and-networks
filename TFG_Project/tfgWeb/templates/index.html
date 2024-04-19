@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TFG</title>
     {% load static %}
+    
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 
     <script type="text/javascript" src="{% static 'data/json/graphInfo.json.js' %}"></script>
@@ -29,6 +30,9 @@
         </select>
         <input type="submit" value="Load Pathway" />
         <!-- <button type="button" id="loadPathway">Load Pathway</button> -->
+    </form>
+    <form id="resetPathway">
+        <input type="submit" value="Reset Pathway">
     </form>
     
     <br><br>
@@ -70,6 +74,18 @@
             </div>
             
             <div id="Actions" class="tabcontent">
+                <p>Split high degree components</p>
+                <form id="splitHighDegreeForm">
+                    <input id="degreeThreshhold" type="number" min="0">
+                    <input type="submit" value="Split" />
+                </form>
+
+                
+                <p id="componentInMostCycles">Cycles:</p>
+                <form id="breakCycle">
+                    <input type="submit" value="Split" />
+                </form>
+
             </div>
 
         </div>
@@ -79,9 +95,28 @@
     <script src="{% static 'js/main.js' %}"></script>
     
     <script>
+
+        $.ajax({
+        type: 'POST',
+        url: '/update_compounds/',
+        data: {
+            csrfmiddlewaretoken: csrf_token_value
+        },
+        success: function (response) {
+            console.log("Compounds updated")
+        },
+        error: function (response) {
+            // alert the error if any error occured
+            alert('Error');
+        }
+
+        })
+
+        var nodeInMostCycles;
+
         function loadGraph(inputNodes, inputEdges)
         {
-
+            console.log(inputEdges)
             var nodes = new vis.DataSet(
                 inputNodes
             );
@@ -145,13 +180,20 @@
                     numCCsElement.innerHTML = "Number of Connected Components: ";
                     numCCsElement.appendChild(document.createTextNode(data.numCCs));
 
-
+                    var numCyclesElement = document.getElementById("componentInMostCycles");
+                    numCyclesElement.innerHTML = "Number of Cycles: ";
+                    numCyclesElement.appendChild(document.createTextNode(data.numCycles));
                     
+                    numCyclesElement.innerHTML += "<br> Node appearing in most cycles: ";
+                    numCyclesElement.appendChild(document.createTextNode(data.nodeInMostCycles));
+
+                    nodeInMostCycles = data.nodeInMostCycles;
                 },
                 error: (error) => {
                     alert('Error');
                 }
             });
+
 
             network.on("click", function(params) {
                 console.log(params)
@@ -213,6 +255,8 @@
                 
 
             });
+
+            
         }
 
         $("#pathwayForm").submit(function (e) {
@@ -226,6 +270,83 @@
                 url: '/add_pathway/',
                 data: {
                     name: $("#pathwaysList option:selected").text(),
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+                    const graphInfo = JSON.parse(response.graphInfo)
+                    loadGraph(graphInfo.nodes, graphInfo.edges)
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error');
+                }
+
+            })
+        })
+
+        $("#resetPathway").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/reset_graph/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+                    const graphInfo = JSON.parse(response.graphInfo)
+                    loadGraph(graphInfo.nodes, graphInfo.edges)
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error');
+                }
+
+            })
+        })
+
+        $("#splitHighDegreeForm").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/split_high_degree/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    threshhold: $("#degreeThreshhold").val(),
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+                    const graphInfo = JSON.parse(response.graphInfo)
+                    loadGraph(graphInfo.nodes, graphInfo.edges)
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error');
+                }
+
+            })
+        })
+
+        $("#breakCycle").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/duplicate_node/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    node: nodeInMostCycles,
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {
