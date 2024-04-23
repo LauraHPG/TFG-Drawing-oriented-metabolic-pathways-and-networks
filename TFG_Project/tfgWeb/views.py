@@ -71,9 +71,9 @@ def get_graph_info(request):
 
       poses = sugiyama(G)
       
-      numNodes, numEdges, numCrossings, numCCs, numCycles, nodeInMostCycles = getGraphInfo(G, poses) 
+      numNodes, numEdges, numCrossings, numCCs, numCycles, nodeInMostCycles, highestDegree = getGraphInfo(G, poses) 
       
-      return JsonResponse({'numNodes': numNodes, 'numEdges': numEdges, 'numCrossings': numCrossings, 'numCCs': numCCs, 'numCycles': numCycles, 'nodeInMostCycles': nodeInMostCycles})
+      return JsonResponse({'numNodes': numNodes, 'numEdges': numEdges, 'numCrossings': numCrossings, 'numCCs': numCCs, 'numCycles': numCycles, 'nodeInMostCycles': nodeInMostCycles, 'highestDegree': highestDegree})
   
 def split_high_degree(request):
    if request.method == 'POST':
@@ -129,7 +129,11 @@ def getCompoundNames(G):
       if node[0] != 'R':
          print(getNodeLabel(node))
          label = getNodeLabel(node)
-         nodeName = Compound.objects.get(pk=label).name
+         try:
+            nodeName = Compound.objects.get(pk=label).name
+         except:
+            nodeName = label
+            
          compounds[label] = nodeName
    return compounds
 

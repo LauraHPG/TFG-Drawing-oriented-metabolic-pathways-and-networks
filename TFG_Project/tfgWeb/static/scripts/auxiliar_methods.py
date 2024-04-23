@@ -333,7 +333,13 @@ def getGraphInfo(graph,poses):
     numCycles = len(nx.recursive_simple_cycles(graph))
     nodeInMostCycles = getNodeInMostCycles(graph)
 
-    return numNodes, numEdges, numCrossings, numCCs, numCycles, nodeInMostCycles
+    highestDegreeNode, highestDegree = getHighestDegreeNode(graph) 
+    return numNodes, numEdges, numCrossings, numCCs, numCycles, nodeInMostCycles, highestDegree
+
+def getHighestDegreeNode(graph):
+
+    ordered_nodes = nodes_ordered_by_degree(graph)
+    return ordered_nodes[0][0], ordered_nodes[0][1]
 
 def linkSameNode(graph, nodeName, iMax):
     # for i in range(0,iMax):

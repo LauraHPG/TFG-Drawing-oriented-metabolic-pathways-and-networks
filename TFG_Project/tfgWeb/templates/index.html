@@ -75,13 +75,14 @@
             
             <div id="Actions" class="tabcontent">
                 <p>Split high degree components</p>
+                <p id="highestDegree"></p>
                 <form id="splitHighDegreeForm">
                     <input id="degreeThreshhold" type="number" min="0">
                     <input type="submit" value="Split" />
                 </form>
 
-                
-                <p id="componentInMostCycles">Cycles:</p>
+                <p>Break cycle</p>
+                <p id="componentInMostCycles"></p>
                 <form id="breakCycle">
                     <input type="submit" value="Split" />
                 </form>
@@ -188,6 +189,10 @@
                     numCyclesElement.appendChild(document.createTextNode(data.nodeInMostCycles));
 
                     nodeInMostCycles = data.nodeInMostCycles;
+
+                    var highestDegreeElement = document.getElementById("highestDegree");
+                    highestDegreeElement.innerHTML = "Highest Degree of a node: ";
+                    highestDegreeElement.appendChild(document.createTextNode(data.highestDegree));
                 },
                 error: (error) => {
                     alert('Error');

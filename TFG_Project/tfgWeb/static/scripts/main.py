@@ -1,6 +1,5 @@
 
 import networkx as nx
-from pyvis.network import Network
 import sys
 
 import auxiliar_methods as funcs
@@ -40,7 +39,7 @@ def main():
                 colors = funcs.setColorNodeType(G)  
 
                 graph = funcs.getCleanGraph(G)
-                nx.draw(graph, pos=poses, with_labels=True, node_color=colors)
+                nx.draw(graph, pos=poses, with_labels=True, node_color=colors, node_shape='s')
                 
                 plt.show()
 
