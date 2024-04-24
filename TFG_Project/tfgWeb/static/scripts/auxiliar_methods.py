@@ -2,7 +2,7 @@ import networkx as nx
 import sys
 
 import grandalf
-from grandalf.layouts import SugiyamaLayout
+from grandalf.layouts import SugiyamaLayout, DigcoLayout
 
 import matplotlib.pyplot as plt
 
@@ -330,11 +330,15 @@ def getGraphInfo(graph,poses):
     numCCs = nx.number_connected_components(H)
     isConnected(graph)
 
+    highestDegreeNode, highestDegree = getHighestDegreeNode(graph) 
+
+    return numNodes, numEdges, numCrossings, numCCs, highestDegree
+
+def getCyclesInfo(graph):
     numCycles = len(nx.recursive_simple_cycles(graph))
     nodeInMostCycles = getNodeInMostCycles(graph)
 
-    highestDegreeNode, highestDegree = getHighestDegreeNode(graph) 
-    return numNodes, numEdges, numCrossings, numCCs, numCycles, nodeInMostCycles, highestDegree
+    return numCycles, nodeInMostCycles
 
 def getHighestDegreeNode(graph):
 

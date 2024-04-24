@@ -7,6 +7,22 @@
     {% load static %}
     
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <style>
+        #overlay {
+            position: fixed;
+            display: none;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2;
+            cursor: wait;
+        }
+
+    </style>
 
     <script type="text/javascript" src="{% static 'data/json/graphInfo.json.js' %}"></script>
 
@@ -16,7 +32,8 @@
 
 </head>
 <body>
-    
+    <div id="overlay"></div> 
+
     <h1>Drawing Metabolic Pathways and Networks</h1>
 
     <label>Choose a metabolic pathway/network:</label>
@@ -43,7 +60,6 @@
 
             <div class="tab">
                 <button class="tablinks" onclick="openTab(event, 'Information')">Information</button>
-                <button class="tablinks" onclick="openTab(event, 'Configuration')">Configuration</button>
                 <button class="tablinks" onclick="openTab(event, 'Actions')">Actions</button>
             </div>
               
@@ -74,19 +90,24 @@
             </div>
             
             <div id="Actions" class="tabcontent">
-                <p>Split high degree components</p>
+                <h4>Split high degree components</h4>
                 <p id="highestDegree"></p>
                 <form id="splitHighDegreeForm">
                     <input id="degreeThreshhold" type="number" min="0">
                     <input type="submit" value="Split" />
                 </form>
 
-                <p>Break cycle</p>
+                <h4>Break cycle</h4>
                 <p id="componentInMostCycles"></p>
                 <form id="breakCycle">
-                    <input type="submit" value="Split" />
+                    <input type="submit" value="Split" id="breakCycleButton"/>
                 </form>
 
+                <h4>Duplicate selected node</h4>
+                <p id="selectedNode"></p>
+                <form id="duplicateSelectedNode">
+                    <input type="submit" value="Split"/>
+                </form>
             </div>
 
         </div>
@@ -113,7 +134,7 @@
 
         })
 
-        var nodeInMostCycles;
+        var nodeInMostCycles, selectedNode;
 
         function loadGraph(inputNodes, inputEdges)
         {
@@ -155,6 +176,8 @@
             // initialize your network!
             var network = new vis.Network(container, data, options);
 
+            document.getElementById("overlay").style.display = "block";
+
             $.ajax({
                 type: "POST",
                 url: "/get_graph_info/",
@@ -181,6 +204,33 @@
                     numCCsElement.innerHTML = "Number of Connected Components: ";
                     numCCsElement.appendChild(document.createTextNode(data.numCCs));
 
+                    var highestDegreeElement = document.getElementById("highestDegree");
+                    highestDegreeElement.innerHTML = "Highest Degree of a node: ";
+                    highestDegreeElement.appendChild(document.createTextNode(data.highestDegree));
+            
+                    document.getElementById("overlay").style.display = "none";
+                },
+                error: (error) => {
+                    document.getElementById("overlay").style.display = "none";
+                    alert('Error');
+                }
+            });
+            
+            var numCyclesElement = document.getElementById("componentInMostCycles");
+            numCyclesElement.innerHTML = "Number of Cycles: Loading...";            
+            numCyclesElement.innerHTML += "<br> Node appearing in most cycles: Loading...";
+
+            $("#breakCycleButton").prop('disabled', true);
+            
+            $.ajax({
+                type: "POST",
+                url: "/get_cycles_info/",
+                data:{
+                    pathwayName: $("#pathwaysList option:selected").text(),
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: (data) => {
+
                     var numCyclesElement = document.getElementById("componentInMostCycles");
                     numCyclesElement.innerHTML = "Number of Cycles: ";
                     numCyclesElement.appendChild(document.createTextNode(data.numCycles));
@@ -189,12 +239,11 @@
                     numCyclesElement.appendChild(document.createTextNode(data.nodeInMostCycles));
 
                     nodeInMostCycles = data.nodeInMostCycles;
+                    $("#breakCycleButton").prop('disabled', false);
 
-                    var highestDegreeElement = document.getElementById("highestDegree");
-                    highestDegreeElement.innerHTML = "Highest Degree of a node: ";
-                    highestDegreeElement.appendChild(document.createTextNode(data.highestDegree));
                 },
                 error: (error) => {
+                    $("#breakCycleButton").prop('disabled', false);
                     alert('Error');
                 }
             });
@@ -205,9 +254,14 @@
                 if (params.nodes.length != 0) {
                     document.getElementById('nodeInfo').hidden = false;
 
-                    var nodeIdHeader = document.getElementById("nodeId");
-                    nodeIdHeader.textContent = params.nodes[0];
+                    selectedNode = params.nodes[0];
 
+                    var nodeIdHeader = document.getElementById("nodeId");
+                    nodeIdHeader.textContent = "Node ID: " + selectedNode;
+
+                    var selectedNodeIdHeader = document.getElementById("selectedNode");
+                    selectedNodeIdHeader.textContent = "Selected Node ID: " + selectedNode;
+                    
                     $.ajax({
                         type: "POST",
                         url: "/get_node_info/",
@@ -269,6 +323,9 @@
             e.preventDefault();
             // serialize the data for sending the form data.
             var serializedData = $(this).serialize();
+
+            document.getElementById("overlay").style.display = "block";
+
             // make POST ajax call
             $.ajax({
                 type: 'POST',
@@ -278,8 +335,8 @@
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {
-                    const graphInfo = JSON.parse(response.graphInfo)
-                    loadGraph(graphInfo.nodes, graphInfo.edges)
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    loadGraph(graphInfo.nodes, graphInfo.edges);
                 },
                 error: function (response) {
                     // alert the error if any error occured
@@ -294,6 +351,7 @@
             e.preventDefault();
             // serialize the data for sending the form data.
             var serializedData = $(this).serialize();
+            document.getElementById("overlay").style.display = "block";
             // make POST ajax call
             $.ajax({
                 type: 'POST',
@@ -319,6 +377,7 @@
             e.preventDefault();
             // serialize the data for sending the form data.
             var serializedData = $(this).serialize();
+            document.getElementById("overlay").style.display = "block";
             // make POST ajax call
             $.ajax({
                 type: 'POST',
@@ -345,6 +404,7 @@
             e.preventDefault();
             // serialize the data for sending the form data.
             var serializedData = $(this).serialize();
+            document.getElementById("overlay").style.display = "block";
             // make POST ajax call
             $.ajax({
                 type: 'POST',
@@ -352,6 +412,33 @@
                 data: {
                     name: $("#pathwaysList option:selected").text(),
                     node: nodeInMostCycles,
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+                    const graphInfo = JSON.parse(response.graphInfo)
+                    loadGraph(graphInfo.nodes, graphInfo.edges)
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error');
+                }
+
+            })
+        })
+
+        $("#duplicateSelectedNode").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            document.getElementById("overlay").style.display = "block";
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/duplicate_node/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    node: selectedNode,
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {

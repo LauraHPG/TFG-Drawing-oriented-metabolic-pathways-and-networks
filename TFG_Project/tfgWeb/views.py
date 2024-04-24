@@ -69,12 +69,27 @@ def get_graph_info(request):
       info = pathway.graphInfo.replace("'", '"')
       G = parseJsonToNx(info)
 
-      poses = sugiyama(G)
+      poses = getGraphPositions(G)
       
-      numNodes, numEdges, numCrossings, numCCs, numCycles, nodeInMostCycles, highestDegree = getGraphInfo(G, poses) 
+      numNodes, numEdges, numCrossings, numCCs, highestDegree = getGraphInfo(G, poses) 
       
-      return JsonResponse({'numNodes': numNodes, 'numEdges': numEdges, 'numCrossings': numCrossings, 'numCCs': numCCs, 'numCycles': numCycles, 'nodeInMostCycles': nodeInMostCycles, 'highestDegree': highestDegree})
-  
+      return JsonResponse({'numNodes': numNodes, 'numEdges': numEdges, 'numCrossings': numCrossings, 'numCCs': numCCs, 'highestDegree': highestDegree})
+
+
+def get_cycles_info(request):
+   if request.method == 'POST':
+      pathwayName = request.POST.get('pathwayName')
+      pathway = Pathway.objects.get(name=pathwayName) 
+
+      G = nx.DiGraph()
+      info = pathway.graphInfo.replace("'", '"')
+      G = parseJsonToNx(info)
+
+      numCycles, nodeInMostCycles = getCyclesInfo(G)
+      
+      return JsonResponse({'numCycles': numCycles, 'nodeInMostCycles': nodeInMostCycles})
+
+
 def split_high_degree(request):
    if request.method == 'POST':
       pathwayName = request.POST.get('name')
@@ -103,25 +118,29 @@ def duplicate_node(request):
    if request.method == 'POST':
       pathwayName = request.POST.get('name')
       node = request.POST.get('node')
-      pathway = Pathway.objects.get(name=pathwayName) 
+      if node[0] != 'D':
+         pathway = Pathway.objects.get(name=pathwayName) 
 
-      G = nx.DiGraph()
-      info = pathway.graphInfo.replace("'", '"')
-      G = parseJsonToNx(info)
+         G = nx.DiGraph()
+         info = pathway.graphInfo.replace("'", '"')
+         G = parseJsonToNx(info)
 
-      duplicateNode(G,node)
+         duplicateNode(G,node)
 
-      poses = getGraphPositions(G)      
+         poses = getGraphPositions(G)      
 
-      graphInfo = parseGraph(G,poses, getCompoundNames(G))
+         graphInfo = parseGraph(G,poses, getCompoundNames(G))
 
-      pthwy = Pathway.objects.get(pk=pathwayName)
-      pthwy.graphInfo = graphInfo
-      pthwy.save()
+         pthwy = Pathway.objects.get(pk=pathwayName)
+         pthwy.graphInfo = graphInfo
+         pthwy.save()
 
-      info = pthwy.graphInfo.replace("'", '"')
+         info = pthwy.graphInfo.replace("'", '"')
 
-      return JsonResponse({'graphInfo':info})
+         return JsonResponse({'graphInfo':info})
+   else:
+      return JsonResponse({'status': 'error'})
+
 
 def getCompoundNames(G):
    compounds = dict()
@@ -129,10 +148,11 @@ def getCompoundNames(G):
       if node[0] != 'R':
          print(getNodeLabel(node))
          label = getNodeLabel(node)
-         try:
-            nodeName = Compound.objects.get(pk=label).name
-         except:
-            nodeName = label
+         if not label in compounds:
+            try:
+               nodeName = Compound.objects.get(pk=label).name
+            except:
+               nodeName = label
             
          compounds[label] = nodeName
    return compounds
