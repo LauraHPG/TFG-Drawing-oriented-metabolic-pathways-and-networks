@@ -118,7 +118,7 @@ def duplicate_node(request):
    if request.method == 'POST':
       pathwayName = request.POST.get('name')
       node = request.POST.get('node')
-      if node[0] != 'D':
+      if node[0] != 'D' :
          pathway = Pathway.objects.get(name=pathwayName) 
 
          G = nx.DiGraph()
@@ -138,6 +138,9 @@ def duplicate_node(request):
          info = pthwy.graphInfo.replace("'", '"')
 
          return JsonResponse({'graphInfo':info})
+         
+      else:
+         return JsonResponse({'status': 'error'})
    else:
       return JsonResponse({'status': 'error'})
 

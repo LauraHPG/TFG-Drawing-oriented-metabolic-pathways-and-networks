@@ -104,6 +104,9 @@ def getNodeInMostCycles(graph):
 
     print(f"Number of cycles: {len(cycles)}")
 
+    if len(cycles) == 0:
+        return None
+
     appearances = {}
     for cycle in cycles:
         for node in cycle:
@@ -525,6 +528,9 @@ def getNodeInfo(graph, node):
 
     return predecessors, successors
 
+def staggerLayers(poses):
+    return poses
+
 def getGraphPositions(graph):
     connected = isConnected(graph)
     poses = {}
@@ -549,4 +555,6 @@ def getGraphPositions(graph):
                         xMax = new_poses[pos][0]
                 poses.update(new_poses)
                 currentMaxX = xMax + 200
+    
+    poses = staggerLayers(poses)
     return poses

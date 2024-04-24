@@ -106,7 +106,7 @@
                 <h4>Duplicate selected node</h4>
                 <p id="selectedNode"></p>
                 <form id="duplicateSelectedNode">
-                    <input type="submit" value="Split"/>
+                    <input type="submit" value="Split" id="duplicateSelectedNodeButton" />
                 </form>
             </div>
 
@@ -129,7 +129,8 @@
         },
         error: function (response) {
             // alert the error if any error occured
-            alert('Error');
+            alert('Error');document.getElementById("overlay").style.display = "none";
+
         }
 
         })
@@ -212,7 +213,8 @@
                 },
                 error: (error) => {
                     document.getElementById("overlay").style.display = "none";
-                    alert('Error');
+                    alert('Error');document.getElementById("overlay").style.display = "none";
+
                 }
             });
             
@@ -241,6 +243,15 @@
                     nodeInMostCycles = data.nodeInMostCycles;
                     $("#breakCycleButton").prop('disabled', false);
 
+                    if (data.numCycles == 0)
+                    {
+                        $("#breakCycleButton").prop('disabled', true);
+                        numCyclesElement.innerHTML = "Number of Cycles: ";
+                        numCyclesElement.appendChild(document.createTextNode(data.numCycles));
+                        
+                        numCyclesElement.innerHTML += "<br> Node appearing in most cycles: None";
+                    }
+
                 },
                 error: (error) => {
                     $("#breakCycleButton").prop('disabled', false);
@@ -261,6 +272,9 @@
 
                     var selectedNodeIdHeader = document.getElementById("selectedNode");
                     selectedNodeIdHeader.textContent = "Selected Node ID: " + selectedNode;
+
+                    $("#duplicateSelectedNodeButton").prop('disabled', false);
+
                     
                     $.ajax({
                         type: "POST",
@@ -309,6 +323,8 @@
                 else
                 {
                     document.getElementById('nodeInfo').hidden = true;
+                    document.getElementById('selectedNode').innerHTML = "No node selected";
+                    $("#duplicateSelectedNodeButton").prop('disabled', true);
                 }
 
                 
@@ -340,7 +356,8 @@
                 },
                 error: function (response) {
                     // alert the error if any error occured
-                    alert('Error');
+                    alert('Error');document.getElementById("overlay").style.display = "none";
+
                 }
 
             })
@@ -366,7 +383,8 @@
                 },
                 error: function (response) {
                     // alert the error if any error occured
-                    alert('Error');
+                    alert('Error');document.getElementById("overlay").style.display = "none";
+
                 }
 
             })
@@ -393,7 +411,8 @@
                 },
                 error: function (response) {
                     // alert the error if any error occured
-                    alert('Error');
+                    alert('Error');document.getElementById("overlay").style.display = "none";
+
                 }
 
             })
@@ -420,7 +439,8 @@
                 },
                 error: function (response) {
                     // alert the error if any error occured
-                    alert('Error');
+                    alert('Error');document.getElementById("overlay").style.display = "none";
+
                 }
 
             })
@@ -447,7 +467,9 @@
                 },
                 error: function (response) {
                     // alert the error if any error occured
-                    alert('Error');
+                    alert('You cannot duplicate an already duplicated compound.');
+                    document.getElementById("overlay").style.display = "none";
+
                 }
 
             })
