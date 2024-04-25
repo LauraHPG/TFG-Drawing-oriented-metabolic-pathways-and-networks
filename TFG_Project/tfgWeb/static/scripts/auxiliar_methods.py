@@ -261,7 +261,7 @@ def rearangeSources(graph, pos):
             # print("source node:", node, "out degree:", graph.out_degree(node))
             neighbors = [n for n in graph.neighbors(node)]
             neighbor = neighbors[0]
-            
+
             posNeigh = pos[neighbor]
             # print("Neighbor:", neighbor, "NPosition:", posNeigh)
             newPosX = 0
@@ -316,8 +316,6 @@ def countCrossings(graph,pos):
             
     print("Number of crossings:", len(numCrossings))    
     return len(numCrossings)
-    return 0
-    pass
 
 def isConnected(graph):
     H = graph.to_undirected()
@@ -536,8 +534,48 @@ def getNodeInfo(graph, node):
 
     return predecessors, successors
 
+def countLevels(poses):
+    levels = dict()
+    new_poses = dict()
+
+    for node in poses:
+        level = poses[node][1]
+        if level in levels:
+            levels[level].append(node)
+        else:
+            levels[level] = [node]
+        
+        
+
+    for level in levels:
+        nodes = [nodes for nodes in levels[level]]  
+        nodes.sort(key=lambda x: poses[x][0])
+
+        if nodes[0][0] != 'R':
+            print("Compounds")
+            offset = 1
+
+            for node in nodes:
+                if offset == 1:
+                    offset = -1
+                else:
+                    offset = 1
+                print(node, poses[node][0])
+                new_poses[node] = (poses[node][0], level*2 + 15*offset)
+        else:
+            print("Reactions")
+            for node in nodes:
+                print(node, poses[node][0])
+
+                new_poses[node] = (poses[node][0], level*2)
+            
+    print("Number of Levels: ", len(levels))
+    return new_poses
+    # print(levels)
+
 def staggerLayers(poses):
-    return poses
+    
+    return countLevels(poses)
 
 def checkMaxCCSize(graph):
 
