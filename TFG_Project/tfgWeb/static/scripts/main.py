@@ -85,6 +85,7 @@ def main():
                 colors = funcs.setColorNodeType(subGraph)                
                 poses = funcs.sugiyama(subGraph)
 
+                funcs.getGraphInfo(subGraph, poses)
                 nx.draw(subGraph, pos=poses, with_labels=True, node_color=colors)
                 
                 plt.show()

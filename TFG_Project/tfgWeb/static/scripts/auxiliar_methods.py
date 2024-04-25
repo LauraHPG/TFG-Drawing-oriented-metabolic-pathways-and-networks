@@ -19,7 +19,10 @@ import requests
 def read_graph(graph):
     nx.set_node_attributes(graph, {})
     path = sys.argv[1]
-    return read_graph_from_txt(graph, path)
+    info = read_graph_from_txt(graph, path)
+    checkMaxCCSize(graph)
+
+    return info
 
 def read_graph_from_txt(graph, path):
     for line in open(path):
@@ -86,10 +89,11 @@ def nodes_ordered_by_degree(graph, nodes=None):
         nodes = graph.nodes()
 
     # Calculate the degree for each node and create a list of (node, degree) tuples
-    degree_list = [(node, degree) for node, degree in graph.degree(nodes)]
+    degree_list = [(node, degree) for node, degree in graph.degree(nodes) if not node.startswith('R')]
 
     # Sort the list by degree in descending order
     degree_list.sort(key=lambda x: x[1], reverse=True)
+
 
     # Extract the nodes from the sorted list
     #nodes_sorted_by_degree = [node for node, _ in degree_list]
@@ -255,7 +259,9 @@ def rearangeSources(graph, pos):
     for node in pos:
         if graph.in_degree(node) == 0:
             # print("source node:", node, "out degree:", graph.out_degree(node))
-            [neighbor] = graph.neighbors(node)
+            neighbors = [n for n in graph.neighbors(node)]
+            neighbor = neighbors[0]
+            
             posNeigh = pos[neighbor]
             # print("Neighbor:", neighbor, "NPosition:", posNeigh)
             newPosX = 0
@@ -344,7 +350,9 @@ def getCyclesInfo(graph):
     return numCycles, nodeInMostCycles
 
 def getHighestDegreeNode(graph):
-
+    '''
+    Returns -> (node, degree)
+    '''
     ordered_nodes = nodes_ordered_by_degree(graph)
     return ordered_nodes[0][0], ordered_nodes[0][1]
 
@@ -530,6 +538,21 @@ def getNodeInfo(graph, node):
 
 def staggerLayers(poses):
     return poses
+
+def checkMaxCCSize(graph):
+
+    H = graph.to_undirected()
+    S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+
+    while len(S[0].nodes()) > 1000:
+        node, degree = getHighestDegreeNode(graph)
+        splitHighDegreeComponents(graph,degree)
+
+        print("Largest CC size ", len(S[0].nodes()))
+        print("Node info: ", node, degree)
+
+        H = graph.to_undirected()
+        S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
 
 def getGraphPositions(graph):
     connected = isConnected(graph)
