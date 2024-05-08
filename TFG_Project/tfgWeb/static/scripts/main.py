@@ -34,17 +34,24 @@ def main():
 
         match op:
             case '0':
-            
-                poses = funcs.getGraphPositions(G)
+
+                N = input("Introduce iterations (default = 1.5):\n")
+
+                poses = funcs.getGraphPositions(G, float(N))
                 colors = funcs.setColorNodeType(G)  
 
-                graph = funcs.getCleanGraph(G)
-                nx.draw(graph, pos=poses, with_labels=True, node_color=colors, node_shape='s')
+                # depth = input("Do you want to arrange it by depth? (y/n)")
+
+                nx.draw(G, pos=poses, with_labels=True, node_color=colors, node_shape='s')
                 
                 plt.show()
 
             case '1':
-                poses = funcs.sugiyama(G)
+                N = input("Introduce iterations (default = 1.5):\n")
+
+
+                poses = funcs.getGraphPositions(G, float(N))
+
 
                 funcs.getGraphInfo(G, poses)
 
@@ -89,7 +96,9 @@ def main():
                 nx.draw(subGraph, pos=poses, with_labels=True, node_color=colors)
                 
                 plt.show()
-
+            
+            case '9':
+                poses = funcs.sugiyama_debug(G)
             case 'p':
 
                 funcs.changeSourceAndSinkNodeType(G)

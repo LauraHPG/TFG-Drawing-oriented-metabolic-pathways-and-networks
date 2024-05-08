@@ -6,8 +6,70 @@
     <title>TFG</title>
     {% load static %}
     
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
     <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 1em !important;
+        }
+
+        #container {
+            display: flex;
+            border: 1px solid #cbd5e0;
+            height: 80vh;
+            width: 100%;
+        }
+
+        #mynetwork {
+            width: 75%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .resizer {
+            background-color: #cbd5e0;
+            cursor: ew-resize;
+            height: 100%;
+            width: 5px;
+        }
+
+        #infoConfig {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+
+        .tab button {
+            background-color: transparent;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: background-color 0.3s;
+            font-size: 17px;
+        }
+
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        .tab button.active {
+            background-color: #ccc;
+        }
+
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+
         #overlay {
             position: fixed;
             display: none;
@@ -15,100 +77,131 @@
             height: 100%;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             z-index: 2;
             cursor: wait;
         }
 
-    </style>
+        form, select, h5{
+            margin-left: 3px;
+            margin-right: 3px;
+        }
 
-    <script type="text/javascript" src="{% static 'data/json/graphInfo.json.js' %}"></script>
+        .btn{
+            margin-right:1em;
+            margin-top: 0.5em;
+            margin-bottom: 1em;
+        }
+
+    </style>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
 </head>
 <body>
+
+    <nav>
+       
+      </nav>
+      
+
     <div id="overlay"></div> 
 
-    <h1>Drawing Metabolic Pathways and Networks</h1>
+    <h1 >Drawing Metabolic Pathways and Networks</h1>
 
-    <label>Choose a metabolic pathway/network:</label>
-
-    <form id="pathwayForm">
+    <div style="display: flex">
+        <label class="form-label"> </label> 
         {% csrf_token %}
-        <select id="pathwaysList" name="pathwayNames">
+        
+        <select id="pathwaysList" class="form-select" name="pathwayNames">
+
+            <option selected>Select a metabolic pathway/network</option>
+
             {% for filename in filenames %}
                 <option value="{{filename}}">{{ filename }}</option>
             {% endfor %}
         </select>
-        <input type="submit" value="Load Pathway" />
-        <!-- <button type="button" id="loadPathway">Load Pathway</button> -->
-    </form>
-    <form id="resetPathway">
-        <input type="submit" value="Reset Pathway">
-    </form>
+    </div>
     
-    <br><br>
-    <div class="container">
+    <div style="display: flex">       
+
+        <form id="pathwayForm">
+            <input type="submit" value="Load" class="btn btn-primary"/>            
+        </form>
+        
+        <form id="recomputePositions">
+            <input type="submit" value="Recompute Positions" class="btn btn-primary">
+        </form>
+
+        <form id="resetPathway">
+            <input type="submit" value="Reset" class="btn btn-danger">
+        </form>
+
+    </div>
+        
+    <div id="container">
         <div id="mynetwork"></div>
         <div class="resizer" id="dragMe"></div> 
         <div id="infoConfig">
 
-            <div class="tab">
-                <button class="tablinks" onclick="openTab(event, 'Information')">Information</button>
-                <button class="tablinks" onclick="openTab(event, 'Actions')">Actions</button>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-link active" id="nav-information-tab" data-bs-toggle="tab" href="#nav-information" role="tab" aria-controls="nav-information" aria-selected="true">Information</a>
+                <a class="nav-link" id="nav-actions-tab" data-bs-toggle="tab" href="#nav-actions" role="tab" aria-controls="nav-actions" aria-selected="false">Actions</a>
             </div>
-              
-             
-            <div id="Information" class="tabcontent">
-                <div id="graphInfo">
-                    <h3>Graph Information</h3>
-                    <p id="numNodes"></p>
-                    <p id="numEdges"></p>
-                    <p id="numCrossings"></p>
-                    <p id="numCCs"></p>
-                </div>
 
-                <div id="nodeInfo" hidden>
-                    <hr>
-                    <h3>Node Information</h3>
-                    <h4 id="nodeId"></h4>
-                    <p>Predecesors:</p>
-                    <ul id="predList"></ul>
-                    <p>Succesors:</p>
-                    <ul id="succList"></ul>
-                    <p>Degree:</p>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-information" role="tabpanel" aria-labelledby="nav-information-tab">
+                    <div id="Information">
+                        <div id="graphInfo">
+                            <h3>Graph Information</h3>
+                            <p id="numNodes"></p>
+                            <p id="numEdges"></p>
+                            <p id="numCrossings"></p>
+                            <p id="numCCs"></p>
+                        </div>
+        
+                        <div id="nodeInfo" hidden>
+                            <hr>
+                            <h3>Node Information</h3>
+                            <h4 id="nodeId"></h4>
+                            <p>Predecesors:</p>
+                            <ul id="predList"></ul>
+                            <p>Succesors:</p>
+                            <ul id="succList"></ul>
+                            <p>Figure:</p>
+                            <p id="nodeFigure"></p>
+                        </div>
+                        
+                    </div>
                 </div>
-                
+                <div class="tab-pane fade" id="nav-actions" role="tabpanel" aria-labelledby="nav-actions-tab">
+                  <div id="Actions">
+                    <h4>Split high degree components</h4>
+                    <p id="highestDegree"></p>
+                    <form id="splitHighDegreeForm">
+                        <input id="degreeThreshhold" type="number" min="0">
+                        <input type="submit" value="Split" />
+                    </form>
+    
+                    <h4>Break cycle</h4>
+                    <p id="componentInMostCycles"></p>
+                    <form id="breakCycle">
+                        <input type="submit" value="Split" id="breakCycleButton"/>
+                    </form>
+    
+                    <h4>Duplicate selected node</h4>
+                    <p id="selectedNode"></p>
+                    <form id="duplicateSelectedNode">
+                        <input type="submit" value="Split" id="duplicateSelectedNodeButton" />
+                    </form>
+                </div>
+                </div>
             </div>
             
-            <div id="Configuration" class="tabcontent">
-            </div>
             
-            <div id="Actions" class="tabcontent">
-                <h4>Split high degree components</h4>
-                <p id="highestDegree"></p>
-                <form id="splitHighDegreeForm">
-                    <input id="degreeThreshhold" type="number" min="0">
-                    <input type="submit" value="Split" />
-                </form>
-
-                <h4>Break cycle</h4>
-                <p id="componentInMostCycles"></p>
-                <form id="breakCycle">
-                    <input type="submit" value="Split" id="breakCycleButton"/>
-                </form>
-
-                <h4>Duplicate selected node</h4>
-                <p id="selectedNode"></p>
-                <form id="duplicateSelectedNode">
-                    <input type="submit" value="Split" id="duplicateSelectedNodeButton" />
-                </form>
-            </div>
 
         </div>
     </div>
@@ -118,28 +211,123 @@
     
     <script>
 
-        $.ajax({
-        type: 'POST',
-        url: '/update_compounds/',
-        data: {
-            csrfmiddlewaretoken: csrf_token_value
-        },
-        success: function (response) {
-            console.log("Compounds updated")
-        },
-        error: function (response) {
-            // alert the error if any error occured
-            alert('Error');document.getElementById("overlay").style.display = "none";
+        function openTab(evt, tabName) {
+            // Declare all variables
+            var i, tabcontent, tablinks;
 
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Query the element
+            const resizer = document.getElementById('dragMe');
+            const leftSide = resizer.previousElementSibling;
+            const rightSide = resizer.nextElementSibling;
+
+            // The current position of mouse
+            let x = 0;
+            let y = 0;
+            let leftWidth = 0;
+
+            // Handle the mousedown event
+            // that's triggered when user drags the resizer
+            const mouseDownHandler = function(e) {
+                // Get the current mouse position
+                x = e.clientX;
+                y = e.clientY;
+                leftWidth = leftSide.getBoundingClientRect().width;
+
+                // Attach the listeners to document
+                document.addEventListener('mousemove', mouseMoveHandler);
+                document.addEventListener('mouseup', mouseUpHandler);
+            };
+
+            const mouseMoveHandler = function(e) {
+                // How far the mouse has been moved
+                const dx = e.clientX - x;
+                const dy = e.clientY - y;
+
+                const newLeftWidth = ((leftWidth + dx) * 100) / resizer.parentNode.getBoundingClientRect().width;
+                leftSide.style.width = newLeftWidth + '%';
+
+                resizer.style.cursor = 'col-resize';
+                document.body.style.cursor = 'col-resize';
+
+                leftSide.style.userSelect = 'none';
+                leftSide.style.pointerEvents = 'none';
+
+                rightSide.style.userSelect = 'none';
+                rightSide.style.pointerEvents = 'none';
+            };
+
+            const mouseUpHandler = function() {
+                resizer.style.removeProperty('cursor');
+                document.body.style.removeProperty('cursor');
+
+                leftSide.style.removeProperty('user-select');
+                leftSide.style.removeProperty('pointer-events');
+
+                rightSide.style.removeProperty('user-select');
+                rightSide.style.removeProperty('pointer-events');
+
+                // Remove the handlers of mousemove and mouseup
+                document.removeEventListener('mousemove', mouseMoveHandler);
+                document.removeEventListener('mouseup', mouseUpHandler);
+            };
+
+            // Attach the handler
+            resizer.addEventListener('mousedown', mouseDownHandler);
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: '/update_compounds/',
+            data: {
+                csrfmiddlewaretoken: csrf_token_value
+            },
+            success: function (response) {
+                console.log("Compounds updated")
+            },
+            error: function (response) {
+                // alert the error if any error occured
+                alert('Error');document.getElementById("overlay").style.display = "none";
+
+            }
 
         })
 
         var nodeInMostCycles, selectedNode;
 
+        function clusterByCid(network, cid, data, numNodesCC) {
+            // network.setData(data);
+
+            var clusterOptionsByData = {
+                joinCondition: function(childOptions) {
+                    return childOptions.cid == cid
+                },
+                clusterNodeProperties: {id:cid, label:'cidCluster',size:numNodesCC*10, shape: 'dot'}
+            }
+            network.cluster(clusterOptionsByData);		
+        }
+
+
         function loadGraph(inputNodes, inputEdges)
         {
-            console.log(inputEdges)
+            console.log(inputNodes)
             var nodes = new vis.DataSet(
                 inputNodes
             );
@@ -160,7 +348,7 @@
 
             var options = {
                 nodes: {
-                    shape: 'box'
+                    shape: 'box',
                 },
                 edges: {
                     smooth: false
@@ -176,8 +364,9 @@
 
             // initialize your network!
             var network = new vis.Network(container, data, options);
-
+            
             document.getElementById("overlay").style.display = "block";
+
 
             $.ajax({
                 type: "POST",
@@ -186,30 +375,39 @@
                     pathwayName: $("#pathwaysList option:selected").text(),
                     csrfmiddlewaretoken: csrf_token_value
                 },
-                success: (data) => {
-                    console.log(data);
+                success: (graphInfo) => {
+                    console.log(graphInfo);
 
                     var numNodesElement = document.getElementById("numNodes");
                     numNodesElement.innerHTML = "Number of Nodes: ";
-                    numNodesElement.appendChild(document.createTextNode(data.numNodes));
+                    numNodesElement.appendChild(document.createTextNode(graphInfo.numNodes));
 
                     var numEdgesElement = document.getElementById("numEdges");
                     numEdgesElement.innerHTML = "Number of Edges: ";
-                    numEdgesElement.appendChild(document.createTextNode(data.numEdges));
+                    numEdgesElement.appendChild(document.createTextNode(graphInfo.numEdges));
 
                     var numCrossingsElement = document.getElementById("numCrossings");
                     numCrossingsElement.innerHTML = "Number of Crossings: ";
-                    numCrossingsElement.appendChild(document.createTextNode(data.numCrossings));
+                    numCrossingsElement.appendChild(document.createTextNode(graphInfo.numCrossings));
 
                     var numCCsElement = document.getElementById("numCCs");
                     numCCsElement.innerHTML = "Number of Connected Components: ";
-                    numCCsElement.appendChild(document.createTextNode(data.numCCs));
+                    numCCsElement.appendChild(document.createTextNode(graphInfo.numCCs));
 
                     var highestDegreeElement = document.getElementById("highestDegree");
                     highestDegreeElement.innerHTML = "Highest Degree of a node: ";
-                    highestDegreeElement.appendChild(document.createTextNode(data.highestDegree));
+                    highestDegreeElement.appendChild(document.createTextNode(graphInfo.highestDegree));
             
                     document.getElementById("overlay").style.display = "none";
+
+                    // for(var i = 0; i < graphInfo.numCCs; ++i)
+                    // {
+                    //     console.log(data, graphInfo.numNodesCC)
+                    //     clusterByCid(network, i, data, graphInfo.numNodesCC[i]);
+                    // }
+
+
+
                 },
                 error: (error) => {
                     document.getElementById("overlay").style.display = "none";
@@ -313,6 +511,24 @@
 
                             } 
 
+                            var nodeFigure = document.getElementById("nodeFigure");
+                            var url;
+                            var selectedNode_id = selectedNode;
+
+                            if (selectedNode.includes('_')) {
+                                selectedNode_id = selectedNode.split('_')[1]
+                            }
+
+                            if(selectedNode_id[0]=='C')
+                            {
+                                url = "https://www.kegg.jp/Fig/compound/" + selectedNode_id + ".gif"
+                                
+                            }
+                            else{
+                                url = "https://www.kegg.jp/Fig/reaction/" + selectedNode_id + ".gif"
+                            }
+                            nodeFigure.innerHTML = ' <img src=' + url + ' style="width:100%">'
+
                         },
                         error: (error) => {
                             alert('Error');
@@ -330,6 +546,20 @@
                 
 
             });
+            
+            // network.on("click", function (params) {
+            //     if (params.nodes.length == 1) {
+            //         if (network.isCluster(params.nodes[0]) == true) {
+            //             var openClusterObj = {};
+            //             openClusterObj.releaseFunction = function(clusterPosition, containedNodesPositions) {
+            //                 return containedNodesPositions;
+            //             }
+
+            //             network.openCluster(params.nodes[0], openClusterObj);
+            //         }
+            //     }   
+            // });
+
 
             
         }
@@ -373,6 +603,33 @@
             $.ajax({
                 type: 'POST',
                 url: '/reset_graph/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+                    const graphInfo = JSON.parse(response.graphInfo)
+                    loadGraph(graphInfo.nodes, graphInfo.edges)
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error');document.getElementById("overlay").style.display = "none";
+
+                }
+
+            })
+        })
+
+        $("#recomputePositions").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            document.getElementById("overlay").style.display = "block";
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/recompute_positions/',
                 data: {
                     name: $("#pathwaysList option:selected").text(),
                     csrfmiddlewaretoken: csrf_token_value
@@ -474,7 +731,11 @@
 
             })
         })
+
+        
     </script>
     {% endblock javascript %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

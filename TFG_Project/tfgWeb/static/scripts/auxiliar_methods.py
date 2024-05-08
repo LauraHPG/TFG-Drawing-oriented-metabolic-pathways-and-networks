@@ -71,7 +71,6 @@ def duplicateNode(graph, node):
         graph.add_edge(in_edge[0], new_node, relationship='reaction-substrate')
         graph.add_node(new_node, node_type=node_type)
     
-    linkSameNode(graph,node,i)
     graph.remove_node(node)
 
 def nodes_ordered_by_degree(graph, nodes=None):
@@ -103,8 +102,7 @@ def nodes_ordered_by_degree(graph, nodes=None):
 
 def getNodeInMostCycles(graph):
 
-    cleanGraph = getCleanGraph(graph)
-    cycles = nx.recursive_simple_cycles(cleanGraph)
+    cycles = nx.recursive_simple_cycles(graph)
 
     print(f"Number of cycles: {len(cycles)}")
 
@@ -130,8 +128,7 @@ def getNodeInMostCycles(graph):
 
 def removeCyclesByNodeInMostCycles(graph):
 
-    cleanGraph = getCleanGraph(graph)
-    cycles = nx.recursive_simple_cycles(cleanGraph)
+    cycles = nx.recursive_simple_cycles(graph)
 
     print(f"Number of cycles: {len(cycles)}")
 
@@ -147,24 +144,22 @@ def removeCyclesByNodeInMostCycles(graph):
 
     sortedAppearances = sorted(appearances.items(), key=lambda x:x[1],reverse=True)
 
-    print(f"{len(appearances)} nodes from {len(cleanGraph.nodes())} appear in a cycle")
+    print(f"{len(appearances)} nodes from {len(graph.nodes())} appear in a cycle")
 
     while True:
         print("(Node in most cycles, number of cycles it appears in): ", sortedAppearances[0])
         node = next(iter(sortedAppearances))[0]
         duplicateNode = input(f"Do you want to duplicate {node}? (Y/n)")
         if duplicateNode == "y" or duplicateNode == "Y":
-            print(f"Initial number of nodes: {cleanGraph.number_of_nodes()}")
+            print(f"Initial number of nodes: {graph.number_of_nodes()}")
 
-            out_edges = cleanGraph.out_edges([node])
-            in_edges = cleanGraph.in_edges([node])
+            out_edges = graph.out_edges([node])
+            in_edges = graph.in_edges([node])
 
             i = 0
             for out_edge in out_edges:
                 new_node = "D" + str(i) + '_' + node
                 i += 1
-                # cleanGraph.add_edge(new_node, out_edge[1], relationship='substrate-reaction')
-                # cleanGraph.add_node(new_node, node_type='component')
 
                 graph.add_edge(new_node, out_edge[1], relationship='substrate-reaction')
                 graph.add_node(new_node, node_type='component')
@@ -172,25 +167,17 @@ def removeCyclesByNodeInMostCycles(graph):
             for in_edge in in_edges:
                 new_node = "D" + str(i) + '_'  + node
                 i += 1
-                # cleanGraph.add_edge(in_edge[0], new_node, relationship='reaction-substrate')
-                # cleanGraph.add_node(new_node, node_type='component')
-
                 graph.add_edge(in_edge[0], new_node, relationship='reaction-substrate')
                 graph.add_node(new_node, node_type='component')
 
-            # linkSameNode(cleanGraph, node, i)
-            linkSameNode(graph, node, i)
-
-            # cleanGraph.remove_node(node)
             graph.remove_node(node)
             
-            cleanGraph = getCleanGraph(graph)
             
         else:
             return
 
-        print(f"Final number of nodes: {cleanGraph.number_of_nodes()}")
-        cycles = nx.recursive_simple_cycles(cleanGraph)
+        print(f"Final number of nodes: {graph.number_of_nodes()}")
+        cycles = nx.recursive_simple_cycles(graph)
         print(f"Number of cycles: {len(cycles)}")
         if len(cycles) == 0 : return
 
@@ -209,9 +196,8 @@ def removeCyclesByNodeInMostCycles(graph):
         print(f"Number of connected components: {nx.number_connected_components(H)}")
 
         # Measure
-        cleanGraph = getCleanGraph(graph)
-        poses = sugiyama(cleanGraph)
-        countCrossings(cleanGraph, poses)
+        poses = sugiyama(graph)
+        countCrossings(graph, poses)
 
 
 def get_color(node_type):
@@ -243,16 +229,12 @@ def changeSourceAndSinkNodeType(graph):
         in_edges = graph.in_edges(node)
         out_edges = graph.out_edges(node)
         
-        flipped_in_edges = flipEdges(in_edges)
-        flipped_out_edges = flipEdges(out_edges)
-        
-        real_in_edges = list(set(in_edges) - set(flipped_out_edges))
-        real_out_edges = list(set(out_edges) - set(flipped_in_edges))
-
-        if len(real_in_edges) == 0:
+        if len(in_edges) == 0:
             graph.nodes[node]['node_type'] = 'source'
-        elif len(real_out_edges) == 0:
+        elif len(out_edges) == 0:
             graph.nodes[node]['node_type'] = 'sink'
+
+
 
 def rearangeSources(graph, pos):
     new_positions = {}
@@ -335,11 +317,12 @@ def getGraphInfo(graph,poses):
     numCrossings = countCrossings(graph,poses)
     H = graph.to_undirected()
     numCCs = nx.number_connected_components(H)
+    numNodesCC = [len(H.subgraph(c).nodes()) for c in sorted(nx.connected_components(H), key=len, reverse=True)]
     isConnected(graph)
 
     highestDegreeNode, highestDegree = getHighestDegreeNode(graph) 
 
-    return numNodes, numEdges, numCrossings, numCCs, highestDegree
+    return numNodes, numEdges, numCrossings, numCCs, highestDegree, numNodesCC
 
 def getCyclesInfo(graph):
     numCycles = len(nx.recursive_simple_cycles(graph))
@@ -354,38 +337,9 @@ def getHighestDegreeNode(graph):
     ordered_nodes = nodes_ordered_by_degree(graph)
     return ordered_nodes[0][0], ordered_nodes[0][1]
 
-def linkSameNode(graph, nodeName, iMax):
-    # for i in range(0,iMax):
-    #     nodeI = "D" + str(i) + '_' + nodeName
-    #     for j in range(0,iMax):
-    #         nodeJ = "D" + str(j) + '_' + nodeName
-    #         if i != j:
-    #             graph.add_edge(nodeI, nodeJ, relationship='sameNode')
-    #             graph.add_edge(nodeJ, nodeI, relationship='sameNode')
-    pass
+def sugiyama(graph, N = 1.5):
 
-def remove_edges_with_attribute(graph, attribute_key, attribute_value):
-    edges_to_remove = []
-    edges = graph.edges()
-    for edge in edges:
-        if graph.edges[edge][attribute_key] == attribute_value:
-            edges_to_remove.append(edge)
-    graph.remove_edges_from(edges_to_remove)
-
-    return graph
-
-def getCleanGraph(graph):
-
-    cleanGraph = nx.DiGraph(graph)
-
-    cleanGraph = remove_edges_with_attribute(cleanGraph,'relationship','sameNode')
-    return cleanGraph
-
-def sugiyama(graph):
-
-    cleanGraph = getCleanGraph(graph)
-
-    g = grandalf.utils.convert_nextworkx_graph_to_grandalf(cleanGraph)
+    g = grandalf.utils.convert_nextworkx_graph_to_grandalf(graph)
 
 
     class defaultview(object):
@@ -397,35 +351,54 @@ def sugiyama(graph):
 
     sug = SugiyamaLayout(g.C[0])
     sug.init_all()  # roots = [V[0]])
-    sug.draw()  # Calculate positions
+    sug.draw(N)  # Calculate positions
 
     poses = {v.data: (v.view.xy[0], v.view.xy[1]) for v in g.C[0].sV}  # Extract positions
-    poses = rearangeSources(cleanGraph, poses)
+    poses = rearangeSources(graph,poses)
+
+    return poses
+
+def sugiyama_debug(graph):
+
+    g = grandalf.utils.convert_nextworkx_graph_to_grandalf(graph)
+
+
+    class defaultview(object):
+        w, h = 20, 20
+
+
+    for v in g.C[0].sV:
+        v.view = defaultview()
+
+    sug = SugiyamaLayout(g.C[0])
+    sug.init_all()  # roots = [V[0]])
+    
+    sug.draw_step()  # Calculate positions
+
+    poses = {v.data: (v.view.xy[0], v.view.xy[1]) for v in g.C[0].sV}  # Extract positions
+    poses = rearangeSources(graph, poses)
     
     return poses
 
 def getLargestCC(graph):
-    cleanGraph = getCleanGraph(graph)
-    connected = isConnected(cleanGraph)
-    edges = cleanGraph.edges()
+    connected = isConnected(graph)
+    edges = graph.edges()
 
     if not connected:
-        H = cleanGraph.to_undirected()
+        H = graph.to_undirected()
         largest_cc = max(nx.connected_components(H), key=len)
-        subGraph = cleanGraph.subgraph(largest_cc).copy()
+        subGraph = graph.subgraph(largest_cc).copy()
         subGraph.to_directed()
 
         return subGraph
     return -1
 
 def getConnectedComponents(graph):
-    cleanGraph = getCleanGraph(graph)
-    H = cleanGraph.to_undirected()
-    # S = [H.subgraph(c).copy() for c in nx.connected_components(H)]
+    H = graph.to_undirected()
     S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
     nth = input("Select nth CC:\n")
     n = int(nth)
-    subGraph = cleanGraph.subgraph(S[n]).copy()
+    subGraph = graph.subgraph(S[n]).copy()
     subGraph.to_directed()
 
     return subGraph
@@ -458,6 +431,8 @@ def parseGraph(graph, node_positions, compounds):
 
     node_colors = nx.get_node_attributes(graph, "color")
     node_types = nx.get_node_attributes(graph, "node_type")
+    node_cids = nx.get_node_attributes(graph, "cid")
+
     print(compounds)
     graphInfo['nodes'] = []
     for node in graph.nodes():
@@ -472,7 +447,7 @@ def parseGraph(graph, node_positions, compounds):
         nodeInfo['y'] = node_positions[node][1]
         nodeInfo['color'] = node_colors[node]
         nodeInfo['type'] = node_types[node]
-        # nodeInfo['shape'] = 'box'
+        nodeInfo['cid'] = node_cids[node]
 
         graphInfo['nodes'].append(nodeInfo)
 
@@ -489,7 +464,7 @@ def parseGraph(graph, node_positions, compounds):
 
         graphInfo['edges'].append(edgeInfo)
 
-
+    print(getGraphInfo)
     return str(graphInfo)
 
 def parseJsonToNx(graphInfo):
@@ -535,6 +510,11 @@ def getNodeInfo(graph, node):
     return predecessors, successors
 
 def countLevels(poses):
+
+    # for node in centralNodes:
+    #     centralLevel = poses[node][1]
+    #     print("Central Node:", node, "Central Level:", centralLevel)
+
     levels = dict()
     new_poses = dict()
 
@@ -545,14 +525,13 @@ def countLevels(poses):
         else:
             levels[level] = [node]
         
-        
 
     for level in levels:
         nodes = [nodes for nodes in levels[level]]  
         nodes.sort(key=lambda x: poses[x][0])
 
         if nodes[0][0] != 'R':
-            print("Compounds")
+            # print("Compounds")
             offset = 1
 
             for node in nodes:
@@ -560,21 +539,33 @@ def countLevels(poses):
                     offset = -1
                 else:
                     offset = 1
-                print(node, poses[node][0])
+                # print(node, poses[node][0])
                 new_poses[node] = (poses[node][0], level*2 + 15*offset)
         else:
-            print("Reactions")
+            # print("Reactions")
             for node in nodes:
-                print(node, poses[node][0])
+                # print(node, poses[node][0])
 
                 new_poses[node] = (poses[node][0], level*2)
             
     print("Number of Levels: ", len(levels))
+    for i, key in enumerate(sorted(levels)):
+        print(i,':',key)
     return new_poses
     # print(levels)
 
-def staggerLayers(poses):
-    
+def staggerLayers(graph, poses):
+    #Computing betweeness
+    # betCent = nx.betweenness_centrality(graph, normalized=True, endpoints=True)
+
+    #Descending order sorting betweeness
+    # betCent_sorted=sorted(betCent.items(), key=lambda item: item[1],reverse=True)
+
+    # print("Bet centrality", betCent_sorted)
+
+    # H = graph.to_undirected()
+    # center = nx.center(H)
+
     return countLevels(poses)
 
 def checkMaxCCSize(graph):
@@ -592,21 +583,28 @@ def checkMaxCCSize(graph):
         H = graph.to_undirected()
         S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
 
-def getGraphPositions(graph):
+def defineNodeCID(graph, nodes, cid):
+    for node in nodes:
+        graph.nodes[node]['cid'] = cid
+        # print(node, graph.nodes[node]['cid'])
+
+def getGraphPositions(graph, N = 1.5):
     connected = isConnected(graph)
     poses = {}
     changeSourceAndSinkNodeType(graph)
     setColorNodeType(graph)  
 
     if connected:
-        poses = sugiyama(graph)
+        poses = sugiyama(graph, N)
+        defineNodeCID(graph, graph.nodes(), 0)
+
     else:
             H = graph.to_undirected()
             S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
 
             xMax = 0
             currentMaxX = 0
-            for c in S:
+            for cid, c in enumerate(S):
                 subGraph = graph.subgraph(c).copy()
                 subGraph.to_directed()
                 new_poses = sugiyama(subGraph)
@@ -616,6 +614,8 @@ def getGraphPositions(graph):
                         xMax = new_poses[pos][0]
                 poses.update(new_poses)
                 currentMaxX = xMax + 200
-    
-    poses = staggerLayers(poses)
+                
+                defineNodeCID(graph, subGraph.nodes(), cid)
+
+    poses = staggerLayers(graph, poses)
     return poses

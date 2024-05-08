@@ -11,7 +11,7 @@ import os
 
 def index(request):
   dirname = os.path.dirname(__file__)
-  directory = os.path.join(dirname, 'static/data/inputGraphs')
+  directory = os.path.join(dirname, 'static/inputGraphs')
   filenames = os.listdir(directory)
   filenames.sort()
   
@@ -26,9 +26,12 @@ def add_pathway(request):
           G = nx.DiGraph()
 
           dirname = os.path.dirname(__file__)
-          directory = os.path.join(dirname, 'static/data/inputGraphs', name)
+          directory = os.path.join(dirname, 'static/inputGraphs', name)
+          
           read_graph_from_txt(G, directory)
           
+          checkMaxCCSize(G)
+
           poses = getGraphPositions(G)
           
           graphInfo = parseGraph(G,poses, getCompoundNames(G))
@@ -71,9 +74,9 @@ def get_graph_info(request):
 
       poses = getGraphPositions(G)
       
-      numNodes, numEdges, numCrossings, numCCs, highestDegree = getGraphInfo(G, poses) 
+      numNodes, numEdges, numCrossings, numCCs, highestDegree, numNodesCC = getGraphInfo(G, poses) 
       
-      return JsonResponse({'numNodes': numNodes, 'numEdges': numEdges, 'numCrossings': numCrossings, 'numCCs': numCCs, 'highestDegree': highestDegree})
+      return JsonResponse({'numNodes': numNodes, 'numEdges': numEdges, 'numCrossings': numCrossings, 'numCCs': numCCs, 'highestDegree': highestDegree, 'numNodesCC':numNodesCC})
 
 
 def get_cycles_info(request):
@@ -167,7 +170,7 @@ def reset_graph(request):
       G = nx.DiGraph()
 
       dirname = os.path.dirname(__file__)
-      directory = os.path.join(dirname, 'static/data/inputGraphs', name)
+      directory = os.path.join(dirname, 'static/inputGraphs', name)
       read_graph_from_txt(G, directory)
       
       poses = getGraphPositions(G)
@@ -186,5 +189,31 @@ def update_compounds(request):
    if request.method == 'POST':
       compounds = retrieveNodeNames()
       for compound in compounds:
-         Compound.objects.get_or_create(identifier=compound, name=compounds[compound])
+         try:
+            Compound.objects.create(identifier=compound, name=compounds[compound])
+         except:
+            Compound.objects.filter(identifier=compound).update(name=compounds[compound])
+         
    return JsonResponse({'status': 'success'})
+
+def recompute_positions(request):
+   if request.method == 'POST':
+      name = request.POST.get('name')
+      
+      pathway = Pathway.objects.get(name=name) 
+   
+      G = nx.DiGraph()
+      info = pathway.graphInfo.replace("'", '"')
+      G = parseJsonToNx(info)
+
+      poses = getGraphPositions(G)      
+
+      graphInfo = parseGraph(G,poses, getCompoundNames(G))
+
+      pthwy = Pathway.objects.get(pk=name)
+      pthwy.graphInfo = graphInfo
+      pthwy.save()
+
+      info = pthwy.graphInfo.replace("'", '"')
+
+      return JsonResponse({'graphInfo':info})
