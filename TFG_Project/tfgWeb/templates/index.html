@@ -31,43 +31,12 @@
             background-color: #cbd5e0;
             cursor: ew-resize;
             height: 100%;
-            width: 5px;
+            width: 3px;
         }
 
         #infoConfig {
             flex: 1;
             overflow-y: auto;
-        }
-
-        .tab {
-            overflow: hidden;
-            border: 1px solid #ccc;
-            background-color: #f1f1f1;
-        }
-
-        .tab button {
-            background-color: transparent;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            padding: 14px 16px;
-            transition: background-color 0.3s;
-            font-size: 17px;
-        }
-
-        .tab button:hover {
-            background-color: #ddd;
-        }
-
-        .tab button.active {
-            background-color: #ccc;
-        }
-
-        .tabcontent {
-            display: none;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-top: none;
         }
 
         #overlay {
@@ -91,6 +60,35 @@
             margin-right:1em;
             margin-top: 0.5em;
             margin-bottom: 1em;
+        }
+
+        .tab-pane{
+            padding: 1em;
+        }
+
+        .legend{
+            margin-bottom: 2em;
+            margin-left: 0.5em;
+            padding: 1em;
+            list-style: none;
+            background-color: white;
+            border-radius: 3px;
+            border: 1px solid lightgrey;
+
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .legend-item .color-box {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 3px;
+            border: transparent;
         }
 
     </style>
@@ -125,23 +123,44 @@
             {% endfor %}
         </select>
     </div>
+
+
+        
+    <ul class="position-absolute bottom-0 left-0 legend z-1 ">
+        <li class="legend-item">
+            <div class="color-box" style="background-color: #0000ff;"></div>
+            <span>Reaction</span>
+        </li>
+        <li class="legend-item">
+            <div class="color-box" style="background-color: #ff0000;"></div>
+            <span>Compound</span>
+        </li>
+        <li class="legend-item">
+            <div class="color-box" style="background-color: #008000;"></div>
+            <span>Sink compound</span>
+        </li>
+        <li class="legend-item">
+            <div class="color-box" style="background-color: #ffa500;"></div>
+            <span>Source compound</span>
+        </li>
+    </ul>
     
     <div style="display: flex">       
 
         <form id="pathwayForm">
-            <input type="submit" value="Load" class="btn btn-primary"/>            
+            <input type="submit" value="Load" class="btn btn-primary" disabled>            
         </form>
         
         <form id="recomputePositions">
-            <input type="submit" value="Recompute Positions" class="btn btn-primary">
+            <input type="submit" value="Recompute Positions" class="btn btn-primary" disabled>
         </form>
 
         <form id="resetPathway">
-            <input type="submit" value="Reset" class="btn btn-danger">
+            <input type="submit" value="Reset" class="btn btn-danger" disabled>
         </form>
 
     </div>
-        
+
     <div id="container">
         <div id="mynetwork"></div>
         <div class="resizer" id="dragMe"></div> 
@@ -182,55 +201,68 @@
                     <h4>Split high degree components</h4>
                     <p id="highestDegree"></p>
                     <form id="splitHighDegreeForm">
-                        <input id="degreeThreshhold" type="number" min="0">
-                        <input type="submit" value="Split" />
+                        <!-- <input id="degreeThreshhold" type="number" min="0"> -->
+                        <p id="selectedValue"></p>
+                        
+                        <input type="range" class="form-range" min="0" id="degreeThreshhold">
+                        <input type="submit" value="Split" class="btn btn-outline-primary" />
                     </form>
-    
+                    <hr>
                     <h4>Break cycle</h4>
                     <p id="componentInMostCycles"></p>
                     <form id="breakCycle">
-                        <input type="submit" value="Split" id="breakCycleButton"/>
+                        <input type="submit" value="Split" class="btn btn-outline-primary" id="breakCycleButton"/>
                     </form>
-    
+                    <hr>
                     <h4>Duplicate selected node</h4>
                     <p id="selectedNode"></p>
                     <form id="duplicateSelectedNode">
-                        <input type="submit" value="Split" id="duplicateSelectedNodeButton" />
+                        <input type="submit" value="Split" class="btn btn-outline-primary" id="duplicateSelectedNodeButton" />
                     </form>
                 </div>
                 </div>
             </div>
-            
-            
 
         </div>
+
     </div>
     {% block javascript %}
     <script>var csrf_token_value = "{{ csrf_token }}";</script>
-    <script src="{% static 'js/main.js' %}"></script>
     
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var rangeInput = document.getElementById("degreeThreshhold");
+            var selectedValueDisplay = document.getElementById("selectedValue");
 
-        function openTab(evt, tabName) {
-            // Declare all variables
-            var i, tabcontent, tablinks;
+            rangeInput.addEventListener("input", function() {
+                selectedValueDisplay.textContent = "Split nodes with degree greater than " + rangeInput.value;
+            });
 
-            // Get all elements with class="tabcontent" and hide them
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
+        });
 
-            // Get all elements with class="tablinks" and remove the class "active"
-            tablinks = document.getElementsByClassName("tablinks");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
+        document.addEventListener("DOMContentLoaded", function() {
+            var selectElement = document.getElementById("pathwaysList");
+            var forms = document.querySelectorAll("form");
 
-            // Show the current tab, and add an "active" class to the button that opened the tab
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
-        }
+            selectElement.addEventListener("change", function() {
+                var selectedOption = selectElement.options[selectElement.selectedIndex].text;
+                var isDisabled = selectedOption === "Select a metabolic pathway/network";
+                
+                var loadForm = document.getElementById("pathwayForm");
+                var recomputeForm = document.getElementById("recomputePositions");
+                var resetForm = document.getElementById("resetPathway");
+
+                loadForm.querySelectorAll("input[type=submit]").forEach(function(input) {
+                    input.disabled = isDisabled;
+                });
+                recomputeForm.querySelectorAll("input[type=submit]").forEach(function(input) {
+                    input.disabled = isDisabled;
+                });
+                resetForm.querySelectorAll("input[type=submit]").forEach(function(input) {
+                    input.disabled = isDisabled;
+                });
+            });
+        });
 
         document.addEventListener('DOMContentLoaded', function() {
             // Query the element
@@ -324,7 +356,6 @@
             network.cluster(clusterOptionsByData);		
         }
 
-
         function loadGraph(inputNodes, inputEdges)
         {
             console.log(inputNodes)
@@ -361,7 +392,6 @@
                 }
         
             };
-
             // initialize your network!
             var network = new vis.Network(container, data, options);
             
@@ -393,11 +423,11 @@
                     var numCCsElement = document.getElementById("numCCs");
                     numCCsElement.innerHTML = "Number of Connected Components: ";
                     numCCsElement.appendChild(document.createTextNode(graphInfo.numCCs));
+                    
+                    document.getElementById("selectedValue").innerHTML = "Split nodes with degree greater than " + graphInfo.highestDegree;
+                    document.getElementById("degreeThreshhold").max = graphInfo.highestDegree;
+                    document.getElementById("degreeThreshhold").value = graphInfo.highestDegree;
 
-                    var highestDegreeElement = document.getElementById("highestDegree");
-                    highestDegreeElement.innerHTML = "Highest Degree of a node: ";
-                    highestDegreeElement.appendChild(document.createTextNode(graphInfo.highestDegree));
-            
                     document.getElementById("overlay").style.display = "none";
 
                     // for(var i = 0; i < graphInfo.numCCs; ++i)
@@ -405,8 +435,6 @@
                     //     console.log(data, graphInfo.numNodesCC)
                     //     clusterByCid(network, i, data, graphInfo.numNodesCC[i]);
                     // }
-
-
 
                 },
                 error: (error) => {
@@ -417,8 +445,14 @@
             });
             
             var numCyclesElement = document.getElementById("componentInMostCycles");
-            numCyclesElement.innerHTML = "Number of Cycles: Loading...";            
-            numCyclesElement.innerHTML += "<br> Node appearing in most cycles: Loading...";
+            numCyclesElement.innerHTML = "Number of Cycles:" + `<div class="spinner-border spinner-border-sm mx-1" role="status">
+                                                                    <span class="sr-only"></span>
+                                                                </div>
+                                                                `;            
+            numCyclesElement.innerHTML += "<br> Node appearing in most cycles:"  + `<div class="spinner-border spinner-border-sm  mx-1" role="status">
+                                                                                        <span class="sr-only"></span>
+                                                                                    </div>
+                                                                                    `; ;
 
             $("#breakCycleButton").prop('disabled', true);
             
@@ -527,7 +561,7 @@
                             else{
                                 url = "https://www.kegg.jp/Fig/reaction/" + selectedNode_id + ".gif"
                             }
-                            nodeFigure.innerHTML = ' <img src=' + url + ' style="width:100%">'
+                            nodeFigure.innerHTML = ' <img src=' + url + ' style="max-width: 400px;">'
 
                         },
                         error: (error) => {

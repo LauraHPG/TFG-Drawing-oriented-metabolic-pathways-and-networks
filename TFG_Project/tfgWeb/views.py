@@ -22,7 +22,10 @@ def add_pathway(request):
         name = request.POST.get('name')
         pathway = {}
         try:
+         pathway = Pathway.objects.get(name=name)    
 
+        except:
+          
           G = nx.DiGraph()
 
           dirname = os.path.dirname(__file__)
@@ -40,8 +43,6 @@ def add_pathway(request):
           
           pathway = Pathway.objects.get(name=name) 
 
-        except:
-          pathway = Pathway.objects.get(name=name)    
 
         info = pathway.graphInfo.replace("'", '"')
         return JsonResponse({'status': 'success', 'graphInfo': info})
