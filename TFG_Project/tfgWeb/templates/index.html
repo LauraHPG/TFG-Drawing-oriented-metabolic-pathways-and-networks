@@ -166,24 +166,40 @@
         <div class="resizer" id="dragMe"></div> 
         <div id="infoConfig">
 
-            <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                <a class="nav-link active" id="nav-information-tab" data-bs-toggle="tab" href="#nav-information" role="tab" aria-controls="nav-information" aria-selected="true">Information</a>
-                <a class="nav-link" id="nav-actions-tab" data-bs-toggle="tab" href="#nav-actions" role="tab" aria-controls="nav-actions" aria-selected="false">Actions</a>
-            </div>
+            <div class="accordion" id="accordionPanelsStayOpenExample">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                      Information
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
 
-            <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show active" id="nav-information" role="tabpanel" aria-labelledby="nav-information-tab">
-                    <div id="Information">
-                        <div id="graphInfo">
-                            <h3>Graph Information</h3>
-                            <p id="numNodes"></p>
-                            <p id="numEdges"></p>
-                            <p id="numCrossings"></p>
-                            <p id="numCCs"></p>
+                        <div id="Information">
+                            <div id="graphInfo">
+                                <h3>Graph Information</h3>
+                                <p id="numNodes"></p>
+                                <p id="numEdges"></p>
+                                <p id="numCrossings"></p>
+                                <p id="numCCs"></p>
+                            </div>
+                                   
                         </div>
-        
+                    
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                        Node Information
+                      </button>
+                    </h2>
+                    <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+                      <div class="accordion-body">
+
                         <div id="nodeInfo" hidden>
-                            <hr>
                             <h3>Node Information</h3>
                             <h4 id="nodeId"></h4>
                             <p>Predecesors:</p>
@@ -193,35 +209,44 @@
                             <p>Figure:</p>
                             <p id="nodeFigure"></p>
                         </div>
-                        
+                      
+                      </div>
                     </div>
+                  </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                      Actions
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <div id="Actions">
+                            <h4>Split high degree components</h4>
+                            <p id="highestDegree"></p>
+                            <form id="splitHighDegreeForm">
+                                <p id="selectedValue"></p>
+                                
+                                <input type="range" class="form-range" min="0" id="degreeThreshhold">
+                                <input type="submit" value="Split" class="btn btn-outline-primary" />
+                            </form>
+                            <hr>
+                            <h4>Break cycle</h4>
+                            <p id="componentInMostCycles"></p>
+                            <form id="breakCycle">
+                                <input type="submit" value="Split" class="btn btn-outline-primary" id="breakCycleButton"/>
+                            </form>
+                            <hr>
+                            <h4>Duplicate selected node</h4>
+                            <p id="selectedNode"></p>
+                            <form id="duplicateSelectedNode">
+                                <input type="submit" value="Split" class="btn btn-outline-primary" id="duplicateSelectedNodeButton" />
+                            </form>
+                        </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="tab-pane fade" id="nav-actions" role="tabpanel" aria-labelledby="nav-actions-tab">
-                  <div id="Actions">
-                    <h4>Split high degree components</h4>
-                    <p id="highestDegree"></p>
-                    <form id="splitHighDegreeForm">
-                        <!-- <input id="degreeThreshhold" type="number" min="0"> -->
-                        <p id="selectedValue"></p>
-                        
-                        <input type="range" class="form-range" min="0" id="degreeThreshhold">
-                        <input type="submit" value="Split" class="btn btn-outline-primary" />
-                    </form>
-                    <hr>
-                    <h4>Break cycle</h4>
-                    <p id="componentInMostCycles"></p>
-                    <form id="breakCycle">
-                        <input type="submit" value="Split" class="btn btn-outline-primary" id="breakCycleButton"/>
-                    </form>
-                    <hr>
-                    <h4>Duplicate selected node</h4>
-                    <p id="selectedNode"></p>
-                    <form id="duplicateSelectedNode">
-                        <input type="submit" value="Split" class="btn btn-outline-primary" id="duplicateSelectedNodeButton" />
-                    </form>
-                </div>
-                </div>
-            </div>
+              </div>
 
         </div>
 
