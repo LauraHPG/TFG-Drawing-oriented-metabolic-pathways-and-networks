@@ -1,13 +1,13 @@
-from django.template import loader
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from .models import Pathway, Compound
-from django.core import serializers
 
 from .static.scripts.poly_point_isect import *
 from .static.scripts.auxiliar_methods import *
 import networkx as nx 
 import os
+
+import time
 
 def index(request):
   dirname = os.path.dirname(__file__)
@@ -18,39 +18,49 @@ def index(request):
   return render(request, 'index.html', {'filenames': filenames})
 
 def add_pathway(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        pathway = {}
-        try:
+    
+   start_time = time.time()
+
+   if request.method == 'POST':
+      name = request.POST.get('name')
+      pathway = {}
+      try:
          pathway = Pathway.objects.get(name=name)    
 
-        except:
-          
-          G = nx.DiGraph()
+      except:
+         
+         G = nx.DiGraph()
 
-          dirname = os.path.dirname(__file__)
-          directory = os.path.join(dirname, 'static/inputGraphs', name)
-          
-          read_graph_from_txt(G, directory)
-          
-          checkMaxCCSize(G)
+         dirname = os.path.dirname(__file__)
+         directory = os.path.join(dirname, 'static/inputGraphs', name)
+         
+         read_graph_from_txt(G, directory)
+         
+         checkMaxCCSize(G)
 
-          poses = getGraphPositions(G)
-          
-          graphInfo = parseGraph(G,poses, getCompoundNames(G))
+         poses = getGraphPositions(G)
+         
+         graphInfo = parseGraph(G,poses, getCompoundNames(G))
 
-          Pathway.objects.create(name=name, graphInfo = graphInfo)
-          
-          pathway = Pathway.objects.get(name=name) 
+         Pathway.objects.create(name=name, graphInfo = graphInfo)
+         
+         pathway = Pathway.objects.get(name=name) 
 
 
-        info = pathway.graphInfo.replace("'", '"')
-        return JsonResponse({'status': 'success', 'graphInfo': info})
-    
-    return JsonResponse({'status': 'error'})
+      info = pathway.graphInfo.replace("'", '"')
+
+      end_time = time.time()
+      elapsed_time = end_time - start_time
+      print("Elapsed time add_pathway: {:.6f} seconds".format(elapsed_time))
+
+      return JsonResponse({'status': 'success', 'graphInfo': info})
+   
+   return JsonResponse({'status': 'error'})
 
 def get_node_info(request):
    if request.method == 'POST':
+      start_time = time.time()
+
       nodeName = request.POST.get('nodeName')
       pathwayName = request.POST.get('pathwayName')
       pathway = Pathway.objects.get(name=pathwayName) 
@@ -61,11 +71,48 @@ def get_node_info(request):
 
       poses = sugiyama(G)
       pred, succ = getNodeInfo(G,nodeName) 
+
+
+      predecessors = pred
+      successors = succ
       
-      return JsonResponse({'predecessors': pred, 'successors': succ})
+      if nodeName[0] == 'R':
+
+         predecessors = dict()
+         successors = dict()
+
+         for node in pred:
+            label = getNodeLabel(node)
+            try:
+               nodeName = Compound.objects.get(pk=label).name
+            except:
+               nodeName = label
+               
+            predecessors[label] = nodeName
+         
+
+         for node in succ:
+            label = getNodeLabel(node)
+            try:
+               nodeName = Compound.objects.get(pk=label).name
+            except:
+               nodeName = label
+               
+            successors[label] = nodeName
+      
+         predecessors = [f"{key}: {value}" for key, value in predecessors.items()]
+         successors = [f"{key}: {value}" for key, value in successors.items()]
+      end_time = time.time()
+      elapsed_time = end_time - start_time
+      print("Elapsed time get_node_info: {:.6f} seconds".format(elapsed_time))
+
+      return JsonResponse({'predecessors':predecessors , 'successors': successors})
 
 def get_graph_info(request):
    if request.method == 'POST':
+      
+      start_time = time.time()
+
       pathwayName = request.POST.get('pathwayName')
       pathway = Pathway.objects.get(name=pathwayName) 
 
@@ -77,11 +124,17 @@ def get_graph_info(request):
       
       numNodes, numEdges, numCrossings, numCCs, highestDegree, numNodesCC = getGraphInfo(G, poses) 
       
+      end_time = time.time()
+      elapsed_time = end_time - start_time
+      print("Elapsed time get_graph_info: {:.6f} seconds".format(elapsed_time))
+      
       return JsonResponse({'numNodes': numNodes, 'numEdges': numEdges, 'numCrossings': numCrossings, 'numCCs': numCCs, 'highestDegree': highestDegree, 'numNodesCC':numNodesCC})
 
 
 def get_cycles_info(request):
    if request.method == 'POST':
+      start_time = time.time()
+      
       pathwayName = request.POST.get('pathwayName')
       pathway = Pathway.objects.get(name=pathwayName) 
 
@@ -91,11 +144,17 @@ def get_cycles_info(request):
 
       numCycles, nodeInMostCycles = getCyclesInfo(G)
       
+
+      end_time = time.time()
+      elapsed_time = end_time - start_time
+      print("Elapsed time get_cycles_info: {:.6f} seconds".format(elapsed_time))
+      
       return JsonResponse({'numCycles': numCycles, 'nodeInMostCycles': nodeInMostCycles})
 
 
 def split_high_degree(request):
    if request.method == 'POST':
+      start_time = time.time()
       pathwayName = request.POST.get('name')
       threshhold = int(request.POST.get('threshhold'))
       pathway = Pathway.objects.get(name=pathwayName) 
@@ -116,10 +175,15 @@ def split_high_degree(request):
 
       info = pthwy.graphInfo.replace("'", '"')
 
+      end_time = time.time()
+      elapsed_time = end_time - start_time
+      print("Elapsed time split_high_degree: {:.6f} seconds".format(elapsed_time))
+
       return JsonResponse({'graphInfo':info})
 
 def duplicate_node(request):
    if request.method == 'POST':
+      start_time = time.time()
       pathwayName = request.POST.get('name')
       node = request.POST.get('node')
       if node[0] != 'D' :
@@ -141,6 +205,11 @@ def duplicate_node(request):
 
          info = pthwy.graphInfo.replace("'", '"')
 
+
+         end_time = time.time()
+         elapsed_time = end_time - start_time
+         print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
+
          return JsonResponse({'graphInfo':info})
          
       else:
@@ -150,10 +219,12 @@ def duplicate_node(request):
 
 
 def getCompoundNames(G):
+   start_time = time.time()
+
    compounds = dict()
    for node in G.nodes():
       if node[0] != 'R':
-         print(getNodeLabel(node))
+         # print(getNodeLabel(node))
          label = getNodeLabel(node)
          if not label in compounds:
             try:
@@ -162,10 +233,18 @@ def getCompoundNames(G):
                nodeName = label
             
          compounds[label] = nodeName
+      
+   
+   end_time = time.time()
+   elapsed_time = end_time - start_time
+   print("Elapsed time getCompoundNames: {:.6f} seconds".format(elapsed_time))
+   
    return compounds
 
 def reset_graph(request):
    if request.method == 'POST':
+      start_time = time.time()
+
       name = request.POST.get('name')
       
       G = nx.DiGraph()
@@ -184,6 +263,10 @@ def reset_graph(request):
 
       info = pthwy.graphInfo.replace("'", '"')
 
+      end_time = time.time()
+      elapsed_time = end_time - start_time
+      print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
+   
       return JsonResponse({'graphInfo':info})
    
 def update_compounds(request):
@@ -199,6 +282,8 @@ def update_compounds(request):
 
 def recompute_positions(request):
    if request.method == 'POST':
+      start_time = time.time()
+
       name = request.POST.get('name')
       
       pathway = Pathway.objects.get(name=name) 
@@ -216,5 +301,9 @@ def recompute_positions(request):
       pthwy.save()
 
       info = pthwy.graphInfo.replace("'", '"')
+
+      end_time = time.time()
+      elapsed_time = end_time - start_time
+      print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
 
       return JsonResponse({'graphInfo':info})

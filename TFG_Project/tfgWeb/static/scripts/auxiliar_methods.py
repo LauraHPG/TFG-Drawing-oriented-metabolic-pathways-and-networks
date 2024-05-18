@@ -15,6 +15,7 @@ import json
 
 import requests
 
+DEBUG = True
 
 def read_graph(graph):
     nx.set_node_attributes(graph, {})
@@ -45,12 +46,12 @@ def read_graph_from_txt(graph, path):
 def splitHighDegreeComponents(graph, threshhold):
 
     ordered_nodes = nodes_ordered_by_degree(graph)
-    print(f"Initial number of nodes: {graph.number_of_nodes()}")
+    if DEBUG: print(f"Initial number of nodes: {graph.number_of_nodes()}")
     for node, degree in ordered_nodes:
         if degree >= threshhold and graph.nodes[node]['node_type'] != 'reaction':
                 duplicateNode(graph, node)
 
-    print(f"Final number of nodes: {graph.number_of_nodes()}")
+    if DEBUG: print(f"Final number of nodes: {graph.number_of_nodes()}")
 
 
 def duplicateNode(graph, node):
@@ -104,7 +105,7 @@ def getNodeInMostCycles(graph):
 
     cycles = nx.recursive_simple_cycles(graph)
 
-    print(f"Number of cycles: {len(cycles)}")
+    if DEBUG: print(f"Number of cycles: {len(cycles)}")
 
     if len(cycles) == 0:
         return None
@@ -121,7 +122,7 @@ def getNodeInMostCycles(graph):
 
     sortedAppearances = sorted(appearances.items(), key=lambda x:x[1],reverse=True)
 
-    print("(Node in most cycles, number of cycles it appears in): ", sortedAppearances[0])
+    if DEBUG: print("(Node in most cycles, number of cycles it appears in): ", sortedAppearances[0])
 
     return sortedAppearances[0][0]
 
@@ -130,7 +131,7 @@ def removeCyclesByNodeInMostCycles(graph):
 
     cycles = nx.recursive_simple_cycles(graph)
 
-    print(f"Number of cycles: {len(cycles)}")
+    if DEBUG: print(f"Number of cycles: {len(cycles)}")
 
     appearances = {}
     for cycle in cycles:
@@ -144,14 +145,14 @@ def removeCyclesByNodeInMostCycles(graph):
 
     sortedAppearances = sorted(appearances.items(), key=lambda x:x[1],reverse=True)
 
-    print(f"{len(appearances)} nodes from {len(graph.nodes())} appear in a cycle")
+    if DEBUG: print(f"{len(appearances)} nodes from {len(graph.nodes())} appear in a cycle")
 
     while True:
-        print("(Node in most cycles, number of cycles it appears in): ", sortedAppearances[0])
+        if DEBUG: print("(Node in most cycles, number of cycles it appears in): ", sortedAppearances[0])
         node = next(iter(sortedAppearances))[0]
         duplicateNode = input(f"Do you want to duplicate {node}? (Y/n)")
         if duplicateNode == "y" or duplicateNode == "Y":
-            print(f"Initial number of nodes: {graph.number_of_nodes()}")
+            if DEBUG: print(f"Initial number of nodes: {graph.number_of_nodes()}")
 
             out_edges = graph.out_edges([node])
             in_edges = graph.in_edges([node])
@@ -176,9 +177,9 @@ def removeCyclesByNodeInMostCycles(graph):
         else:
             return
 
-        print(f"Final number of nodes: {graph.number_of_nodes()}")
+        if DEBUG: print(f"Final number of nodes: {graph.number_of_nodes()}")
         cycles = nx.recursive_simple_cycles(graph)
-        print(f"Number of cycles: {len(cycles)}")
+        if DEBUG: print(f"Number of cycles: {len(cycles)}")
         if len(cycles) == 0 : return
 
         appearances = {}
@@ -193,7 +194,7 @@ def removeCyclesByNodeInMostCycles(graph):
         sortedAppearances = sorted(appearances.items(), key=lambda x:x[1],reverse=True)
 
         H = graph.to_undirected()
-        print(f"Number of connected components: {nx.number_connected_components(H)}")
+        if DEBUG: print(f"Number of connected components: {nx.number_connected_components(H)}")
 
         # Measure
         poses = sugiyama(graph)
@@ -240,12 +241,12 @@ def rearangeSources(graph, pos):
     new_positions = {}
     for node in pos:
         if graph.in_degree(node) == 0:
-            # print("source node:", node, "out degree:", graph.out_degree(node))
+            # if DEBUG: print("source node:", node, "out degree:", graph.out_degree(node))
             neighbors = [n for n in graph.neighbors(node)]
             neighbor = neighbors[0]
 
             posNeigh = pos[neighbor]
-            # print("Neighbor:", neighbor, "NPosition:", posNeigh)
+            # if DEBUG: print("Neighbor:", neighbor, "NPosition:", posNeigh)
             newPosX = 0
             if pos[node][0] < posNeigh[0]:
                 newPosX = posNeigh[0]-40
@@ -255,17 +256,17 @@ def rearangeSources(graph, pos):
             # if the only neighbor lower of neighbor is node, put node at same x as neighbor
             belowNeighbors = 0
             for neigh in graph.predecessors(neighbor):
-                # print(neigh, pos[neigh])
+                # if DEBUG: print(neigh, pos[neigh])
                 if pos[neigh][1] < posNeigh[1]:
                     belowNeighbors += 1
 
             for neigh in graph.successors(neighbor):
-                # print(neigh, pos[neigh])
+                # if DEBUG: print(neigh, pos[neigh])
                 if pos[neigh][1] < posNeigh[1]:
                     belowNeighbors += 1
 
 
-            # print(belowNeighbors)
+            # if DEBUG: print(belowNeighbors)
 
             # it is the only under neigh, we put it under the upper one
             if belowNeighbors == 1:
@@ -294,15 +295,15 @@ def countCrossings(graph,pos):
             numCrossings = bent.isect_segments(segments_y, validate=True)
         except:
             numCrossings = []
-            print("Could not compute number of crossings")    
+            if DEBUG: print("Could not compute number of crossings")    
             
-    print("Number of crossings:", len(numCrossings))    
+    if DEBUG: print("Number of crossings:", len(numCrossings))    
     return len(numCrossings)
 
 def isConnected(graph):
     H = graph.to_undirected()
     numCC = nx.number_connected_components(H)
-    print(f"Number of connected components: {numCC}")
+    if DEBUG: print(f"Number of connected components: {numCC}")
 
     if numCC > 1:
         return False
@@ -311,9 +312,9 @@ def isConnected(graph):
 
 def getGraphInfo(graph,poses):
     numNodes = len(graph.nodes())
-    print("Num Nodes:", numNodes)
+    if DEBUG: print("Num Nodes:", numNodes)
     numEdges = len(graph.edges())
-    print("Num Edges:", numEdges)
+    if DEBUG: print("Num Edges:", numEdges)
     numCrossings = countCrossings(graph,poses)
     H = graph.to_undirected()
     numCCs = nx.number_connected_components(H)
@@ -422,7 +423,7 @@ def retrieveNodeNames():
                 compounds[compoundId] = compoundName
 
     else:
-        print("Failed to retrieve data. Status code:", response.status_code)
+        if DEBUG: print("Failed to retrieve data. Status code:", response.status_code)
     
     return compounds
 
@@ -433,7 +434,7 @@ def parseGraph(graph, node_positions, compounds):
     node_types = nx.get_node_attributes(graph, "node_type")
     node_cids = nx.get_node_attributes(graph, "cid")
 
-    print(compounds)
+    # if DEBUG: print(compounds)
     graphInfo['nodes'] = []
     for node in graph.nodes():
         nodeInfo = {}
@@ -464,11 +465,11 @@ def parseGraph(graph, node_positions, compounds):
 
         graphInfo['edges'].append(edgeInfo)
 
-    print(getGraphInfo)
+    # if DEBUG: print(getGraphInfo)
     return str(graphInfo)
 
 def parseJsonToNx(graphInfo):
-    print(graphInfo)
+    # if DEBUG: print(graphInfo)
     json_data = json.loads(graphInfo)
     graph = nx.DiGraph()
 
@@ -492,14 +493,14 @@ def parseJsonToNx(graphInfo):
 
 def getNodeInfo(graph, node):
     predecessors, successors = [],[]
-    print(node)
-    print("Predecessors:")
+    if DEBUG: print(node)
+    if DEBUG: print("Predecessors:")
     for pred in graph.predecessors(node):
-        print("- ", pred)
+        if DEBUG: print("- ", pred)
         predecessors.append(pred)
-    print("Successors")
+    if DEBUG: print("Successors")
     for suc in graph.successors(node):
-        print("- ", suc)
+        if DEBUG: print("- ", suc)
         successors.append(suc)
     
     if len(predecessors) == 0:
@@ -513,7 +514,7 @@ def countLevels(poses):
 
     # for node in centralNodes:
     #     centralLevel = poses[node][1]
-    #     print("Central Node:", node, "Central Level:", centralLevel)
+    #     if DEBUG: print("Central Node:", node, "Central Level:", centralLevel)
 
     levels = dict()
     new_poses = dict()
@@ -531,7 +532,7 @@ def countLevels(poses):
         nodes.sort(key=lambda x: poses[x][0])
 
         if nodes[0][0] != 'R':
-            # print("Compounds")
+            # if DEBUG: print("Compounds")
             offset = 1
 
             for node in nodes:
@@ -539,20 +540,20 @@ def countLevels(poses):
                     offset = -1
                 else:
                     offset = 1
-                # print(node, poses[node][0])
+                # if DEBUG: print(node, poses[node][0])
                 new_poses[node] = (poses[node][0], level*2 + 15*offset)
         else:
-            # print("Reactions")
+            # if DEBUG: print("Reactions")
             for node in nodes:
-                # print(node, poses[node][0])
+                # if DEBUG: print(node, poses[node][0])
 
                 new_poses[node] = (poses[node][0], level*2)
             
-    print("Number of Levels: ", len(levels))
+    if DEBUG: print("Number of Levels: ", len(levels))
     for i, key in enumerate(sorted(levels)):
-        print(i,':',key)
+        if DEBUG: print(i,':',key)
     return new_poses
-    # print(levels)
+    # if DEBUG: print(levels)
 
 def staggerLayers(graph, poses):
     #Computing betweeness
@@ -561,7 +562,7 @@ def staggerLayers(graph, poses):
     #Descending order sorting betweeness
     # betCent_sorted=sorted(betCent.items(), key=lambda item: item[1],reverse=True)
 
-    # print("Bet centrality", betCent_sorted)
+    # if DEBUG: print("Bet centrality", betCent_sorted)
 
     # H = graph.to_undirected()
     # center = nx.center(H)
@@ -577,8 +578,8 @@ def checkMaxCCSize(graph):
         node, degree = getHighestDegreeNode(graph)
         splitHighDegreeComponents(graph,degree)
 
-        print("Largest CC size ", len(S[0].nodes()))
-        print("Node info: ", node, degree)
+        if DEBUG: print("Largest CC size ", len(S[0].nodes()))
+        if DEBUG: print("Node info: ", node, degree)
 
         H = graph.to_undirected()
         S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
@@ -586,7 +587,7 @@ def checkMaxCCSize(graph):
 def defineNodeCID(graph, nodes, cid):
     for node in nodes:
         graph.nodes[node]['cid'] = cid
-        # print(node, graph.nodes[node]['cid'])
+        # if DEBUG: print(node, graph.nodes[node]['cid'])
 
 def getGraphPositions(graph, N = 1.5):
     connected = isConnected(graph)
