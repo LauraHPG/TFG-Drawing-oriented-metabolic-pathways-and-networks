@@ -28,6 +28,8 @@ def main():
 |     6: Delete node                                        |
 |     7: Delete edge                                        |
 |     8: Visualise connected component (largest first)      |
+|     9: Generate graph cycle-crossings                     |
+|     10: Generate graph highDegree-crossings               |
 └───────────────────────────────────────────────────────────┘                 
 (q) Quit
 ''')
@@ -98,7 +100,99 @@ def main():
                 plt.show()
             
             case '9':
-                poses = funcs.sugiyama_debug(G)
+                x_data = []
+                y_data = []
+                
+                x_labels = []
+                
+                plt.ion()  # Turn on interactive mode
+                fig, ax = plt.subplots()
+                line, = ax.plot(x_data, y_data)
+
+                numCycles = len(nx.recursive_simple_cycles(G))
+                nodeInMostCycles = funcs.getNodeInMostCycles(G)
+
+                poses = funcs.getGraphPositions(G, 1.5)
+
+                numCrossings = funcs.countCrossings(G,poses)
+                i = 0
+                
+                while numCycles > 0:
+
+                    x_data.append(i)
+                    y_data.append(numCrossings)
+                    x_labels.append(highestDegreeNode)
+                    
+                    line.set_xdata(x_data)
+                    line.set_ydata(y_data)
+                    
+                    ax.set_xticks(x_data)  # Set the x-ticks to the positions in x_data
+                    ax.set_xticklabels(x_labels)  # Set the x-tick labels to the labels in x_labels
+                    ax.set_xticklabels(x_labels, rotation=90) 
+
+                    ax.relim()  # Recalculate limits
+                    ax.autoscale_view()  # Autoscale the view to fit the data
+                    plt.draw()
+                    plt.pause(0.1)  # Pause to allow the plot to update
+
+                    funcs.duplicateNode(G, nodeInMostCycles)
+
+
+                    numCycles = len(nx.recursive_simple_cycles(G))
+                    nodeInMostCycles = funcs.getNodeInMostCycles(G)
+
+                    poses = funcs.getGraphPositions(G, 1.5)
+                    numCrossings = funcs.countCrossings(G,poses)
+                    highestDegree -= 1
+                    i += 1
+
+                plt.ioff()
+                plt.show()
+
+            case '10':
+                x_data = []
+                y_data = []
+                
+                x_labels = []
+                
+                plt.ion()  # Turn on interactive mode
+                fig, ax = plt.subplots()
+                line, = ax.plot(x_data, y_data)
+
+                highestDegreeNode, highestDegree = funcs.getHighestDegreeNode(G) 
+                poses = funcs.getGraphPositions(G, 1.5)
+
+                numCrossings = funcs.countCrossings(G,poses)
+                
+                for i in range(0, highestDegree):
+
+                    x_data.append(i)
+                    y_data.append(numCrossings)
+                    x_labels.append(highestDegreeNode)
+                    
+                    line.set_xdata(x_data)
+                    line.set_ydata(y_data)
+                    
+                    ax.set_xticks(x_data)  # Set the x-ticks to the positions in x_data
+                    ax.set_xticklabels(x_labels)  # Set the x-tick labels to the labels in x_labels
+                    ax.set_xticklabels(x_labels, rotation=90) 
+                    
+                    ax.relim()  # Recalculate limits
+                    ax.autoscale_view()  # Autoscale the view to fit the data
+                    plt.draw()
+                    plt.pause(0.1)  # Pause to allow the plot to update
+
+
+                    funcs.splitHighDegreeComponents(G, highestDegree - i)
+
+                    poses = funcs.getGraphPositions(G, 1.5)
+                    numCrossings = funcs.countCrossings(G,poses)
+                    highestDegree -= 1
+
+                plt.ioff()
+                plt.show()
+
+
             case 'p':
 
                 funcs.changeSourceAndSinkNodeType(G)
