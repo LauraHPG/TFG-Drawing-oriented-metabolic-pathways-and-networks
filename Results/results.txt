@@ -1,0 +1,119 @@
+map00010.oriented
+Iteration: 0 Current Highest Degree Node: C00080 Current Highest Degree: 14 Crossings: 1285
+Iteration: 1 Current Highest Degree Node: C00001 Current Highest Degree: 12 Crossings: 994
+Iteration: 2 Current Highest Degree Node: C00002 Current Highest Degree: 9 Crossings: 683
+Iteration: 3 Current Highest Degree Node: C00084 Current Highest Degree: 7 Crossings: 527
+Iteration: 4 Current Highest Degree Node: C00022 Current Highest Degree: 5 Crossings: 308
+Iteration: 5 Current Highest Degree Node: C00010 Current Highest Degree: 3 Crossings: 36
+map00020.oriented
+Iteration: 0 Current Highest Degree Node: C00011 Current Highest Degree: 9 Crossings: 460
+Iteration: 1 Current Highest Degree Node: C00036 Current Highest Degree: 7 Crossings: 324
+Iteration: 2 Current Highest Degree Node: C00080 Current Highest Degree: 5 Crossings: 160
+Iteration: 3 Current Highest Degree Node: C00068 Current Highest Degree: 3 Crossings: 68
+map00030.oriented
+Iteration: 0 Current Highest Degree Node: C00080 Current Highest Degree: 14 Crossings: 800
+Iteration: 1 Current Highest Degree Node: C00008 Current Highest Degree: 11 Crossings: 657
+Iteration: 2 Current Highest Degree Node: C00118 Current Highest Degree: 8 Crossings: 375
+Iteration: 3 Current Highest Degree Node: C00198 Current Highest Degree: 6 Crossings: 153
+Iteration: 4 Current Highest Degree Node: C00354 Current Highest Degree: 4 Crossings: 134
+Iteration: 5 Current Highest Degree Node: C00031 Current Highest Degree: 2 Crossings: 4
+map00040.oriented
+Iteration: 0 Current Highest Degree Node: C00080 Current Highest Degree: 35 Crossings: 3170
+Iteration: 1 Current Highest Degree Node: C00003 Current Highest Degree: 19 Crossings: 1646
+Iteration: 2 Current Highest Degree Node: C00001 Current Highest Degree: 16 Crossings: 1028
+Iteration: 3 Current Highest Degree Node: C00006 Current Highest Degree: 12 Crossings: 369
+Iteration: 4 Current Highest Degree Node: C00008 Current Highest Degree: 7 Crossings: 288
+Iteration: 5 Current Highest Degree Node: C00379 Current Highest Degree: 5 Crossings: 174
+Iteration: 6 Current Highest Degree Node: C00191 Current Highest Degree: 3 Crossings: 52
+map00051.oriented
+Iteration: 0 Current Highest Degree Node: C00080 Current Highest Degree: 22 Crossings: 2111
+Iteration: 1 Current Highest Degree Node: C00001 Current Highest Degree: 17 Crossings: 1815
+Iteration: 2 Current Highest Degree Node: C00003 Current Highest Degree: 11 Crossings: 1420
+Iteration: 3 Current Highest Degree Node: C00085 Current Highest Degree: 9 Crossings: 580
+Iteration: 4 Current Highest Degree Node: C00009 Current Highest Degree: 7 Crossings: 412
+Iteration: 5 Current Highest Degree Node: C00794 Current Highest Degree: 5 Crossings: 315
+Iteration: 6 Current Highest Degree Node: C00275 Current Highest Degree: 3 Crossings: 17
+map00052.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 21 Crossings: 817
+Iteration: 1 Current Highest Degree Node: C00124 Current Highest Degree: 17 Crossings: 404
+Iteration: 2 Current Highest Degree Node: C01097 Current Highest Degree: 8 Crossings: 352
+Iteration: 3 Current Highest Degree Node: C00052 Current Highest Degree: 6 Crossings: 146
+Iteration: 4 Current Highest Degree Node: C03785 Current Highest Degree: 4 Crossings: 199
+Iteration: 5 Current Highest Degree Node: C00103 Current Highest Degree: 2 Crossings: 34
+map00053.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 30 Crossings: 1455
+Iteration: 1 Current Highest Degree Node: C00080 Current Highest Degree: 20 Crossings: 1038
+Iteration: 2 Current Highest Degree Node: C00072 Current Highest Degree: 11 Crossings: 615
+Iteration: 3 Current Highest Degree Node: C00003 Current Highest Degree: 9 Crossings: 519
+Iteration: 4 Current Highest Degree Node: C00006 Current Highest Degree: 7 Crossings: 379
+Iteration: 5 Current Highest Degree Node: C00007 Current Highest Degree: 5 Crossings: 152
+Iteration: 6 Current Highest Degree Node: C00433 Current Highest Degree: 3 Crossings: 100
+map00500.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 28 Crossings: 2235
+Iteration: 1 Current Highest Degree Node: C00031 Current Highest Degree: 23 Crossings: 1344
+Iteration: 2 Current Highest Degree Node: C00103 Current Highest Degree: 14 Crossings: 1013
+Iteration: 3 Current Highest Degree Node: C00718 Current Highest Degree: 10 Crossings: 627
+Iteration: 4 Current Highest Degree Node: C00208 Current Highest Degree: 8 Crossings: 406
+Iteration: 5 Current Highest Degree Node: C00008 Current Highest Degree: 6 Crossings: 70
+Iteration: 6 Current Highest Degree Node: C00002 Current Highest Degree: 4 Crossings: 38
+Iteration: 7 Current Highest Degree Node: C00085 Current Highest Degree: 2 Crossings: 0
+map00520.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 41 Crossings: 5093
+Iteration: 1 Current Highest Degree Node: C00080 Current Highest Degree: 24 Crossings: 4442
+Iteration: 2 Current Highest Degree Node: C00013 Current Highest Degree: 18 Crossings: 2789
+Iteration: 3 Current Highest Degree Node: C00002 Current Highest Degree: 16 Crossings: 2646
+Iteration: 4 Current Highest Degree Node: C00004 Current Highest Degree: 13 Crossings: 2113
+Iteration: 5 Current Highest Degree Node: C00009 Current Highest Degree: 10 Crossings: 734
+Iteration: 6 Current Highest Degree Node: C00140 Current Highest Degree: 8 Crossings: 1192
+Iteration: 7 Current Highest Degree Node: C01222 Current Highest Degree: 6 Crossings: 953
+Iteration: 8 Current Highest Degree Node: C00052 Current Highest Degree: 4 Crossings: 241
+Iteration: 9 Current Highest Degree Node: C01674 Current Highest Degree: 2 Crossings: 20
+map00562.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 26 Crossings: 1140
+Iteration: 1 Current Highest Degree Node: C00009 Current Highest Degree: 19 Crossings: 831
+Iteration: 2 Current Highest Degree Node: C00002 Current Highest Degree: 17 Crossings: 401
+Iteration: 3 Current Highest Degree Node: C00137 Current Highest Degree: 8 Crossings: 243
+Iteration: 4 Current Highest Degree Node: C00080 Current Highest Degree: 6 Crossings: 146
+Iteration: 5 Current Highest Degree Node: C00004 Current Highest Degree: 4 Crossings: 43
+Iteration: 6 Current Highest Degree Node: C00222 Current Highest Degree: 2 Crossings: 1
+map00620.oriented
+Iteration: 0 Current Highest Degree Node: C00022 Current Highest Degree: 31 Crossings: 4883
+Iteration: 1 Current Highest Degree Node: C00080 Current Highest Degree: 23 Crossings: 3882
+Iteration: 2 Current Highest Degree Node: C00011 Current Highest Degree: 18 Crossings: 1864
+Iteration: 3 Current Highest Degree Node: C00010 Current Highest Degree: 15 Crossings: 721
+Iteration: 4 Current Highest Degree Node: C00003 Current Highest Degree: 13 Crossings: 1192
+Iteration: 5 Current Highest Degree Node: C00036 Current Highest Degree: 11 Crossings: 731
+Iteration: 6 Current Highest Degree Node: C00186 Current Highest Degree: 8 Crossings: 382
+Iteration: 7 Current Highest Degree Node: C00008 Current Highest Degree: 5 Crossings: 105
+Iteration: 8 Current Highest Degree Node: C00125 Current Highest Degree: 3 Crossings: 14
+map00630.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 25 Crossings: 2486
+Iteration: 1 Current Highest Degree Node: C00080 Current Highest Degree: 20 Crossings: 1748
+Iteration: 2 Current Highest Degree Node: C00048 Current Highest Degree: 17 Crossings: 1370
+Iteration: 3 Current Highest Degree Node: C00011 Current Highest Degree: 13 Crossings: 1426
+Iteration: 4 Current Highest Degree Node: C00004 Current Highest Degree: 11 Crossings: 850
+Iteration: 5 Current Highest Degree Node: C00002 Current Highest Degree: 7 Crossings: 438
+Iteration: 6 Current Highest Degree Node: C00008 Current Highest Degree: 5 Crossings: 300
+Iteration: 7 Current Highest Degree Node: C00027 Current Highest Degree: 3 Crossings: 94
+map00640.oriented
+Iteration: 0 Current Highest Degree Node: C00080 Current Highest Degree: 22 Crossings: 2093
+Iteration: 1 Current Highest Degree Node: C00100 Current Highest Degree: 18 Crossings: 1473
+Iteration: 2 Current Highest Degree Node: C00010 Current Highest Degree: 16 Crossings: 1606
+Iteration: 3 Current Highest Degree Node: C00003 Current Highest Degree: 13 Crossings: 737
+Iteration: 4 Current Highest Degree Node: C00001 Current Highest Degree: 10 Crossings: 602
+Iteration: 5 Current Highest Degree Node: C00011 Current Highest Degree: 7 Crossings: 409
+Iteration: 6 Current Highest Degree Node: C00024 Current Highest Degree: 5 Crossings: 156
+Iteration: 7 Current Highest Degree Node: C00022 Current Highest Degree: 3 Crossings: 28
+map00650.oriented
+Iteration: 0 Current Highest Degree Node: C00080 Current Highest Degree: 29 Crossings: 2319
+Iteration: 1 Current Highest Degree Node: C00001 Current Highest Degree: 17 Crossings: 1538
+Iteration: 2 Current Highest Degree Node: C00010 Current Highest Degree: 11 Crossings: 914
+Iteration: 3 Current Highest Degree Node: C00024 Current Highest Degree: 9 Crossings: 616
+Iteration: 4 Current Highest Degree Node: C00011 Current Highest Degree: 7 Crossings: 326
+Iteration: 5 Current Highest Degree Node: C00042 Current Highest Degree: 5 Crossings: 120
+Iteration: 6 Current Highest Degree Node: C01412 Current Highest Degree: 3 Crossings: 20
+map00660.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 15 Crossings: 229
+Iteration: 1 Current Highest Degree Node: C00011 Current Highest Degree: 7 Crossings: 116
+Iteration: 2 Current Highest Degree Node: C00022 Current Highest Degree: 4 Crossings: 66
+Iteration: 3 Current Highest Degree Node: C03618 Current Highest Degree: 2 Crossings: 27

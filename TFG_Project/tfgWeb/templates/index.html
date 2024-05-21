@@ -200,6 +200,7 @@
 
                         <div id="nodeInfo" hidden>
                             <h4 id="nodeId"></h4>
+                            <p id="degree"></p>
                             <p>Predecesors:</p>
                             <ul id="predList"></ul>
                             <p>Succesors:</p>
@@ -224,6 +225,9 @@
                             <p id="highestDegree"></p>
                             <form id="splitHighDegreeForm">
                                 <p id="selectedValue"></p>
+
+
+                                    <ul id="highestDegreeNode"></ul>
                                 
                                 <input type="range" class="form-range" min="0" id="degreeThreshhold">
                                 <input type="submit" value="Split" class="btn btn-outline-primary" />
@@ -448,6 +452,19 @@
                     numCCsElement.appendChild(document.createTextNode(graphInfo.numCCs));
                     
                     document.getElementById("selectedValue").innerHTML = "Split nodes with degree greater than " + graphInfo.highestDegree;
+                    var highestDegreeNodeList = document.getElementById("highestDegreeNode");
+                    highestDegreeNodeList.innerHTML = "";
+                    var highestDegreeNodes = graphInfo.highestDegreeNodes;
+
+                    for(var i = 0; i < highestDegreeNodes.length; ++i)
+                    {
+                        var li = document.createElement("li");
+                        li.appendChild(document.createTextNode(highestDegreeNodes[i]));
+                        highestDegreeNodeList.appendChild(li);
+
+                    }  
+                            
+                    
                     document.getElementById("degreeThreshhold").max = graphInfo.highestDegree;
                     document.getElementById("degreeThreshhold").value = graphInfo.highestDegree;
 
@@ -493,7 +510,7 @@
                     numCyclesElement.appendChild(document.createTextNode(data.numCycles));
                     
                     numCyclesElement.innerHTML += "<br> Node appearing in most cycles: ";
-                    numCyclesElement.appendChild(document.createTextNode(data.nodeInMostCycles));
+                    numCyclesElement.appendChild(document.createTextNode(data.nodeInMostCycles.id + " " + data.nodeInMostCycles.name));
 
                     nodeInMostCycles = data.nodeInMostCycles;
                     $("#breakCycleButton").prop('disabled', false);
@@ -522,11 +539,7 @@
 
                     selectedNode = params.nodes[0];
 
-                    var nodeIdHeader = document.getElementById("nodeId");
-                    nodeIdHeader.textContent = "Node ID: " + selectedNode;
-
-                    var selectedNodeIdHeader = document.getElementById("selectedNode");
-                    selectedNodeIdHeader.textContent = "Selected Node ID: " + selectedNode;
+                    
 
                     $("#duplicateSelectedNodeButton").prop('disabled', false);
 
@@ -541,6 +554,15 @@
                         },
                         success: (data) => {
                             console.log(data);
+
+                            var nodeIdHeader = document.getElementById("nodeId");
+                            nodeIdHeader.textContent = selectedNode + ": " + data.nodeName;
+
+                            var selectedNodeIdHeader = document.getElementById("selectedNode");
+                            selectedNodeIdHeader.textContent = "Selected Node: " + selectedNode + ": " + data.nodeName;
+                            
+                            var predList = document.getElementById("predList");
+                            
 
                             var predList = document.getElementById("predList");
                             predList.innerHTML = "";
@@ -567,7 +589,9 @@
                                 succList.appendChild(li);
 
                             } 
-
+                            
+                            var degree = document.getElementById("degree")
+                            degree.innerHTML = "Degree: " + (predecessors.length + successors.length);
                             var nodeFigure = document.getElementById("nodeFigure");
                             var url;
                             var selectedNode_id = selectedNode;

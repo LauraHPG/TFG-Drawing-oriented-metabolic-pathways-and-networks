@@ -17,11 +17,12 @@ import requests
 
 DEBUG = True
 
-def read_graph(graph):
+def read_graph(graph, check = True):
     nx.set_node_attributes(graph, {})
     path = sys.argv[1]
     info = read_graph_from_txt(graph, path)
-    checkMaxCCSize(graph)
+    if check:
+        checkMaxCCSize(graph)
 
     return info
 
@@ -55,24 +56,26 @@ def splitHighDegreeComponents(graph, threshhold):
 
 
 def duplicateNode(graph, node):
-    out_edges = graph.out_edges([node])
-    in_edges = graph.in_edges([node])
-    node_type = graph.nodes[node]['node_type']
+    if node[0] != 'D':
+        out_edges = graph.out_edges([node])
+        in_edges = graph.in_edges([node])
+        node_type = graph.nodes[node]['node_type']
 
-    i = 0
-    for out_edge in out_edges:
-        new_node = "D" + str(i) + '_' + node
-        i += 1
-        graph.add_edge(new_node, out_edge[1], relationship='substrate-reaction')
-        graph.add_node(new_node, node_type=node_type)
+        i = 0
+        for out_edge in out_edges:
+            new_node = "D" + str(i) + '_' + node
+            i += 1
+            graph.add_edge(new_node, out_edge[1], relationship='substrate-reaction')
+            graph.add_node(new_node, node_type=node_type)
 
-    for in_edge in in_edges:
-        new_node = "D" + str(i) + '_'  + node
-        i += 1
-        graph.add_edge(in_edge[0], new_node, relationship='reaction-substrate')
-        graph.add_node(new_node, node_type=node_type)
-    
-    graph.remove_node(node)
+        for in_edge in in_edges:
+            new_node = "D" + str(i) + '_'  + node
+            i += 1
+            graph.add_edge(in_edge[0], new_node, relationship='reaction-substrate')
+            graph.add_node(new_node, node_type=node_type)
+        
+        graph.remove_node(node)
+
 
 def nodes_ordered_by_degree(graph, nodes=None):
     """
@@ -321,9 +324,10 @@ def getGraphInfo(graph,poses):
     numNodesCC = [len(H.subgraph(c).nodes()) for c in sorted(nx.connected_components(H), key=len, reverse=True)]
     isConnected(graph)
 
-    highestDegreeNode, highestDegree = getHighestDegreeNode(graph) 
+    highestDegreeNodes, highestDegree = getHighestDegreeNodes(graph) 
+    if DEBUG: print("High Degree nodes:", highestDegreeNodes)
 
-    return numNodes, numEdges, numCrossings, numCCs, highestDegree, numNodesCC
+    return numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC
 
 def getCyclesInfo(graph):
     numCycles = len(nx.recursive_simple_cycles(graph))
@@ -337,6 +341,17 @@ def getHighestDegreeNode(graph):
     '''
     ordered_nodes = nodes_ordered_by_degree(graph)
     return ordered_nodes[0][0], ordered_nodes[0][1]
+
+def getHighestDegreeNodes(graph):
+    '''
+    Returns -> [(node)], degree
+    '''
+    ordered_nodes = nodes_ordered_by_degree(graph)
+    result = []
+    for node in ordered_nodes:
+        if node[1] == ordered_nodes[0][1]:
+            result.append(node[0])
+    return result, ordered_nodes[0][1]
 
 def sugiyama(graph, N = 1.5):
 
