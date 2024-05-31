@@ -15,7 +15,7 @@ import json
 
 import requests
 
-DEBUG = True
+DEBUG = False
 
 def read_graph(graph, check = True):
     nx.set_node_attributes(graph, {})
@@ -73,7 +73,7 @@ def duplicateNode(graph, node):
             i += 1
             graph.add_edge(in_edge[0], new_node, relationship='reaction-substrate')
             graph.add_node(new_node, node_type=node_type)
-        
+
         graph.remove_node(node)
 
 
@@ -175,8 +175,8 @@ def removeCyclesByNodeInMostCycles(graph):
                 graph.add_node(new_node, node_type='component')
 
             graph.remove_node(node)
-            
-            
+
+
         else:
             return
 
@@ -232,7 +232,7 @@ def changeSourceAndSinkNodeType(graph):
     for node in graph.nodes():
         in_edges = graph.in_edges(node)
         out_edges = graph.out_edges(node)
-        
+
         if len(in_edges) == 0:
             graph.nodes[node]['node_type'] = 'source'
         elif len(out_edges) == 0:
@@ -279,7 +279,7 @@ def rearangeSources(graph, pos):
         else:
             new_positions[node] = pos[node]
 
-    return new_positions 
+    return new_positions
 
 def getNumSources(graph):
     sources = 0
@@ -287,7 +287,7 @@ def getNumSources(graph):
     for node in graph.nodes():
         if graph.in_degree(node) == 0:
             sources += 1
-        
+
     return sources
 def countCrossings(graph,pos):
     numCrossings = 0
@@ -295,8 +295,8 @@ def countCrossings(graph,pos):
     segments_x = []
     segments_y = []
     for edge in graph.edges():
-        # bentley ottman does not cover vertial lines -> change x by y, no two adjacent nodes will be at the same height 
-            segments_x.append(((pos[edge[0]][1],pos[edge[0]][0]), (pos[edge[1]][1],pos[edge[1]][0])))      
+        # bentley ottman does not cover vertial lines -> change x by y, no two adjacent nodes will be at the same height
+            segments_x.append(((pos[edge[0]][1],pos[edge[0]][0]), (pos[edge[1]][1],pos[edge[1]][0])))
             segments_y.append(((pos[edge[0]][0],pos[edge[0]][1]), (pos[edge[1]][0],pos[edge[1]][1])))
 
     try:
@@ -306,9 +306,9 @@ def countCrossings(graph,pos):
             numCrossings = bent.isect_segments(segments_y, validate=True)
         except:
             numCrossings = []
-            if DEBUG: print("Could not compute number of crossings")    
-            
-    if DEBUG: print("Number of crossings:", len(numCrossings))    
+            if DEBUG: print("Could not compute number of crossings")
+
+    if DEBUG: print("Number of crossings:", len(numCrossings))
     return len(numCrossings)
 
 def isConnected(graph):
@@ -332,7 +332,7 @@ def getGraphInfo(graph,poses):
     numNodesCC = [len(H.subgraph(c).nodes()) for c in sorted(nx.connected_components(H), key=len, reverse=True)]
     isConnected(graph)
 
-    highestDegreeNodes, highestDegree = getHighestDegreeNodes(graph) 
+    highestDegreeNodes, highestDegree = getHighestDegreeNodes(graph)
     if DEBUG: print("High Degree nodes:", highestDegreeNodes)
 
     return numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC
@@ -406,7 +406,7 @@ def getConnectedComponents(graph):
     return subGraph
 
 def getNodeLabel(name):
-    return name.split("_")[-1]   
+    return name.split("_")[-1]
 
 def retrieveNodeNames():
     url = "https://rest.kegg.jp/list/compound"
@@ -419,13 +419,13 @@ def retrieveNodeNames():
         for compound in lines:
             info = compound.split("\t")
             if len(info) > 1:
-                compoundId = info[0]            
+                compoundId = info[0]
                 compoundName = info[1].split(';')[0]
                 compounds[compoundId] = compoundName
 
     else:
         if DEBUG: print("Failed to retrieve data. Status code:", response.status_code)
-    
+
     return compounds
 
 def parseGraph(graph, node_positions, compounds):
@@ -503,7 +503,7 @@ def getNodeInfo(graph, node):
     for suc in graph.successors(node):
         if DEBUG: print("- ", suc)
         successors.append(suc)
-    
+
     if len(predecessors) == 0:
         predecessors.append("None")
     if len(successors) == 0:
@@ -526,10 +526,10 @@ def countLevels(poses):
             levels[level].append(node)
         else:
             levels[level] = [node]
-        
+
 
     for level in levels:
-        nodes = [nodes for nodes in levels[level]]  
+        nodes = [nodes for nodes in levels[level]]
         nodes.sort(key=lambda x: poses[x][0])
 
         if nodes[0][0] != 'R':
@@ -549,7 +549,7 @@ def countLevels(poses):
                 # if DEBUG: print(node, poses[node][0])
 
                 new_poses[node] = (poses[node][0], level*2)
-            
+
     if DEBUG: print("Number of Levels: ", len(levels))
     for i, key in enumerate(sorted(levels)):
         if DEBUG: print(i,':',key)
@@ -571,7 +571,6 @@ def staggerLayers(graph, poses):
     return countLevels(poses)
 
 def checkMaxCCSize(graph):
-
     H = graph.to_undirected()
     S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
     it = 0
@@ -590,16 +589,17 @@ def checkMaxCCSize(graph):
         S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
         it += 1
 
+
 def defineNodeCID(graph, nodes, cid):
     for node in nodes:
         graph.nodes[node]['cid'] = cid
-        # if DEBUG: print(node, graph.nodes[node]['cid'])
+        if DEBUG: print(node, graph.nodes[node]['cid'])
 
 def getGraphPositions(graph, N = 1.5):
     connected = isConnected(graph)
     poses = {}
     changeSourceAndSinkNodeType(graph)
-    setColorNodeType(graph)  
+    setColorNodeType(graph)
 
     if connected:
         poses = sugiyama(graph, N)
@@ -621,7 +621,7 @@ def getGraphPositions(graph, N = 1.5):
                         xMax = new_poses[pos][0]
                 poses.update(new_poses)
                 currentMaxX = xMax + 200
-                
+
                 defineNodeCID(graph, subGraph.nodes(), cid)
 
     # poses = staggerLayers(graph, poses)

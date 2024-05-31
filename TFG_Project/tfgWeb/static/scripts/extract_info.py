@@ -46,13 +46,15 @@ for filename in sorted(filenames):
             line, = ax.plot(x_data, y_data)
 
             highestDegreeNode, highestDegree = funcs.getHighestDegreeNode(G) 
-            poses = funcs.getGraphPositions(G, 1.5)
-            currentMaxDegree = highestDegree
-            numCrossings = funcs.countCrossings(G, poses)
+            
 
             # for i in range(0, highestDegree):
             i = 0
-            while numCrossings > 0:
+            while highestDegree > 0:
+
+                poses = funcs.getGraphPositions(G, 1.5)
+                numCrossings = funcs.countCrossings(G, poses)
+
                 x_data.append(i)
                 y_data.append(numCrossings)
                 x_labels.append(highestDegreeNode)
@@ -67,13 +69,12 @@ for filename in sorted(filenames):
                 ax.autoscale_view()  # Autoscale the view to fit the data
                 plt.draw()
                 plt.pause(0.1)  # Pause to allow the plot to update
-
-
-                poses = funcs.getGraphPositions(G, 1.5)
-                numCrossings = funcs.countCrossings(G, poses)
-
-                print("Iteration:", i, "Current Highest Degree Node:", highestDegreeNode, "Current Highest Degree:", highestDegree, "Crossings:", numCrossings)
+                # print("Iteration:", i, "Current Highest Degree Node:", highestDegreeNode, "Current Highest Degree:", highestDegree, "Crossings:", numCrossings)
                 
+                H = G.to_undirected()
+                S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+                
+                print(highestDegree, numCrossings, len(S), len(G.nodes()))
                 funcs.splitHighDegreeComponents(G, highestDegree)
                 highestDegreeNode, highestDegree = funcs.getHighestDegreeNode(G) 
 
@@ -85,7 +86,7 @@ for filename in sorted(filenames):
             output_path = os.path.join(output_directory, f"{filename}.png")
             # plt.savefig(output_path)
             plt.close(fig)  # Close the figure to free up memory
-
+            
 
         elif mode == '1':
             H = G.to_undirected()
