@@ -37,14 +37,13 @@ def main():
         match op:
             case '0':
 
-                N = input("Introduce iterations (default = 1.5):\n")
 
-                poses = funcs.getGraphPositions(G, float(N))
+                poses = funcs.getGraphPositions(G)
                 colors = funcs.setColorNodeType(G)  
 
                 # depth = input("Do you want to arrange it by depth? (y/n)")
 
-                nx.draw(G, pos=poses, with_labels=True, node_color=colors, node_shape='s')
+                nx.draw(G, pos=poses, with_labels=True, node_color=colors)
                 
                 plt.show()
 
@@ -191,7 +190,6 @@ def main():
 
                 plt.ioff()
                 plt.show()
-
 
             case 'p':
 

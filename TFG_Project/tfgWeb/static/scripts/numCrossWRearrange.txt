@@ -1,0 +1,710 @@
+map00010.oriented;0.32118678092956543;1254;241
+map00020.oriented;0.12127256393432617;445;138
+map00030.oriented;0.18201017379760742;774;229
+map00040.oriented;0.7252395153045654;3076;326
+map00051.oriented;0.4801795482635498;2067;325
+map00052.oriented;0.16941356658935547;566;223
+map00053.oriented;0.3283529281616211;1422;282
+map00500.oriented;0.48793601989746094;2298;279
+map00520.oriented;1.3697059154510498;4607;577
+map00562.oriented;0.2643744945526123;1174;245
+map00620.oriented;1.0147347450256348;4101;396
+map00630.oriented;0.9222123622894287;3682;349
+map00640.oriented;0.5336494445800781;2175;285
+map00650.oriented;0.6598889827728271;2534;316
+map00660.oriented;0.05695223808288574;221;138
+map01200.oriented;9.076167106628418;32571;917
+map01210.oriented;4.755174398422241;17411;720
+map01212.oriented;2.0499441623687744;7955;527
+map01220.oriented;14.136203289031982;50503;1240
+map01230.oriented;4.5906760692596436;15895;711
+map01232.oriented;2.690483570098877;10762;571
+map01240.oriented;13.848259449005127;19711;1516
+map01250.oriented;2.930145502090454;9923;790
+map00010.oriented;0.32544827461242676;1329;241
+map00020.oriented;0.09660577774047852;416;138
+map00030.oriented;0.18718171119689941;833;229
+map00040.oriented;0.7967870235443115;3038;326
+map00051.oriented;0.5585815906524658;2505;325
+map00052.oriented;0.16112112998962402;515;223
+map00053.oriented;0.33141636848449707;1420;282
+map00500.oriented;0.457106351852417;2119;279
+map00520.oriented;1.0696675777435303;3527;577
+map00562.oriented;0.25467586517333984;1132;245
+map00620.oriented;0.8429110050201416;3783;396
+map00630.oriented;0.6763339042663574;2415;349
+map00640.oriented;0.48990440368652344;2211;285
+map00650.oriented;0.69167160987854;2631;316
+map00660.oriented;0.058542728424072266;232;138
+map01200.oriented;7.622458457946777;25728;917
+map01210.oriented;4.220951080322266;15071;720
+map01212.oriented;1.98148775100708;7651;527
+map01220.oriented;15.274340867996216;56735;1240
+map01230.oriented;4.284473180770874;14272;711
+map01232.oriented;2.68959379196167;10791;571
+map01240.oriented;17.560498476028442;38315;1516
+map01250.oriented;2.8994405269622803;9923;790
+map00010.oriented;0.3183279037475586;1275;241
+map00020.oriented;0.09619498252868652;427;138
+map00030.oriented;0.1670548915863037;667;229
+map00040.oriented;0.7971210479736328;3342;326
+map00051.oriented;0.4891321659088135;2277;325
+map00052.oriented;0.16001105308532715;515;223
+map00053.oriented;0.3146977424621582;1330;282
+map00500.oriented;0.47200751304626465;2222;279
+map00520.oriented;1.2786524295806885;4895;577
+map00562.oriented;0.2616429328918457;1222;245
+map00620.oriented;0.831787109375;3752;396
+map00630.oriented;0.6817917823791504;2466;349
+map00640.oriented;0.4704093933105469;2055;285
+map00650.oriented;0.6345949172973633;2181;316
+map00660.oriented;0.05879330635070801;230;138
+map01200.oriented;7.004308700561523;22190;917
+map01210.oriented;4.642868757247925;17194;720
+map01212.oriented;1.2209091186523438;2734;527
+map01220.oriented;16.349820613861084;55829;1240
+map01230.oriented;3.9935975074768066;12718;711
+map01232.oriented;3.0365588665008545;11682;571
+map01240.oriented;13.408647298812866;17282;1516
+map01250.oriented;2.9036707878112793;10008;790
+map00010.oriented;0.3027160167694092;1157;241
+map00020.oriented;0.09501910209655762;424;138
+map00030.oriented;0.19075632095336914;825;229
+map00040.oriented;0.749082088470459;3095;326
+map00051.oriented;0.44608616828918457;2029;325
+map00052.oriented;0.16458606719970703;539;223
+map00053.oriented;0.3924403190612793;1622;282
+map00500.oriented;0.4503324031829834;2316;279
+map00520.oriented;1.2243056297302246;4462;577
+map00562.oriented;0.2585747241973877;1182;245
+map00620.oriented;1.0547094345092773;5095;396
+map00630.oriented;0.7507941722869873;2847;349
+map00640.oriented;0.4735410213470459;2093;285
+map00650.oriented;0.6921932697296143;2631;316
+map00660.oriented;0.05685710906982422;221;138
+map01200.oriented;8.737775087356567;31634;917
+map01210.oriented;4.80754542350769;17362;720
+map01212.oriented;1.8596618175506592;7181;527
+map01220.oriented;14.172114610671997;50142;1240
+map01230.oriented;4.337147235870361;13587;711
+map01232.oriented;2.759483814239502;10994;571
+map01240.oriented;16.616838693618774;29241;1516
+map01250.oriented;3.214287757873535;11115;790
+map00010.oriented;0.39019036293029785;1254;241
+map00020.oriented;0.09445881843566895;413;138
+map00030.oriented;0.1862952709197998;808;229
+map00040.oriented;0.6873815059661865;2768;326
+map00051.oriented;0.4905221462249756;2215;325
+map00052.oriented;0.18517589569091797;500;223
+map00053.oriented;0.3511929512023926;1469;282
+map00500.oriented;0.45301246643066406;2073;279
+map00520.oriented;1.2733349800109863;4810;577
+map00562.oriented;0.2848362922668457;1139;245
+map00620.oriented;0.905839204788208;4185;396
+map00630.oriented;0.69527268409729;2467;349
+map00640.oriented;0.4288594722747803;1695;285
+map00650.oriented;0.7242727279663086;2704;316
+map00660.oriented;0.057119131088256836;216;138
+map01200.oriented;8.781270742416382;31412;917
+map01210.oriented;4.098074674606323;13758;720
+map01212.oriented;1.7426385879516602;6292;527
+map01220.oriented;13.13673448562622;44633;1240
+map01230.oriented;4.194226026535034;13353;711
+map01232.oriented;2.756709098815918;10844;571
+map01240.oriented;15.357494592666626;24194;1516
+map01250.oriented;2.962312698364258;10008;790
+map00010.oriented;0.3225851058959961;1286;241
+map00020.oriented;0.09649038314819336;427;138
+map00030.oriented;0.18613934516906738;808;229
+map00040.oriented;0.709604024887085;2768;326
+map00051.oriented;0.464674711227417;2013;325
+map00052.oriented;0.18740200996398926;539;223
+map00053.oriented;0.40413808822631836;1522;282
+map00500.oriented;0.4730057716369629;2383;279
+map00520.oriented;1.5643467903137207;6151;577
+map00562.oriented;0.2899746894836426;1333;245
+map00620.oriented;0.8724591732025146;3783;396
+map00630.oriented;0.7412617206573486;2546;349
+map00640.oriented;0.5209324359893799;2268;285
+map00650.oriented;0.6606831550598145;2181;316
+map00660.oriented;0.06708288192749023;257;138
+map01200.oriented;7.974216938018799;26243;917
+map01210.oriented;4.524608373641968;15235;720
+map01212.oriented;2.1668624877929688;7912;527
+map01220.oriented;14.477192163467407;50042;1240
+map01230.oriented;4.40700888633728;13854;711
+map01232.oriented;2.899110794067383;11230;571
+map01240.oriented;16.07490611076355;28643;1516
+map01250.oriented;2.8439137935638428;9923;790
+map00010.oriented;0.3238215446472168;1313;241
+map00020.oriented;0.09573912620544434;424;138
+map00030.oriented;0.1649320125579834;611;229
+map00040.oriented;0.7974154949188232;3393;326
+map00051.oriented;0.4761650562286377;2232;325
+map00052.oriented;0.15853357315063477;515;223
+map00053.oriented;0.37821054458618164;1522;282
+map00500.oriented;0.45505213737487793;2311;279
+map00520.oriented;1.2965831756591797;4974;577
+map00562.oriented;0.26920580863952637;1297;245
+map00620.oriented;1.0090794563293457;4891;396
+map00630.oriented;0.7104473114013672;2613;349
+map00640.oriented;0.4957468509674072;2268;285
+map00650.oriented;0.7372972965240479;2840;316
+map00660.oriented;0.0571591854095459;221;138
+map01200.oriented;8.081294059753418;28253;917
+map01210.oriented;4.786100387573242;17232;720
+map01212.oriented;1.9674327373504639;7789;527
+map01220.oriented;14.7433500289917;54596;1240
+map01230.oriented;4.050495147705078;13442;711
+map01232.oriented;2.729901075363159;11230;571
+map01240.oriented;13.598631858825684;20707;1516
+map01250.oriented;2.820481061935425;9923;790
+map00010.oriented;0.3355867862701416;1453;241
+map00020.oriented;0.14003205299377441;427;138
+map00030.oriented;0.1739511489868164;738;229
+map00040.oriented;0.7459850311279297;3351;326
+map00051.oriented;0.38237547874450684;1466;325
+map00052.oriented;0.16890335083007812;598;223
+map00053.oriented;0.3418006896972656;1558;282
+map00500.oriented;0.4309523105621338;2213;279
+map00520.oriented;1.230867862701416;4741;577
+map00562.oriented;0.24946904182434082;1174;245
+map00620.oriented;1.038243293762207;5025;396
+map00630.oriented;0.6537926197052002;2505;349
+map00640.oriented;0.4986264705657959;2155;285
+map00650.oriented;0.6407613754272461;2534;316
+map00660.oriented;0.0841975212097168;221;138
+map01200.oriented;8.708122253417969;31641;917
+map01210.oriented;4.089205503463745;14308;720
+map01212.oriented;1.133714199066162;2734;527
+map01220.oriented;14.566412210464478;54170;1240
+map01230.oriented;3.2826390266418457;8766;711
+map01232.oriented;2.963127374649048;12866;571
+map01240.oriented;19.591036796569824;48043;1516
+map01250.oriented;2.737222671508789;10249;790
+map00010.oriented;0.30376648902893066;1180;241
+map00020.oriented;0.09327411651611328;424;138
+map00030.oriented;0.18145465850830078;808;229
+map00040.oriented;0.6304888725280762;2489;326
+map00051.oriented;0.4105966091156006;1855;325
+map00052.oriented;0.15993189811706543;539;223
+map00053.oriented;0.37328481674194336;1522;282
+map00500.oriented;0.4634523391723633;2415;279
+map00520.oriented;0.9909548759460449;3192;577
+map00562.oriented;0.2574763298034668;1224;245
+map00620.oriented;0.9665570259094238;4699;396
+map00630.oriented;0.6824898719787598;2484;349
+map00640.oriented;0.46145153045654297;2088;285
+map00650.oriented;0.6746587753295898;2631;316
+map00660.oriented;0.05674338340759277;221;138
+map01200.oriented;9.094677209854126;34330;917
+map01210.oriented;4.371020555496216;15607;720
+map01212.oriented;1.841822624206543;7332;527
+map01220.oriented;14.341543674468994;53494;1240
+map01230.oriented;4.025799989700317;13337;711
+map01232.oriented;2.606933832168579;10679;571
+map01240.oriented;17.68283486366272;39003;1516
+map01250.oriented;2.811436414718628;9923;790
+map00010.oriented;0.3555924892425537;1328;241
+map00020.oriented;0.09399056434631348;421;138
+map00030.oriented;0.18052220344543457;808;229
+map00040.oriented;0.7369050979614258;3079;326
+map00051.oriented;0.44437670707702637;2064;325
+map00052.oriented;0.16193318367004395;558;223
+map00053.oriented;0.34045863151550293;1516;282
+map00500.oriented;0.44728899002075195;2158;279
+map00520.oriented;1.2644963264465332;4995;577
+map00562.oriented;0.302889347076416;1330;245
+map00620.oriented;0.821925163269043;3845;396
+map00630.oriented;0.6644203662872314;2415;349
+map00640.oriented;0.4698159694671631;2143;285
+map00650.oriented;0.7262427806854248;2840;316
+map00660.oriented;0.056645870208740234;221;138
+map01200.oriented;8.03200078010559;28664;917
+map01210.oriented;4.484254837036133;16400;720
+map01212.oriented;1.7889184951782227;6486;527
+map01220.oriented;13.638106346130371;50420;1240
+map01230.oriented;3.9788436889648438;12346;711
+map01232.oriented;2.620713472366333;10679;571
+map01240.oriented;12.381542444229126;15385;1516
+map01250.oriented;2.6697845458984375;9923;790
+map00010.oriented;0.5198671817779541;1322;241
+map00020.oriented;0.08669185638427734;356;138
+map00030.oriented;0.18535852432250977;799;229
+map00040.oriented;0.8160369396209717;3393;326
+map00051.oriented;0.5025157928466797;1869;325
+map00052.oriented;0.17879843711853027;557;223
+map00053.oriented;0.33716821670532227;1469;282
+map00500.oriented;0.3407912254333496;1517;279
+map00520.oriented;1.233215570449829;4610;577
+map00562.oriented;0.24822711944580078;1169;245
+map00620.oriented;0.8492813110351562;3968;396
+map00630.oriented;0.7034401893615723;2346;349
+map00640.oriented;0.497438907623291;2114;285
+map00650.oriented;0.7066483497619629;2683;316
+map00660.oriented;0.06305432319641113;247;138
+map01200.oriented;7.28252100944519;22286;917
+map01210.oriented;4.9089789390563965;16646;720
+map01212.oriented;1.7950127124786377;6486;527
+map01220.oriented;14.337917566299438;51048;1240
+map01230.oriented;4.360171318054199;13825;711
+map01232.oriented;3.2338883876800537;13476;571
+map01240.oriented;14.18735647201538;20653;1516
+map01250.oriented;2.7060739994049072;10008;790
+map00010.oriented;0.5176715850830078;1311;241
+map00020.oriented;0.09697580337524414;429;138
+map00030.oriented;0.18657898902893066;799;229
+map00040.oriented;0.8053989410400391;3393;326
+map00051.oriented;0.5234453678131104;2170;325
+map00052.oriented;0.15747404098510742;500;223
+map00053.oriented;0.34618091583251953;1379;282
+map00500.oriented;0.3751235008239746;1517;279
+map00520.oriented;1.2785263061523438;4861;577
+map00562.oriented;0.30142974853515625;1211;245
+map00620.oriented;1.0140528678894043;4694;396
+map00630.oriented;0.6842350959777832;2492;349
+map00640.oriented;0.5578515529632568;2658;285
+map00650.oriented;0.7277469635009766;2704;316
+map00660.oriented;0.05811023712158203;219;138
+map01200.oriented;7.522525787353516;24876;917
+map01210.oriented;4.226240634918213;14735;720
+map01212.oriented;2.017024278640747;7619;527
+map01220.oriented;14.623492002487183;52557;1240
+map01230.oriented;4.312572002410889;14099;711
+map01232.oriented;2.5192489624023438;9875;571
+map01240.oriented;15.737163305282593;29019;1516
+map01250.oriented;2.939286947250366;9923;790
+map00010.oriented;0.3268086910247803;1231;241
+map00020.oriented;0.10502457618713379;424;138
+map00030.oriented;0.17647933959960938;611;229
+map00040.oriented;0.777580976486206;3079;326
+map00051.oriented;0.45140576362609863;2047;325
+map00052.oriented;0.16629314422607422;557;223
+map00053.oriented;0.38126492500305176;1522;282
+map00500.oriented;0.4415411949157715;2201;279
+map00520.oriented;1.2382142543792725;4462;577
+map00562.oriented;0.2773458957672119;1328;245
+map00620.oriented;0.7132904529571533;2515;396
+map00630.oriented;0.7752864360809326;2659;349
+map00640.oriented;0.5289022922515869;2268;285
+map00650.oriented;0.7406589984893799;2631;316
+map00660.oriented;0.05801033973693848;221;138
+map01200.oriented;7.992274522781372;27065;917
+map01210.oriented;4.324530601501465;14728;720
+map01212.oriented;1.8144898414611816;6486;527
+map01220.oriented;15.128443479537964;54982;1240
+map01230.oriented;3.970978021621704;12417;711
+map01232.oriented;2.796210765838623;11467;571
+map01240.oriented;18.43837594985962;39781;1516
+map01250.oriented;2.9613897800445557;10315;790
+map00010.oriented;0.3264133930206299;1282;241
+map00020.oriented;0.09546542167663574;427;138
+map00030.oriented;0.22627711296081543;699;229
+map00040.oriented;0.7032654285430908;2744;326
+map00051.oriented;0.4793076515197754;2108;325
+map00052.oriented;0.2149803638458252;545;223
+map00053.oriented;0.3256187438964844;1233;282
+map00500.oriented;0.46022987365722656;2284;279
+map00520.oriented;1.262547254562378;4683;577
+map00562.oriented;0.2452688217163086;1101;245
+map00620.oriented;0.9917268753051758;4246;396
+map00630.oriented;0.7173135280609131;2772;349
+map00640.oriented;0.5228745937347412;2175;285
+map00650.oriented;0.67514967918396;2598;316
+map00660.oriented;0.058637380599975586;233;138
+map01200.oriented;9.099224090576172;32057;917
+map01210.oriented;4.517967462539673;15966;720
+map01212.oriented;2.025728702545166;7954;527
+map01220.oriented;15.637716293334961;56517;1240
+map01230.oriented;3.0582594871520996;7093;711
+map01232.oriented;3.0175082683563232;12335;571
+map01240.oriented;19.073533535003662;40043;1516
+map01250.oriented;2.458730697631836;8352;790
+map00010.oriented;0.35976457595825195;1328;241
+map00020.oriented;0.0954136848449707;424;138
+map00030.oriented;0.18721723556518555;799;229
+map00040.oriented;0.793938398361206;3310;326
+map00051.oriented;0.4478166103363037;1849;325
+map00052.oriented;0.17713141441345215;531;223
+map00053.oriented;0.3262369632720947;1370;282
+map00500.oriented;0.46628689765930176;2213;279
+map00520.oriented;1.1251299381256104;3952;577
+map00562.oriented;0.307232141494751;1261;245
+map00620.oriented;0.8544468879699707;3910;396
+map00630.oriented;0.7071628570556641;2502;349
+map00640.oriented;0.4520695209503174;2013;285
+map00650.oriented;0.8690478801727295;3729;316
+map00660.oriented;0.05917167663574219;232;138
+map01200.oriented;8.1994149684906;26171;917
+map01210.oriented;4.264054298400879;15276;720
+map01212.oriented;1.8471100330352783;7156;527
+map01220.oriented;14.159940004348755;50457;1240
+map01230.oriented;4.119341135025024;12529;711
+map01232.oriented;2.553074598312378;9875;571
+map01240.oriented;17.408608198165894;33370;1516
+map01250.oriented;3.0102334022521973;10008;790
+map00010.oriented;0.35379934310913086;1275;241
+map00020.oriented;0.10799551010131836;449;138
+map00030.oriented;0.18889689445495605;749;229
+map00040.oriented;0.967857837677002;3766;326
+map00051.oriented;0.4682033061981201;1855;325
+map00052.oriented;0.20759940147399902;515;223
+map00053.oriented;0.35206031799316406;1281;282
+map00500.oriented;0.4519214630126953;2209;279
+map00520.oriented;1.2581446170806885;4293;577
+map00562.oriented;0.29039907455444336;1312;245
+map00620.oriented;1.0647978782653809;4662;396
+map00630.oriented;0.739741325378418;2894;349
+map00640.oriented;0.5257663726806641;2071;285
+map00650.oriented;0.768240213394165;2523;316
+map00660.oriented;0.060010671615600586;221;138
+map01200.oriented;8.999754667282104;31292;917
+map01210.oriented;4.256262540817261;14540;720
+map01212.oriented;2.0140669345855713;7167;527
+map01220.oriented;15.284817218780518;54207;1240
+map01230.oriented;4.450197696685791;14625;711
+map01232.oriented;2.8582637310028076;11464;571
+map01240.oriented;14.19623351097107;22261;1516
+map01250.oriented;2.951713800430298;10315;790
+map00010.oriented;0.3602313995361328;1287;241
+map00020.oriented;0.08227992057800293;324;138
+map00030.oriented;0.18617844581604004;799;229
+map00040.oriented;0.8051662445068359;3393;326
+map00051.oriented;0.4794285297393799;2249;325
+map00052.oriented;0.1680612564086914;558;223
+map00053.oriented;0.3350515365600586;1425;282
+map00500.oriented;0.46378111839294434;2213;279
+map00520.oriented;1.3582344055175781;5434;577
+map00562.oriented;0.2709033489227295;1070;245
+map00620.oriented;1.0245239734649658;4928;396
+map00630.oriented;0.6911153793334961;2467;349
+map00640.oriented;0.4743616580963135;2098;285
+map00650.oriented;0.6425726413726807;2181;316
+map00660.oriented;0.057420969009399414;221;138
+map01200.oriented;6.834286451339722;21047;917
+map01210.oriented;4.454464912414551;15887;720
+map01212.oriented;2.006230115890503;7912;527
+map01220.oriented;14.52723240852356;51817;1240
+map01230.oriented;4.281805992126465;13806;711
+map01232.oriented;3.1886885166168213;13352;571
+map01240.oriented;12.984436750411987;16220;1516
+map01250.oriented;2.6591522693634033;9923;790
+map00010.oriented;0.5256283283233643;1311;241
+map00020.oriented;0.09531188011169434;421;138
+map00030.oriented;0.18465805053710938;799;229
+map00040.oriented;0.8056290149688721;3393;326
+map00051.oriented;0.4250011444091797;1901;325
+map00052.oriented;0.16739106178283691;557;223
+map00053.oriented;0.3508596420288086;1522;282
+map00500.oriented;0.5154445171356201;2272;279
+map00520.oriented;1.2716662883758545;4705;577
+map00562.oriented;0.2762928009033203;1331;245
+map00620.oriented;0.8452036380767822;3783;396
+map00630.oriented;0.7054605484008789;2502;349
+map00640.oriented;0.48038411140441895;2171;285
+map00650.oriented;0.7591361999511719;2631;316
+map00660.oriented;0.05364251136779785;191;138
+map01200.oriented;7.64609694480896;25522;917
+map01210.oriented;4.43059778213501;15732;720
+map01212.oriented;2.0195162296295166;8048;527
+map01220.oriented;14.857005834579468;53700;1240
+map01230.oriented;4.211936712265015;13746;711
+map01232.oriented;3.1383259296417236;13352;571
+map01240.oriented;19.2486252784729;41534;1516
+map01250.oriented;2.914485216140747;9923;790
+map00010.oriented;0.23623323440551758;740;241
+map00020.oriented;0.09634900093078613;427;138
+map00030.oriented;0.18596291542053223;808;229
+map00040.oriented;0.8031516075134277;3218;326
+map00051.oriented;0.46985530853271484;2148;325
+map00052.oriented;0.16063690185546875;515;223
+map00053.oriented;0.360825777053833;1522;282
+map00500.oriented;0.468433141708374;2157;279
+map00520.oriented;1.2573792934417725;4607;577
+map00562.oriented;0.2806546688079834;1161;245
+map00620.oriented;1.0520553588867188;4960;396
+map00630.oriented;0.6883833408355713;2466;349
+map00640.oriented;0.47644829750061035;2108;285
+map00650.oriented;0.6968281269073486;2631;316
+map00660.oriented;0.05704665184020996;211;138
+map01200.oriented;7.972399711608887;26978;917
+map01210.oriented;4.864501476287842;17744;720
+map01212.oriented;1.823000431060791;6551;527
+map01220.oriented;13.413586854934692;47170;1240
+map01230.oriented;4.5289881229400635;15245;711
+map01232.oriented;2.850407361984253;11467;571
+map01240.oriented;18.019860982894897;39196;1516
+map01250.oriented;1.7060856819152832;3231;790
+map00010.oriented;0.3198671340942383;1289;241
+map00020.oriented;0.09589099884033203;427;138
+map00030.oriented;0.188554048538208;831;229
+map00040.oriented;0.7902328968048096;3303;326
+map00051.oriented;0.42880749702453613;1942;325
+map00052.oriented;0.16843724250793457;557;223
+map00053.oriented;0.3834552764892578;1522;282
+map00500.oriented;0.44440579414367676;2188;279
+map00520.oriented;1.3113880157470703;4974;577
+map00562.oriented;0.25325751304626465;1184;245
+map00620.oriented;0.6822006702423096;2805;396
+map00630.oriented;0.7552931308746338;2890;349
+map00640.oriented;0.49697208404541016;2268;285
+map00650.oriented;0.640275239944458;2181;316
+map00660.oriented;0.06100821495056152;259;138
+map01200.oriented;7.04819130897522;22525;917
+map01210.oriented;4.474294424057007;15682;720
+map01212.oriented;2.0358433723449707;7742;527
+map01220.oriented;13.893019676208496;50534;1240
+map01230.oriented;3.9915196895599365;12367;711
+map01232.oriented;2.704150676727295;10830;571
+map01240.oriented;13.501657009124756;19147;1516
+map01250.oriented;2.726835012435913;10008;790
+
+
+map00010.oriented
+Iteration: 0 Current Highest Degree Node: C00080 Current Highest Degree: 14 Crossings: 1275
+Iteration: 1 Current Highest Degree Node: C00001 Current Highest Degree: 12 Crossings: 945
+Iteration: 2 Current Highest Degree Node: C00002 Current Highest Degree: 9 Crossings: 699
+Iteration: 3 Current Highest Degree Node: C00084 Current Highest Degree: 7 Crossings: 463
+Iteration: 4 Current Highest Degree Node: C00022 Current Highest Degree: 5 Crossings: 320
+Iteration: 5 Current Highest Degree Node: C00010 Current Highest Degree: 3 Crossings: 44
+Iteration: 6 Current Highest Degree Node: C00103 Current Highest Degree: 1 Crossings: 0
+map00020.oriented
+Iteration: 0 Current Highest Degree Node: C00011 Current Highest Degree: 9 Crossings: 424
+Iteration: 1 Current Highest Degree Node: C00036 Current Highest Degree: 7 Crossings: 360
+Iteration: 2 Current Highest Degree Node: C00080 Current Highest Degree: 5 Crossings: 153
+Iteration: 3 Current Highest Degree Node: C00068 Current Highest Degree: 3 Crossings: 64
+Iteration: 4 Current Highest Degree Node: C05125 Current Highest Degree: 1 Crossings: 0
+map00030.oriented
+Iteration: 0 Current Highest Degree Node: C00080 Current Highest Degree: 14 Crossings: 679
+Iteration: 1 Current Highest Degree Node: C00008 Current Highest Degree: 11 Crossings: 527
+Iteration: 2 Current Highest Degree Node: C00118 Current Highest Degree: 8 Crossings: 340
+Iteration: 3 Current Highest Degree Node: C00198 Current Highest Degree: 6 Crossings: 135
+Iteration: 4 Current Highest Degree Node: C00354 Current Highest Degree: 4 Crossings: 130
+Iteration: 5 Current Highest Degree Node: C00031 Current Highest Degree: 2 Crossings: 1
+Iteration: 6 Current Highest Degree Node: C15602 Current Highest Degree: 0 Crossings: 0
+map00040.oriented
+Iteration: 0 Current Highest Degree Node: C00080 Current Highest Degree: 35 Crossings: 3013
+Iteration: 1 Current Highest Degree Node: C00003 Current Highest Degree: 19 Crossings: 1266
+Iteration: 2 Current Highest Degree Node: C00001 Current Highest Degree: 16 Crossings: 815
+Iteration: 3 Current Highest Degree Node: C00006 Current Highest Degree: 12 Crossings: 464
+Iteration: 4 Current Highest Degree Node: C00008 Current Highest Degree: 7 Crossings: 253
+Iteration: 5 Current Highest Degree Node: C00379 Current Highest Degree: 5 Crossings: 161
+Iteration: 6 Current Highest Degree Node: C00191 Current Highest Degree: 3 Crossings: 42
+Iteration: 7 Current Highest Degree Node: C00026 Current Highest Degree: 1 Crossings: 1
+Iteration: 8 Current Highest Degree Node: D0_C00080 Current Highest Degree: 0 Crossings: 0
+map00051.oriented
+Iteration: 0 Current Highest Degree Node: C00080 Current Highest Degree: 22 Crossings: 2066
+Iteration: 1 Current Highest Degree Node: C00001 Current Highest Degree: 17 Crossings: 2092
+Iteration: 2 Current Highest Degree Node: C00003 Current Highest Degree: 11 Crossings: 1328
+Iteration: 3 Current Highest Degree Node: C00085 Current Highest Degree: 9 Crossings: 591
+Iteration: 4 Current Highest Degree Node: C00009 Current Highest Degree: 7 Crossings: 345
+Iteration: 5 Current Highest Degree Node: C00794 Current Highest Degree: 5 Crossings: 311
+Iteration: 6 Current Highest Degree Node: C00275 Current Highest Degree: 3 Crossings: 15
+Iteration: 7 Current Highest Degree Node: C03267 Current Highest Degree: 1 Crossings: 0
+map00052.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 21 Crossings: 569
+Iteration: 1 Current Highest Degree Node: C00124 Current Highest Degree: 17 Crossings: 423
+Iteration: 2 Current Highest Degree Node: C01097 Current Highest Degree: 8 Crossings: 347
+Iteration: 3 Current Highest Degree Node: C00052 Current Highest Degree: 6 Crossings: 156
+Iteration: 4 Current Highest Degree Node: C03785 Current Highest Degree: 4 Crossings: 197
+Iteration: 5 Current Highest Degree Node: C00103 Current Highest Degree: 2 Crossings: 21
+Iteration: 6 Current Highest Degree Node: C03733 Current Highest Degree: 0 Crossings: 0
+map00053.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 30 Crossings: 1434
+Iteration: 1 Current Highest Degree Node: C00080 Current Highest Degree: 20 Crossings: 1041
+Iteration: 2 Current Highest Degree Node: C00072 Current Highest Degree: 11 Crossings: 713
+Iteration: 3 Current Highest Degree Node: C00003 Current Highest Degree: 9 Crossings: 276
+Iteration: 4 Current Highest Degree Node: C00006 Current Highest Degree: 7 Crossings: 267
+Iteration: 5 Current Highest Degree Node: C00007 Current Highest Degree: 5 Crossings: 157
+Iteration: 6 Current Highest Degree Node: C00433 Current Highest Degree: 3 Crossings: 101
+Iteration: 7 Current Highest Degree Node: C00126 Current Highest Degree: 1 Crossings: 5
+Iteration: 8 Current Highest Degree Node: D0_C00001 Current Highest Degree: 0 Crossings: 0
+map00500.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 28 Crossings: 2051
+Iteration: 1 Current Highest Degree Node: C00031 Current Highest Degree: 23 Crossings: 1312
+Iteration: 2 Current Highest Degree Node: C00103 Current Highest Degree: 14 Crossings: 879
+Iteration: 3 Current Highest Degree Node: C00718 Current Highest Degree: 10 Crossings: 517
+Iteration: 4 Current Highest Degree Node: C00208 Current Highest Degree: 8 Crossings: 411
+Iteration: 5 Current Highest Degree Node: C00008 Current Highest Degree: 6 Crossings: 74
+Iteration: 6 Current Highest Degree Node: C00002 Current Highest Degree: 4 Crossings: 20
+Iteration: 7 Current Highest Degree Node: C00085 Current Highest Degree: 2 Crossings: 0
+map00520.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 41 Crossings: 4453
+Iteration: 1 Current Highest Degree Node: C00080 Current Highest Degree: 24 Crossings: 4146
+Iteration: 2 Current Highest Degree Node: C00013 Current Highest Degree: 18 Crossings: 2637
+Iteration: 3 Current Highest Degree Node: C00002 Current Highest Degree: 16 Crossings: 1388
+Iteration: 4 Current Highest Degree Node: C00004 Current Highest Degree: 13 Crossings: 1928
+Iteration: 5 Current Highest Degree Node: C00009 Current Highest Degree: 10 Crossings: 569
+Iteration: 6 Current Highest Degree Node: C00140 Current Highest Degree: 8 Crossings: 1144
+Iteration: 7 Current Highest Degree Node: C01222 Current Highest Degree: 6 Crossings: 887
+Iteration: 8 Current Highest Degree Node: C00052 Current Highest Degree: 4 Crossings: 167
+Iteration: 9 Current Highest Degree Node: C01674 Current Highest Degree: 2 Crossings: 8
+Iteration: 10 Current Highest Degree Node: C03733 Current Highest Degree: 0 Crossings: 0
+map00562.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 26 Crossings: 1209
+Iteration: 1 Current Highest Degree Node: C00009 Current Highest Degree: 19 Crossings: 704
+Iteration: 2 Current Highest Degree Node: C00002 Current Highest Degree: 17 Crossings: 397
+Iteration: 3 Current Highest Degree Node: C00137 Current Highest Degree: 8 Crossings: 242
+Iteration: 4 Current Highest Degree Node: C00080 Current Highest Degree: 6 Crossings: 152
+Iteration: 5 Current Highest Degree Node: C00004 Current Highest Degree: 4 Crossings: 45
+Iteration: 6 Current Highest Degree Node: C00222 Current Highest Degree: 2 Crossings: 3
+Iteration: 7 Current Highest Degree Node: C00118 Current Highest Degree: 0 Crossings: 0
+map00620.oriented
+Iteration: 0 Current Highest Degree Node: C00022 Current Highest Degree: 31 Crossings: 4260
+Iteration: 1 Current Highest Degree Node: C00080 Current Highest Degree: 23 Crossings: 3107
+Iteration: 2 Current Highest Degree Node: C00011 Current Highest Degree: 18 Crossings: 2058
+Iteration: 3 Current Highest Degree Node: C00010 Current Highest Degree: 15 Crossings: 513
+Iteration: 4 Current Highest Degree Node: C00003 Current Highest Degree: 13 Crossings: 1152
+Iteration: 5 Current Highest Degree Node: C00036 Current Highest Degree: 11 Crossings: 702
+Iteration: 6 Current Highest Degree Node: C00186 Current Highest Degree: 8 Crossings: 354
+Iteration: 7 Current Highest Degree Node: C00008 Current Highest Degree: 5 Crossings: 88
+Iteration: 8 Current Highest Degree Node: C00125 Current Highest Degree: 3 Crossings: 15
+Iteration: 9 Current Highest Degree Node: C00068 Current Highest Degree: 1 Crossings: 2
+Iteration: 10 Current Highest Degree Node: D0_C00022 Current Highest Degree: 0 Crossings: 0
+map00630.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 25 Crossings: 2344
+Iteration: 1 Current Highest Degree Node: C00080 Current Highest Degree: 20 Crossings: 1733
+Iteration: 2 Current Highest Degree Node: C00048 Current Highest Degree: 17 Crossings: 1472
+Iteration: 3 Current Highest Degree Node: C00011 Current Highest Degree: 13 Crossings: 1389
+Iteration: 4 Current Highest Degree Node: C00004 Current Highest Degree: 11 Crossings: 880
+Iteration: 5 Current Highest Degree Node: C00002 Current Highest Degree: 7 Crossings: 442
+Iteration: 6 Current Highest Degree Node: C00008 Current Highest Degree: 5 Crossings: 290
+Iteration: 7 Current Highest Degree Node: C00027 Current Highest Degree: 3 Crossings: 91
+Iteration: 8 Current Highest Degree Node: C00064 Current Highest Degree: 1 Crossings: 1
+Iteration: 9 Current Highest Degree Node: D0_C00001 Current Highest Degree: 0 Crossings: 0
+map00640.oriented
+Iteration: 0 Current Highest Degree Node: C00080 Current Highest Degree: 22 Crossings: 2063
+Iteration: 1 Current Highest Degree Node: C00100 Current Highest Degree: 18 Crossings: 1472
+Iteration: 2 Current Highest Degree Node: C00010 Current Highest Degree: 16 Crossings: 1342
+Iteration: 3 Current Highest Degree Node: C00003 Current Highest Degree: 13 Crossings: 783
+Iteration: 4 Current Highest Degree Node: C00001 Current Highest Degree: 10 Crossings: 514
+Iteration: 5 Current Highest Degree Node: C00011 Current Highest Degree: 7 Crossings: 405
+Iteration: 6 Current Highest Degree Node: C00024 Current Highest Degree: 5 Crossings: 132
+Iteration: 7 Current Highest Degree Node: C00022 Current Highest Degree: 3 Crossings: 19
+Iteration: 8 Current Highest Degree Node: C04593 Current Highest Degree: 1 Crossings: 0
+map00650.oriented
+Iteration: 0 Current Highest Degree Node: C00080 Current Highest Degree: 29 Crossings: 2381
+Iteration: 1 Current Highest Degree Node: C00001 Current Highest Degree: 17 Crossings: 1443
+Iteration: 2 Current Highest Degree Node: C00010 Current Highest Degree: 11 Crossings: 976
+Iteration: 3 Current Highest Degree Node: C00024 Current Highest Degree: 9 Crossings: 596
+Iteration: 4 Current Highest Degree Node: C00011 Current Highest Degree: 7 Crossings: 334
+Iteration: 5 Current Highest Degree Node: C00042 Current Highest Degree: 5 Crossings: 112
+Iteration: 6 Current Highest Degree Node: C01412 Current Highest Degree: 3 Crossings: 23
+Iteration: 7 Current Highest Degree Node: C01089 Current Highest Degree: 1 Crossings: 0
+map00660.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 15 Crossings: 241
+Iteration: 1 Current Highest Degree Node: C00011 Current Highest Degree: 7 Crossings: 113
+Iteration: 2 Current Highest Degree Node: C00022 Current Highest Degree: 4 Crossings: 60
+Iteration: 3 Current Highest Degree Node: C03618 Current Highest Degree: 2 Crossings: 28
+Iteration: 4 Current Highest Degree Node: C02630 Current Highest Degree: 0 Crossings: 0
+map01200.oriented
+Iteration: 0 Current Highest Degree Node: C00080 Current Highest Degree: 62 Crossings: 27020
+Iteration: 1 Current Highest Degree Node: C00001 Current Highest Degree: 48 Crossings: 24519
+Iteration: 2 Current Highest Degree Node: C00002 Current Highest Degree: 27 Crossings: 15392
+Iteration: 3 Current Highest Degree Node: C00003 Current Highest Degree: 24 Crossings: 8754
+Iteration: 4 Current Highest Degree Node: C00009 Current Highest Degree: 20 Crossings: 3604
+Iteration: 5 Current Highest Degree Node: C00022 Current Highest Degree: 13 Crossings: 2332
+Iteration: 6 Current Highest Degree Node: C00118 Current Highest Degree: 11 Crossings: 2719
+Iteration: 7 Current Highest Degree Node: C00149 Current Highest Degree: 9 Crossings: 1469
+Iteration: 8 Current Highest Degree Node: C00020 Current Highest Degree: 7 Crossings: 1213
+Iteration: 9 Current Highest Degree Node: C00074 Current Highest Degree: 5 Crossings: 838
+Iteration: 10 Current Highest Degree Node: C00027 Current Highest Degree: 3 Crossings: 112
+Iteration: 11 Current Highest Degree Node: C00169 Current Highest Degree: 1 Crossings: 0
+map01210.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 51 Crossings: 17705
+Iteration: 1 Current Highest Degree Node: C00011 Current Highest Degree: 46 Crossings: 13217
+Iteration: 2 Current Highest Degree Node: C00080 Current Highest Degree: 42 Crossings: 10204
+Iteration: 3 Current Highest Degree Node: C00010 Current Highest Degree: 28 Crossings: 6904
+Iteration: 4 Current Highest Degree Node: C00003 Current Highest Degree: 21 Crossings: 4771
+Iteration: 5 Current Highest Degree Node: C00026 Current Highest Degree: 19 Crossings: 3278
+Iteration: 6 Current Highest Degree Node: C00024 Current Highest Degree: 17 Crossings: 2089
+Iteration: 7 Current Highest Degree Node: C00025 Current Highest Degree: 15 Crossings: 1782
+Iteration: 8 Current Highest Degree Node: C00022 Current Highest Degree: 13 Crossings: 1036
+Iteration: 9 Current Highest Degree Node: C03161 Current Highest Degree: 11 Crossings: 1253
+Iteration: 10 Current Highest Degree Node: C00151 Current Highest Degree: 8 Crossings: 525
+Iteration: 11 Current Highest Degree Node: C00008 Current Highest Degree: 5 Crossings: 706
+Iteration: 12 Current Highest Degree Node: C00041 Current Highest Degree: 3 Crossings: 94
+Iteration: 13 Current Highest Degree Node: C05379 Current Highest Degree: 1 Crossings: 0
+map01212.oriented
+Iteration: 0 Current Highest Degree Node: C00080 Current Highest Degree: 54 Crossings: 6486
+Iteration: 1 Current Highest Degree Node: C00001 Current Highest Degree: 35 Crossings: 6859
+Iteration: 2 Current Highest Degree Node: C00006 Current Highest Degree: 23 Crossings: 3688
+Iteration: 3 Current Highest Degree Node: C00010 Current Highest Degree: 17 Crossings: 1933
+Iteration: 4 Current Highest Degree Node: C00999 Current Highest Degree: 13 Crossings: 655
+Iteration: 5 Current Highest Degree Node: C00024 Current Highest Degree: 11 Crossings: 779
+Iteration: 6 Current Highest Degree Node: C01209 Current Highest Degree: 9 Crossings: 277
+Iteration: 7 Current Highest Degree Node: C01352 Current Highest Degree: 6 Crossings: 106
+Iteration: 8 Current Highest Degree Node: C05764 Current Highest Degree: 4 Crossings: 120
+Iteration: 9 Current Highest Degree Node: C00002 Current Highest Degree: 2 Crossings: 50
+Iteration: 10 Current Highest Degree Node: C00008 Current Highest Degree: 0 Crossings: 0
+map01220.oriented
+Iteration: 0 Current Highest Degree Node: C00080 Current Highest Degree: 143 Crossings: 52015
+Iteration: 1 Current Highest Degree Node: C00004 Current Highest Degree: 112 Crossings: 29889
+Iteration: 2 Current Highest Degree Node: C00007 Current Highest Degree: 100 Crossings: 10672
+Iteration: 3 Current Highest Degree Node: C00001 Current Highest Degree: 91 Crossings: 4931
+Iteration: 4 Current Highest Degree Node: C00005 Current Highest Degree: 22 Crossings: 2260
+Iteration: 5 Current Highest Degree Node: C00011 Current Highest Degree: 19 Crossings: 2036
+Iteration: 6 Current Highest Degree Node: C00596 Current Highest Degree: 12 Crossings: 1978
+Iteration: 7 Current Highest Degree Node: C00010 Current Highest Degree: 9 Crossings: 1464
+Iteration: 8 Current Highest Degree Node: C00002 Current Highest Degree: 6 Crossings: 1186
+Iteration: 9 Current Highest Degree Node: C00022 Current Highest Degree: 4 Crossings: 312
+Iteration: 10 Current Highest Degree Node: C06321 Current Highest Degree: 2 Crossings: 48
+Iteration: 11 Current Highest Degree Node: C02357 Current Highest Degree: 0 Crossings: 0
+map01230.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 53 Crossings: 14919
+Iteration: 1 Current Highest Degree Node: C00080 Current Highest Degree: 32 Crossings: 10202
+Iteration: 2 Current Highest Degree Node: C00025 Current Highest Degree: 27 Crossings: 8246
+Iteration: 3 Current Highest Degree Node: C00026 Current Highest Degree: 22 Crossings: 4728
+Iteration: 4 Current Highest Degree Node: C00006 Current Highest Degree: 18 Crossings: 3388
+Iteration: 5 Current Highest Degree Node: C00011 Current Highest Degree: 16 Crossings: 3088
+Iteration: 6 Current Highest Degree Node: C00003 Current Highest Degree: 12 Crossings: 1961
+Iteration: 7 Current Highest Degree Node: C00022 Current Highest Degree: 10 Crossings: 1295
+Iteration: 8 Current Highest Degree Node: C00010 Current Highest Degree: 8 Crossings: 1025
+Iteration: 9 Current Highest Degree Node: C00024 Current Highest Degree: 6 Crossings: 758
+Iteration: 10 Current Highest Degree Node: C00064 Current Highest Degree: 4 Crossings: 524
+Iteration: 11 Current Highest Degree Node: C00169 Current Highest Degree: 2 Crossings: 50
+Iteration: 12 Current Highest Degree Node: C00147 Current Highest Degree: 0 Crossings: 0
+map01232.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 75 Crossings: 13350
+Iteration: 1 Current Highest Degree Node: C00009 Current Highest Degree: 42 Crossings: 7996
+Iteration: 2 Current Highest Degree Node: C00002 Current Highest Degree: 37 Crossings: 6285
+Iteration: 3 Current Highest Degree Node: C00008 Current Highest Degree: 35 Crossings: 2822
+Iteration: 4 Current Highest Degree Node: C00013 Current Highest Degree: 17 Crossings: 2126
+Iteration: 5 Current Highest Degree Node: C00014 Current Highest Degree: 13 Crossings: 2100
+Iteration: 6 Current Highest Degree Node: C00105 Current Highest Degree: 8 Crossings: 2205
+Iteration: 7 Current Highest Degree Node: C00075 Current Highest Degree: 6 Crossings: 925
+Iteration: 8 Current Highest Degree Node: C00015 Current Highest Degree: 4 Crossings: 174
+Iteration: 9 Current Highest Degree Node: C00117 Current Highest Degree: 2 Crossings: 6
+Iteration: 10 Current Highest Degree Node: C00122 Current Highest Degree: 0 Crossings: 0
+map01240.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 91 Crossings: 42534
+Iteration: 1 Current Highest Degree Node: C00080 Current Highest Degree: 66 Crossings: 9046
+Iteration: 2 Current Highest Degree Node: C00002 Current Highest Degree: 58 Crossings: 23511
+Iteration: 3 Current Highest Degree Node: C00009 Current Highest Degree: 43 Crossings: 20936
+Iteration: 4 Current Highest Degree Node: C00008 Current Highest Degree: 41 Crossings: 10600
+Iteration: 5 Current Highest Degree Node: C00013 Current Highest Degree: 36 Crossings: 8714
+Iteration: 6 Current Highest Degree Node: C00003 Current Highest Degree: 30 Crossings: 2844
+Iteration: 7 Current Highest Degree Node: C00006 Current Highest Degree: 28 Crossings: 5746
+Iteration: 8 Current Highest Degree Node: C00004 Current Highest Degree: 25 Crossings: 5251
+Iteration: 9 Current Highest Degree Node: C00021 Current Highest Degree: 22 Crossings: 4380
+Iteration: 10 Current Highest Degree Node: C00025 Current Highest Degree: 20 Crossings: 6712
+Iteration: 11 Current Highest Degree Node: C00020 Current Highest Degree: 15 Crossings: 2441
+Iteration: 12 Current Highest Degree Node: C00073 Current Highest Degree: 12 Crossings: 2808
+Iteration: 13 Current Highest Degree Node: C00010 Current Highest Degree: 10 Crossings: 4092
+Iteration: 14 Current Highest Degree Node: C00064 Current Highest Degree: 8 Crossings: 3367
+Iteration: 15 Current Highest Degree Node: C00058 Current Highest Degree: 5 Crossings: 1890
+Iteration: 16 Current Highest Degree Node: C04732 Current Highest Degree: 3 Crossings: 2073
+Iteration: 17 Current Highest Degree Node: C00931 Current Highest Degree: 1 Crossings: 22
+Iteration: 18 Current Highest Degree Node: D0_C00001 Current Highest Degree: 0 Crossings: 0
+map01250.oriented
+Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 41 Crossings: 8852
+Iteration: 1 Current Highest Degree Node: C00013 Current Highest Degree: 23 Crossings: 3494
+Iteration: 2 Current Highest Degree Node: C00002 Current Highest Degree: 20 Crossings: 5272
+Iteration: 3 Current Highest Degree Node: C00008 Current Highest Degree: 17 Crossings: 2213
+Iteration: 4 Current Highest Degree Node: C00009 Current Highest Degree: 14 Crossings: 2568
+Iteration: 5 Current Highest Degree Node: C00024 Current Highest Degree: 11 Crossings: 1362
+Iteration: 6 Current Highest Degree Node: C00019 Current Highest Degree: 9 Crossings: 1638
+Iteration: 7 Current Highest Degree Node: C00043 Current Highest Degree: 7 Crossings: 1274
+Iteration: 8 Current Highest Degree Node: C00167 Current Highest Degree: 5 Crossings: 308
+Iteration: 9 Current Highest Degree Node: C00052 Current Highest Degree: 3 Crossings: 27
+Iteration: 10 Current Highest Degree Node: C04089 Current Highest Degree: 1 Crossings: 0

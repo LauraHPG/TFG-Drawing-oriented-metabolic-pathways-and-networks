@@ -281,6 +281,14 @@ def rearangeSources(graph, pos):
 
     return new_positions 
 
+def getNumSources(graph):
+    sources = 0
+
+    for node in graph.nodes():
+        if graph.in_degree(node) == 0:
+            sources += 1
+        
+    return sources
 def countCrossings(graph,pos):
     numCrossings = 0
 
@@ -370,30 +378,8 @@ def sugiyama(graph, N = 1.5):
     sug.draw(N)  # Calculate positions
 
     poses = {v.data: (v.view.xy[0], v.view.xy[1]) for v in g.C[0].sV}  # Extract positions
-    poses = rearangeSources(graph,poses)
+    poses  = rearangeSources(graph,poses)
 
-    return poses
-
-def sugiyama_debug(graph):
-
-    g = grandalf.utils.convert_nextworkx_graph_to_grandalf(graph)
-
-
-    class defaultview(object):
-        w, h = 20, 20
-
-
-    for v in g.C[0].sV:
-        v.view = defaultview()
-
-    sug = SugiyamaLayout(g.C[0])
-    sug.init_all()  # roots = [V[0]])
-    
-    sug.draw_step()  # Calculate positions
-
-    poses = {v.data: (v.view.xy[0], v.view.xy[1]) for v in g.C[0].sV}  # Extract positions
-    poses = rearangeSources(graph, poses)
-    
     return poses
 
 def getLargestCC(graph):
@@ -588,16 +574,21 @@ def checkMaxCCSize(graph):
 
     H = graph.to_undirected()
     S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
-
+    it = 0
     while len(S[0].nodes()) > 1000:
-        node, degree = getHighestDegreeNode(graph)
+        print("It",it)
+        node, degree = getHighestDegreeNodes(graph)
         splitHighDegreeComponents(graph,degree)
 
-        if DEBUG: print("Largest CC size ", len(S[0].nodes()))
-        if DEBUG: print("Node info: ", node, degree)
+        if DEBUG: print("Largest CC size:", len(S[0].nodes()))
+        if DEBUG: print("Num CCs", len(S))
+        if DEBUG: print("Nodes info:", node,)
+        if DEBUG: print("Degree:", degree)
+        if DEBUG: print("Nodes:", len(graph.nodes()), "Edges:", len(graph.edges()))
 
         H = graph.to_undirected()
         S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+        it += 1
 
 def defineNodeCID(graph, nodes, cid):
     for node in nodes:
@@ -633,5 +624,5 @@ def getGraphPositions(graph, N = 1.5):
                 
                 defineNodeCID(graph, subGraph.nodes(), cid)
 
-    poses = staggerLayers(graph, poses)
+    # poses = staggerLayers(graph, poses)
     return poses

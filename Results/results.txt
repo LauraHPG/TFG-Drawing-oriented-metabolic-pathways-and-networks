@@ -117,3 +117,104 @@ Iteration: 0 Current Highest Degree Node: C00001 Current Highest Degree: 15 Cros
 Iteration: 1 Current Highest Degree Node: C00011 Current Highest Degree: 7 Crossings: 116
 Iteration: 2 Current Highest Degree Node: C00022 Current Highest Degree: 4 Crossings: 66
 Iteration: 3 Current Highest Degree Node: C03618 Current Highest Degree: 2 Crossings: 27
+
+
+
+
+map00010.oriented
+Elapsed time get_graph_info: 0.339442 seconds Crossings: 1404
+map00020.oriented
+Elapsed time get_graph_info: 0.113885 seconds Crossings: 431
+map00030.oriented
+Elapsed time get_graph_info: 0.179301 seconds Crossings: 710
+map00040.oriented
+Elapsed time get_graph_info: 0.783720 seconds Crossings: 3464
+map00051.oriented
+Elapsed time get_graph_info: 0.482243 seconds Crossings: 2065
+map00052.oriented
+Elapsed time get_graph_info: 0.186561 seconds Crossings: 682
+map00053.oriented
+Elapsed time get_graph_info: 0.357131 seconds Crossings: 1560
+map00500.oriented
+Elapsed time get_graph_info: 0.451364 seconds Crossings: 2291
+map00520.oriented
+Elapsed time get_graph_info: 1.336843 seconds Crossings: 5183
+map00562.oriented
+Elapsed time get_graph_info: 0.273967 seconds Crossings: 1297
+map00620.oriented
+Elapsed time get_graph_info: 1.133033 seconds Crossings: 5397
+map00630.oriented
+Elapsed time get_graph_info: 0.739815 seconds Crossings: 2728
+map00640.oriented
+Elapsed time get_graph_info: 0.484407 seconds Crossings: 2127
+map00650.oriented
+Elapsed time get_graph_info: 0.718654 seconds Crossings: 2855
+map00660.oriented
+Elapsed time get_graph_info: 0.103520 seconds Crossings: 240
+map01200.oriented
+Elapsed time get_graph_info: 9.215493 seconds Crossings: 33485
+map01210.oriented
+Elapsed time get_graph_info: 4.686475 seconds Crossings: 16701
+map01212.oriented
+Elapsed time get_graph_info: 2.013109 seconds Crossings: 7400
+map01220.oriented
+Elapsed time get_graph_info: 15.319151 seconds Crossings: 53327
+map01230.oriented
+Elapsed time get_graph_info: 4.636766 seconds Crossings: 15959
+map01232.oriented
+Elapsed time get_graph_info: 2.622576 seconds Crossings: 10392
+map01240.oriented
+Elapsed time get_graph_info: 15.574465 seconds Crossings: 23682
+map01250.oriented
+Elapsed time get_graph_info: 3.235651 seconds Crossings: 10819
+
+
+map00010.oriented
+Elapsed time get_graph_info: 0.376397 seconds Crossings: 1518 Edges: 241
+map00020.oriented
+Elapsed time get_graph_info: 0.134407 seconds Crossings: 463 Edges: 138
+map00030.oriented
+Elapsed time get_graph_info: 0.206722 seconds Crossings: 909 Edges: 229
+map00040.oriented
+Elapsed time get_graph_info: 0.794797 seconds Crossings: 3570 Edges: 326
+map00051.oriented
+Elapsed time get_graph_info: 0.482965 seconds Crossings: 2065 Edges: 325
+map00052.oriented
+Elapsed time get_graph_info: 0.200767 seconds Crossings: 745 Edges: 223
+map00053.oriented
+Elapsed time get_graph_info: 0.357834 seconds Crossings: 1560 Edges: 282
+map00500.oriented
+Elapsed time get_graph_info: 0.448797 seconds Crossings: 2291 Edges: 279
+map00520.oriented
+Elapsed time get_graph_info: 1.304425 seconds Crossings: 5137 Edges: 577
+map00562.oriented
+Elapsed time get_graph_info: 0.271477 seconds Crossings: 1285 Edges: 245
+map00620.oriented
+Elapsed time get_graph_info: 0.898367 seconds Crossings: 3935 Edges: 396
+map00630.oriented
+Elapsed time get_graph_info: 0.708704 seconds Crossings: 2773 Edges: 349
+map00640.oriented
+Elapsed time get_graph_info: 0.483441 seconds Crossings: 2158 Edges: 285
+map00650.oriented
+Elapsed time get_graph_info: 0.710966 seconds Crossings: 2855 Edges: 316
+map00660.oriented
+Elapsed time get_graph_info: 0.108238 seconds Crossings: 240 Edges: 138
+map01100.oriented
+map01110.oriented
+map01120.oriented
+map01200.oriented
+Elapsed time get_graph_info: 7.615400 seconds Crossings: 25352 Edges: 917
+map01210.oriented
+Elapsed time get_graph_info: 4.007363 seconds Crossings: 13401 Edges: 720
+map01212.oriented
+Elapsed time get_graph_info: 1.799863 seconds Crossings: 6680 Edges: 527
+map01220.oriented
+Elapsed time get_graph_info: 13.548352 seconds Crossings: 48050 Edges: 1240
+map01230.oriented
+Elapsed time get_graph_info: 4.336302 seconds Crossings: 14266 Edges: 711
+map01232.oriented
+Elapsed time get_graph_info: 2.919558 seconds Crossings: 12097 Edges: 571
+map01240.oriented
+Elapsed time get_graph_info: 15.796570 seconds Crossings: 28760 Edges: 1516
+map01250.oriented
+Elapsed time get_graph_info: 2.987209 seconds Crossings: 11327 Edges: 790

@@ -1,0 +1,1167 @@
+map01100.oriented
+It 0
+Initial number of nodes: 8071
+Final number of nodes: 9736
+Largest CC size: 8068
+Num CCs 2
+Nodes info: ['C00001']
+Degree: 1666
+Nodes: 9736 Edges: 20121
+It 1
+Initial number of nodes: 9736
+Final number of nodes: 10792
+Largest CC size: 9726
+Num CCs 3
+Nodes info: ['C00080']
+Degree: 1057
+Nodes: 10792 Edges: 20121
+It 2
+Initial number of nodes: 10792
+Final number of nodes: 11429
+Largest CC size: 10782
+Num CCs 3
+Nodes info: ['C00007']
+Degree: 638
+Nodes: 11429 Edges: 20121
+It 3
+Initial number of nodes: 11429
+Final number of nodes: 11892
+Largest CC size: 11419
+Num CCs 3
+Nodes info: ['C00003']
+Degree: 464
+Nodes: 11892 Edges: 20121
+It 4
+Initial number of nodes: 11892
+Final number of nodes: 12345
+Largest CC size: 11882
+Num CCs 3
+Nodes info: ['C00004']
+Degree: 454
+Nodes: 12345 Edges: 20121
+It 5
+Initial number of nodes: 12345
+Final number of nodes: 12774
+Largest CC size: 12335
+Num CCs 3
+Nodes info: ['C00006']
+Degree: 430
+Nodes: 12774 Edges: 20121
+It 6
+Initial number of nodes: 12774
+Final number of nodes: 13202
+Largest CC size: 12764
+Num CCs 3
+Nodes info: ['C00005']
+Degree: 429
+Nodes: 13202 Edges: 20121
+It 7
+Initial number of nodes: 13202
+Final number of nodes: 13568
+Largest CC size: 13180
+Num CCs 5
+Nodes info: ['C00002']
+Degree: 367
+Nodes: 13568 Edges: 20121
+It 8
+Initial number of nodes: 13568
+Final number of nodes: 13917
+Largest CC size: 13546
+Num CCs 5
+Nodes info: ['C00011']
+Degree: 350
+Nodes: 13917 Edges: 20121
+It 9
+Initial number of nodes: 13917
+Final number of nodes: 14230
+Largest CC size: 13895
+Num CCs 5
+Nodes info: ['C00009']
+Degree: 314
+Nodes: 14230 Edges: 20121
+It 10
+Initial number of nodes: 14230
+Final number of nodes: 14493
+Largest CC size: 14203
+Num CCs 6
+Nodes info: ['C00008']
+Degree: 264
+Nodes: 14493 Edges: 20121
+It 11
+Initial number of nodes: 14493
+Final number of nodes: 14747
+Largest CC size: 14456
+Num CCs 8
+Nodes info: ['C00010']
+Degree: 255
+Nodes: 14747 Edges: 20121
+It 12
+Initial number of nodes: 14747
+Final number of nodes: 14973
+Largest CC size: 14710
+Num CCs 8
+Nodes info: ['C00013']
+Degree: 227
+Nodes: 14973 Edges: 20121
+It 13
+Initial number of nodes: 14973
+Final number of nodes: 15170
+Largest CC size: 14936
+Num CCs 8
+Nodes info: ['C00014']
+Degree: 198
+Nodes: 15170 Edges: 20121
+It 14
+Initial number of nodes: 15170
+Final number of nodes: 15354
+Largest CC size: 15133
+Num CCs 8
+Nodes info: ['C00019']
+Degree: 185
+Nodes: 15354 Edges: 20121
+It 15
+Initial number of nodes: 15354
+Final number of nodes: 15514
+Largest CC size: 15317
+Num CCs 8
+Nodes info: ['C00021']
+Degree: 161
+Nodes: 15514 Edges: 20121
+It 16
+Initial number of nodes: 15514
+Final number of nodes: 15651
+Largest CC size: 15443
+Num CCs 11
+Nodes info: ['C00026']
+Degree: 138
+Nodes: 15651 Edges: 20121
+It 17
+Initial number of nodes: 15651
+Final number of nodes: 15779
+Largest CC size: 15580
+Num CCs 11
+Nodes info: ['C00025']
+Degree: 129
+Nodes: 15779 Edges: 20121
+It 18
+Initial number of nodes: 15779
+Final number of nodes: 15900
+Largest CC size: 15692
+Num CCs 13
+Nodes info: ['C00020']
+Degree: 122
+Nodes: 15900 Edges: 20121
+It 19
+Initial number of nodes: 15900
+Final number of nodes: 16014
+Largest CC size: 15787
+Num CCs 18
+Nodes info: ['C00022']
+Degree: 115
+Nodes: 16014 Edges: 20121
+It 20
+Initial number of nodes: 16014
+Final number of nodes: 16127
+Largest CC size: 15901
+Num CCs 18
+Nodes info: ['C00027']
+Degree: 114
+Nodes: 16127 Edges: 20121
+It 21
+Initial number of nodes: 16127
+Final number of nodes: 16335
+Largest CC size: 15994
+Num CCs 19
+Nodes info: ['C03024', 'C03161']
+Degree: 105
+Nodes: 16335 Edges: 20121
+It 22
+Initial number of nodes: 16335
+Final number of nodes: 16436
+Largest CC size: 16202
+Num CCs 19
+Nodes info: ['C00024']
+Degree: 102
+Nodes: 16436 Edges: 20121
+It 23
+Initial number of nodes: 16436
+Final number of nodes: 16515
+Largest CC size: 16261
+Num CCs 22
+Nodes info: ['C00042']
+Degree: 80
+Nodes: 16515 Edges: 20121
+It 24
+Initial number of nodes: 16515
+Final number of nodes: 16746
+Largest CC size: 16340
+Num CCs 22
+Nodes info: ['C00028', 'C00030', 'C00015']
+Degree: 78
+Nodes: 16746 Edges: 20121
+It 25
+Initial number of nodes: 16746
+Final number of nodes: 16822
+Largest CC size: 16533
+Num CCs 24
+Nodes info: ['G10619']
+Degree: 77
+Nodes: 16822 Edges: 20121
+It 26
+Initial number of nodes: 16822
+Final number of nodes: 16946
+Largest CC size: 16609
+Num CCs 24
+Nodes info: ['C00139', 'C00138']
+Degree: 63
+Nodes: 16946 Edges: 20121
+It 27
+Initial number of nodes: 16946
+Final number of nodes: 17000
+Largest CC size: 16725
+Num CCs 25
+Nodes info: ['C00033']
+Degree: 55
+Nodes: 17000 Edges: 20121
+It 28
+Initial number of nodes: 17000
+Final number of nodes: 17050
+Largest CC size: 16751
+Num CCs 29
+Nodes info: ['C00058']
+Degree: 51
+Nodes: 17050 Edges: 20121
+It 29
+Initial number of nodes: 17050
+Final number of nodes: 17148
+Largest CC size: 16773
+Num CCs 34
+Nodes info: ['C00067', 'C00229']
+Degree: 50
+Nodes: 17148 Edges: 20121
+It 30
+Initial number of nodes: 17148
+Final number of nodes: 17190
+Largest CC size: 16864
+Num CCs 35
+Nodes info: ['C00029']
+Degree: 43
+Nodes: 17190 Edges: 20121
+It 31
+Initial number of nodes: 17190
+Final number of nodes: 17270
+Largest CC size: 16906
+Num CCs 35
+Nodes info: ['C00031', 'C00051']
+Degree: 41
+Nodes: 17270 Edges: 20121
+It 32
+Initial number of nodes: 17270
+Final number of nodes: 17308
+Largest CC size: 16966
+Num CCs 37
+Nodes info: ['C00363']
+Degree: 39
+Nodes: 17308 Edges: 20121
+It 33
+Initial number of nodes: 17308
+Final number of nodes: 17345
+Largest CC size: 16968
+Num CCs 38
+Nodes info: ['C00037']
+Degree: 38
+Nodes: 17345 Edges: 20121
+It 34
+Initial number of nodes: 17345
+Final number of nodes: 17415
+Largest CC size: 16988
+Num CCs 39
+Nodes info: ['C00083', 'C00041']
+Degree: 36
+Nodes: 17415 Edges: 20121
+It 35
+Initial number of nodes: 17415
+Final number of nodes: 17447
+Largest CC size: 16874
+Num CCs 48
+Nodes info: ['C00016']
+Degree: 33
+Nodes: 17447 Edges: 20121
+It 36
+Initial number of nodes: 17447
+Final number of nodes: 17478
+Largest CC size: 16906
+Num CCs 48
+Nodes info: ['C00044']
+Degree: 32
+Nodes: 17478 Edges: 20121
+It 37
+Initial number of nodes: 17478
+Final number of nodes: 17598
+Largest CC size: 16937
+Num CCs 48
+Nodes info: ['C00073', 'C00101', 'C01352', 'G10620']
+Degree: 31
+Nodes: 17598 Edges: 20121
+It 38
+Initial number of nodes: 17598
+Final number of nodes: 17627
+Largest CC size: 17038
+Num CCs 51
+Nodes info: ['C00063']
+Degree: 30
+Nodes: 17627 Edges: 20121
+It 39
+Initial number of nodes: 17627
+Final number of nodes: 17735
+Largest CC size: 17067
+Num CCs 51
+Nodes info: ['C00055', 'C00097', 'C00283', 'C01327']
+Degree: 28
+Nodes: 17735 Edges: 20121
+It 40
+Initial number of nodes: 17735
+Final number of nodes: 17813
+Largest CC size: 17156
+Num CCs 54
+Nodes info: ['C00074', 'C00036', 'C00059']
+Degree: 27
+Nodes: 17813 Edges: 20121
+It 41
+Initial number of nodes: 17813
+Final number of nodes: 17963
+Largest CC size: 17188
+Num CCs 62
+Nodes info: ['C00082', 'C00064', 'C00049', 'C00094', 'C00641', 'G10609']
+Degree: 26
+Nodes: 17963 Edges: 20121
+It 42
+Initial number of nodes: 17963
+Final number of nodes: 18059
+Largest CC size: 17163
+Num CCs 79
+Nodes info: ['C00084', 'C00035', 'C00062', 'C00100']
+Degree: 25
+Nodes: 18059 Edges: 20121
+It 43
+Initial number of nodes: 18059
+Final number of nodes: 18105
+Largest CC size: 17162
+Num CCs 89
+Nodes info: ['C00091', 'G10621']
+Degree: 24
+Nodes: 18105 Edges: 20121
+It 44
+Initial number of nodes: 18105
+Final number of nodes: 18193
+Largest CC size: 17149
+Num CCs 95
+Nodes info: ['C00048', 'C00125', 'C00126', 'C00118']
+Degree: 23
+Nodes: 18193 Edges: 20121
+It 45
+Initial number of nodes: 18193
+Final number of nodes: 18256
+Largest CC size: 17201
+Num CCs 101
+Nodes info: ['C00127', 'C00047', 'G10616']
+Degree: 22
+Nodes: 18256 Edges: 20121
+It 46
+Initial number of nodes: 18256
+Final number of nodes: 18316
+Largest CC size: 17187
+Num CCs 112
+Nodes info: ['C00065', 'G10610', 'G10615']
+Degree: 21
+Nodes: 18316 Edges: 20121
+It 47
+Initial number of nodes: 18316
+Final number of nodes: 18354
+Largest CC size: 17238
+Num CCs 114
+Nodes info: ['C00078', 'C00124']
+Degree: 20
+Nodes: 18354 Edges: 20121
+It 48
+Initial number of nodes: 18354
+Final number of nodes: 18408
+Largest CC size: 17210
+Num CCs 116
+Nodes info: ['C00103', 'C00085', 'G10611']
+Degree: 19
+Nodes: 18408 Edges: 20121
+It 49
+Initial number of nodes: 18408
+Final number of nodes: 18459
+Largest CC size: 17213
+Num CCs 118
+Nodes info: ['C00088', 'C00061', 'C05198']
+Degree: 18
+Nodes: 18459 Edges: 20121
+It 50
+Initial number of nodes: 18459
+Final number of nodes: 18587
+Largest CC size: 17196
+Num CCs 125
+Nodes info: ['C00355', 'C00075', 'C15602', 'C15603', 'C00122', 'C00143', 'C00079', 'C00095']
+Degree: 17
+Nodes: 18587 Edges: 20121
+It 51
+Initial number of nodes: 18587
+Final number of nodes: 18677
+Largest CC size: 17171
+Num CCs 147
+Nodes info: ['C00072', 'C00105', 'C00099', 'C00109', 'C00134', 'C00448']
+Degree: 16
+Nodes: 18677 Edges: 20121
+It 52
+Initial number of nodes: 18677
+Final number of nodes: 18775
+Largest CC size: 17025
+Num CCs 169
+Nodes info: ['C00119', 'C00155', 'C00052', 'C00144', 'C00111', 'C00221', 'C00385']
+Degree: 15
+Nodes: 18775 Edges: 20121
+It 53
+Initial number of nodes: 18775
+Final number of nodes: 18905
+Largest CC size: 17029
+Num CCs 181
+Nodes info: ['C00166', 'C00040', 'C00620', 'C00667', 'C00662', 'C01209', 'C00596', 'C00999', 'C00996', 'C03576']
+Degree: 14
+Nodes: 18905 Edges: 20121
+It 54
+Initial number of nodes: 18905
+Final number of nodes: 19085
+Largest CC size: 17067
+Num CCs 190
+Nodes info: ['C00197', 'C01847', 'C00086', 'C00546', 'C00043', 'C00053', 'C00222', 'C00219', 'C00258', 'C00195', 'C00341', 'C00272', 'C00343', 'C00342', 'C00698']
+Degree: 13
+Nodes: 19085 Edges: 20121
+It 55
+Initial number of nodes: 19085
+Final number of nodes: 19283
+Largest CC size: 16631
+Num CCs 240
+Nodes info: ['C00140', 'C00533', 'C00148', 'C00288', 'C00117', 'C00147', 'C00256', 'C00149', 'C00167', 'C00054', 'C00077', 'C00132', 'C01179', 'C00096', 'C00106', 'C00121', 'C00135', 'C00615']
+Degree: 12
+Nodes: 19283 Edges: 20121
+It 56
+Initial number of nodes: 19283
+Final number of nodes: 19463
+Largest CC size: 16204
+Num CCs 297
+Nodes info: ['C00170', 'C00169', 'C00186', 'C00332', 'C00334', 'C00718', 'C00213', 'C00164', 'C00068', 'C00232', 'C00108', 'C00199', 'C00235', 'C00877', 'C00441', 'C00353', 'C04261', 'G10622']
+Degree: 11
+Nodes: 19463 Edges: 20121
+It 57
+Initial number of nodes: 19463
+Final number of nodes: 19643
+Largest CC size: 15239
+Num CCs 360
+Nodes info: ['C05422', 'C00153', 'C00130', 'C00158', 'C04076', 'C00218', 'C04253', 'C04570', 'C00089', 'C00090', 'C00114', 'C00136', 'C00137', 'C00180', 'C00230', 'C00157', 'C00320', 'C00350', 'G10614', 'C13747']
+Degree: 10
+Nodes: 19643 Edges: 20121
+It 58
+Initial number of nodes: 19643
+Final number of nodes: 19779
+Largest CC size: 14600
+Num CCs 408
+Nodes info: ['C01326', 'C00112', 'C00267', 'C00234', 'C00668', 'C00262', 'C00191', 'C00154', 'C00315', 'C00509', 'C11907', 'C03771', 'C01097', 'C00876', 'C01132', 'C11921', 'C01151']
+Degree: 9
+Nodes: 19779 Edges: 20121
+It 59
+Initial number of nodes: 19779
+Final number of nodes: 20073
+Largest CC size: 13641
+Num CCs 463
+Nodes info: ['C00208', 'C00327', 'C00092', 'C00032', 'C00237', 'C00224', 'C00409', 'C00515', 'C00331', 'C00423', 'C01222', 'C00683', 'C00163', 'C06002', 'C00251', 'C00576', 'C00253', 'C00156', 'C00416', 'C00266', 'C00512', 'C00181', 'C00424', 'C00187', 'C01026', 'C00364', 'C00223', 'C00365', 'C00593', 'C15972', 'C01185', 'C01194', 'C00956', 'C00333', 'C00544', 'C00719', 'C00760', 'C03920', 'C04628', 'G10617', 'G00050', 'C16353']
+Degree: 8
+Nodes: 20073 Edges: 20121
+It 60
+Initial number of nodes: 20073
+Final number of nodes: 20445
+Largest CC size: 11890
+Num CCs 603
+Nodes info: ['C01083', 'C01146', 'C00378', 'C00255', 'C00427', 'C00212', 'C00227', 'C00217', 'C00198', 'C14818', 'C00133', 'C00160', 'C00475', 'C01005', 'C00398', 'C00081', 'C00346', 'C00189', 'C00188', 'C00354', 'C00116', 'C00159', 'C00440', 'C00110', 'C00129', 'C00655', 'C00555', 'C00461', 'C00141', 'C03912', 'C00161', 'C00162', 'C00254', 'C00345', 'C00204', 'C00672', 'C00239', 'C00245', 'C00259', 'C00369', 'C00268', 'C00322', 'C00406', 'C00470', 'C01617', 'C00410', 'C00493', 'C00974', 'C00577', 'C15973', 'C01161', 'C00282', 'C01080', 'C01290', 'C04832', 'C05432', 'C05752', 'C02745', 'C02869', 'C07481', 'C16358', 'C22158']
+Degree: 7
+Nodes: 20445 Edges: 20121
+It 61
+Initial number of nodes: 20445
+Final number of nodes: 20830
+Largest CC size: 3630
+Num CCs 828
+Nodes info: ['C00376', 'C00455', 'C05933', 'C01165', 'C00433', 'C00311', 'C00887', 'C00209', 'C00603', 'C00168', 'C01081', 'C00104', 'C03167', 'C00352', 'C00244', 'C00805', 'C00681', 'C00894', 'C00415', 'C00299', 'C02291', 'C00279', 'C00231', 'C00233', 'C00270', 'C00294', 'C00691', 'C04006', 'C00357', 'C00183', 'C00445', 'C01157', 'C01885', 'C00601', 'C00178', 'C00536', 'C00319', 'C00543', 'C01172', 'C02814', 'C05382', 'C00458', 'C05764', 'C00280', 'C00286', 'C00944', 'C00527', 'C00323', 'C00460', 'C00344', 'C00473', 'C00671', 'C03765', 'C00628', 'C07086', 'C00954', 'C02170', 'C00697', 'C00836', 'C02222', 'C04281', 'C04637', 'C02139', 'C03684', 'C03972', 'C04895', 'C01330', 'C04756', 'C04377', 'C04613', 'C05761', 'C11911', 'G00092', 'G00094', 'C15930', 'C07480', 'C07130']
+Degree: 6
+Nodes: 20830 Edges: 20121
+It 62
+Initial number of nodes: 20830
+Final number of nodes: 21342
+Largest CC size: 2035
+Num CCs 1095
+Nodes info: ['C01182', 'C01041', 'C00390', 'C00018', 'C00250', 'C01011', 'C00185', 'C02191', 'C00500', 'C00645', 'C04501', 'C01304', 'C03239', 'C00739', 'C00152', 'C00669', 'C00617', 'C00380', 'C00179', 'C00792', 'C00979', 'C01180', 'C01077', 'C00463', 'C00826', 'C00469', 'C00275', 'C00093', 'C00392', 'C01094', 'C00794', 'C00506', 'C00498', 'C01118', 'C00184', 'C00236', 'C03785', 'C00492', 'C00387', 'C00242', 'C03564', 'C00249', 'C00307', 'C00207', 'C01335', 'C00190', 'C01563', 'C00379', 'C00310', 'C01164', 'C02686', 'C00257', 'C00309', 'C01134', 'C02637', 'C00989', 'C00314', 'C00263', 'C00269', 'C00643', 'C01935', 'C00312', 'C00618', 'C00986', 'C00637', 'C00558', 'C05427', 'C03758', 'C00366', 'C00389', 'C00408', 'C01953', 'C00490', 'C00431', 'C00679', 'C00468', 'C05824', 'C05528', 'C00565', 'C05577', 'C01455', 'C00580', 'C00632', 'C01794', 'C01054', 'C05604', 'C05819', 'C01300', 'C01092', 'C01079', 'C01277', 'C04549', 'C01217', 'C04297', 'C01245', 'C04635', 'C03373', 'C02923', 'C01561', 'C01595', 'C06028', 'C01944', 'C02972', 'C02090', 'C02880', 'C05223', 'C02937', 'C04677', 'C05947', 'C05925', 'C06377', 'C06509', 'C06620', 'C11437', 'G00023', 'G10612', 'G00015', 'G00037', 'C11831', 'C02557', 'C10208', 'C21097', 'C06098', 'C16540', 'C16541', 'C19823', 'C22160', 'C22157']
+Degree: 5
+Nodes: 21342 Edges: 20121
+
+
+map01110.oriented
+It 0
+Initial number of nodes: 5000
+Final number of nodes: 5851
+Largest CC size: 4997
+Num CCs 2
+Nodes info: ['C00001']
+Degree: 852
+Nodes: 5851 Edges: 11228
+It 1
+Initial number of nodes: 5851
+Final number of nodes: 6384
+Largest CC size: 5848
+Num CCs 2
+Nodes info: ['C00007']
+Degree: 534
+Nodes: 6384 Edges: 11228
+It 2
+Initial number of nodes: 6384
+Final number of nodes: 6899
+Largest CC size: 6381
+Num CCs 2
+Nodes info: ['C00080']
+Degree: 516
+Nodes: 6899 Edges: 11228
+It 3
+Initial number of nodes: 6899
+Final number of nodes: 7479
+Largest CC size: 6896
+Num CCs 2
+Nodes info: ['C00006', 'C00005']
+Degree: 291
+Nodes: 7479 Edges: 11228
+It 4
+Initial number of nodes: 7479
+Final number of nodes: 7707
+Largest CC size: 7476
+Num CCs 2
+Nodes info: ['C00011']
+Degree: 229
+Nodes: 7707 Edges: 11228
+It 5
+Initial number of nodes: 7707
+Final number of nodes: 7909
+Largest CC size: 7704
+Num CCs 2
+Nodes info: ['C00019']
+Degree: 203
+Nodes: 7909 Edges: 11228
+It 6
+Initial number of nodes: 7909
+Final number of nodes: 8110
+Largest CC size: 7906
+Num CCs 2
+Nodes info: ['C00013']
+Degree: 202
+Nodes: 8110 Edges: 11228
+It 7
+Initial number of nodes: 8110
+Final number of nodes: 8291
+Largest CC size: 8107
+Num CCs 2
+Nodes info: ['C00021']
+Degree: 182
+Nodes: 8291 Edges: 11228
+It 8
+Initial number of nodes: 8291
+Final number of nodes: 8647
+Largest CC size: 8283
+Num CCs 3
+Nodes info: ['C03024', 'C03161']
+Degree: 179
+Nodes: 8647 Edges: 11228
+It 9
+Initial number of nodes: 8647
+Final number of nodes: 8806
+Largest CC size: 8639
+Num CCs 3
+Nodes info: ['C00010']
+Degree: 160
+Nodes: 8806 Edges: 11228
+It 10
+Initial number of nodes: 8806
+Final number of nodes: 9082
+Largest CC size: 8798
+Num CCs 3
+Nodes info: ['C00003', 'C00004']
+Degree: 139
+Nodes: 9082 Edges: 11228
+It 11
+Initial number of nodes: 9082
+Final number of nodes: 9207
+Largest CC size: 9074
+Num CCs 3
+Nodes info: ['C00002']
+Degree: 126
+Nodes: 9207 Edges: 11228
+It 12
+Initial number of nodes: 9207
+Final number of nodes: 9312
+Largest CC size: 9194
+Num CCs 4
+Nodes info: ['C00026']
+Degree: 106
+Nodes: 9312 Edges: 11228
+It 13
+Initial number of nodes: 9312
+Final number of nodes: 9411
+Largest CC size: 9299
+Num CCs 4
+Nodes info: ['C00009']
+Degree: 100
+Nodes: 9411 Edges: 11228
+It 14
+Initial number of nodes: 9411
+Final number of nodes: 9500
+Largest CC size: 9398
+Num CCs 4
+Nodes info: ['C00015']
+Degree: 90
+Nodes: 9500 Edges: 11228
+It 15
+Initial number of nodes: 9500
+Final number of nodes: 9573
+Largest CC size: 9487
+Num CCs 4
+Nodes info: ['C00008']
+Degree: 74
+Nodes: 9573 Edges: 11228
+It 16
+Initial number of nodes: 9573
+Final number of nodes: 9644
+Largest CC size: 9555
+Num CCs 5
+Nodes info: ['C00029']
+Degree: 72
+Nodes: 9644 Edges: 11228
+It 17
+Initial number of nodes: 9644
+Final number of nodes: 9708
+Largest CC size: 9626
+Num CCs 5
+Nodes info: ['C00042']
+Degree: 65
+Nodes: 9708 Edges: 11228
+It 18
+Initial number of nodes: 9708
+Final number of nodes: 9767
+Largest CC size: 9690
+Num CCs 5
+Nodes info: ['C00020']
+Degree: 60
+Nodes: 9767 Edges: 11228
+It 19
+Initial number of nodes: 9767
+Final number of nodes: 9823
+Largest CC size: 9740
+Num CCs 7
+Nodes info: ['C00025']
+Degree: 57
+Nodes: 9823 Edges: 11228
+It 20
+Initial number of nodes: 9823
+Final number of nodes: 9877
+Largest CC size: 9796
+Num CCs 7
+Nodes info: ['C00024']
+Degree: 55
+Nodes: 9877 Edges: 11228
+It 21
+Initial number of nodes: 9877
+Final number of nodes: 9979
+Largest CC size: 9826
+Num CCs 8
+Nodes info: ['C00028', 'C00030']
+Degree: 52
+Nodes: 9979 Edges: 11228
+It 22
+Initial number of nodes: 9979
+Final number of nodes: 10027
+Largest CC size: 9914
+Num CCs 9
+Nodes info: ['C00363']
+Degree: 49
+Nodes: 10027 Edges: 11228
+It 23
+Initial number of nodes: 10027
+Final number of nodes: 10074
+Largest CC size: 9962
+Num CCs 9
+Nodes info: ['C00027']
+Degree: 48
+Nodes: 10074 Edges: 11228
+It 24
+Initial number of nodes: 10074
+Final number of nodes: 10209
+Largest CC size: 10005
+Num CCs 10
+Nodes info: ['C00083', 'C00138', 'C00139']
+Degree: 46
+Nodes: 10209 Edges: 11228
+It 25
+Initial number of nodes: 10209
+Final number of nodes: 10248
+Largest CC size: 10061
+Num CCs 14
+Nodes info: ['C00014']
+Degree: 40
+Nodes: 10248 Edges: 11228
+It 26
+Initial number of nodes: 10248
+Final number of nodes: 10278
+Largest CC size: 10100
+Num CCs 14
+Nodes info: ['C00448']
+Degree: 31
+Nodes: 10278 Edges: 11228
+It 27
+Initial number of nodes: 10278
+Final number of nodes: 10334
+Largest CC size: 9966
+Num CCs 28
+Nodes info: ['C00022', 'C00235']
+Degree: 29
+Nodes: 10334 Edges: 11228
+It 28
+Initial number of nodes: 10334
+Final number of nodes: 10361
+Largest CC size: 9996
+Num CCs 32
+Nodes info: ['C00067']
+Degree: 28
+Nodes: 10361 Edges: 11228
+It 29
+Initial number of nodes: 10361
+Final number of nodes: 10433
+Largest CC size: 10023
+Num CCs 32
+Nodes info: ['C00033', 'C00341', 'C00353']
+Degree: 25
+Nodes: 10433 Edges: 11228
+It 30
+Initial number of nodes: 10433
+Final number of nodes: 10454
+Largest CC size: 9501
+Num CCs 59
+Nodes info: ['C00073']
+Degree: 22
+Nodes: 10454 Edges: 11228
+It 31
+Initial number of nodes: 10454
+Final number of nodes: 10514
+Largest CC size: 9515
+Num CCs 60
+Nodes info: ['C00031', 'C00082', 'C00223']
+Degree: 21
+Nodes: 10514 Edges: 11228
+It 32
+Initial number of nodes: 10514
+Final number of nodes: 10552
+Largest CC size: 9347
+Num CCs 65
+Nodes info: ['C00129', 'C00229']
+Degree: 20
+Nodes: 10552 Edges: 11228
+It 33
+Initial number of nodes: 10552
+Final number of nodes: 10569
+Largest CC size: 9225
+Num CCs 79
+Nodes info: ['C00016']
+Degree: 18
+Nodes: 10569 Edges: 11228
+It 34
+Initial number of nodes: 10569
+Final number of nodes: 10585
+Largest CC size: 9242
+Num CCs 79
+Nodes info: ['C01352']
+Degree: 17
+Nodes: 10585 Edges: 11228
+It 35
+Initial number of nodes: 10585
+Final number of nodes: 10615
+Largest CC size: 9258
+Num CCs 79
+Nodes info: ['C00065', 'C05198']
+Degree: 16
+Nodes: 10615 Edges: 11228
+It 36
+Initial number of nodes: 10615
+Final number of nodes: 10628
+Largest CC size: 9265
+Num CCs 81
+Nodes info: ['C00064']
+Degree: 14
+Nodes: 10628 Edges: 11228
+It 37
+Initial number of nodes: 10628
+Final number of nodes: 10640
+Largest CC size: 9264
+Num CCs 83
+Nodes info: ['C00118']
+Degree: 13
+Nodes: 10640 Edges: 11228
+It 38
+Initial number of nodes: 10640
+Final number of nodes: 10684
+Largest CC size: 9276
+Num CCs 83
+Nodes info: ['C00078', 'C01179', 'C00097', 'C01054']
+Degree: 12
+Nodes: 10684 Edges: 11228
+It 39
+Initial number of nodes: 10684
+Final number of nodes: 10744
+Largest CC size: 9103
+Num CCs 95
+Nodes info: ['C00049', 'C00058', 'C00079', 'C00085', 'C00406', 'C02139']
+Degree: 11
+Nodes: 10744 Edges: 11228
+It 40
+Initial number of nodes: 10744
+Final number of nodes: 10789
+Largest CC size: 8592
+Num CCs 102
+Nodes info: ['C00074', 'C00500', 'C00062', 'C00077', 'C11901']
+Degree: 10
+Nodes: 10789 Edges: 11228
+It 41
+Initial number of nodes: 10789
+Final number of nodes: 10909
+Largest CC size: 8532
+Num CCs 118
+Nodes info: ['C00032', 'C00036', 'C00037', 'C00041', 'C00084', 'C00111', 'C00416', 'C00323', 'C03758', 'C00385', 'C11907', 'C00132', 'C11921', 'C00999', 'C00996']
+Degree: 9
+Nodes: 10909 Edges: 11228
+It 42
+Initial number of nodes: 10909
+Final number of nodes: 11000
+Largest CC size: 7434
+Num CCs 139
+Nodes info: ['C00355', 'C00061', 'C00103', 'C00091', 'C00423', 'C00251', 'C00169', 'C00055', 'C00063', 'C00509', 'C11923', 'C16353', 'C13747']
+Degree: 8
+Nodes: 11000 Edges: 11228
+It 43
+Initial number of nodes: 11000
+Final number of nodes: 11138
+Largest CC size: 6902
+Num CCs 173
+Nodes info: ['C00092', 'C15602', 'C15603', 'C14818', 'C00158', 'C00148', 'C00166', 'C00093', 'C00668', 'C00119', 'C00122', 'C00183', 'C00371', 'C00407', 'C00482', 'C00493', 'C00590', 'C05432', 'C09244', 'C12211', 'C21097', 'C07481', 'C00698']
+Degree: 7
+Nodes: 11138 Edges: 11228
+It 44
+Initial number of nodes: 11138
+Final number of nodes: 11343
+Largest CC size: 5543
+Num CCs 222
+Nodes info: ['C00718', 'C00047', 'C00811', 'C00188', 'C00354', 'C00101', 'C00108', 'C00141', 'C03912', 'C00157', 'C00641', 'C00254', 'C00197', 'C01326', 'C01172', 'C00441', 'C00956', 'C00350', 'C06089', 'C00121', 'C01617', 'C02666', 'C04076', 'C06178', 'C00751', 'C00054', 'C02094', 'C02105', 'C02646', 'C06620', 'C11911', 'C11902', 'C12483', 'C06098', 'C06427', 'C07480', 'C16358', 'C07130', 'C01500', 'C08538', 'C01743']
+Degree: 6
+Nodes: 11343 Edges: 11228
+It 45
+Initial number of nodes: 11343
+Final number of nodes: 11523
+Largest CC size: 3322
+Num CCs 348
+Nodes info: ['C00170', 'C00149', 'C00048', 'C00044', 'C00155', 'C00398', 'C00469', 'C00040', 'C00199', 'C00123', 'C00135', 'C00877', 'C00156', 'C00221', 'C02637', 'C05427', 'C00389', 'C01494', 'C05610', 'C00486', 'C05631', 'C00974', 'C03319', 'C00810', 'C00053', 'C01852', 'C01752', 'C05435', 'C03677', 'C03972', 'C04638', 'C06181', 'C08592', 'C01847', 'C11831', 'C11863', 'C02557', 'C10208', 'C12447', 'C12468', 'C08579', 'C08614', 'C16540', 'C16541', 'C09092']
+Degree: 5
+Nodes: 11523 Edges: 11228
+It 46
+Initial number of nodes: 11523
+Final number of nodes: 11913
+Largest CC size: 1797
+Num CCs 471
+Nodes info: ['C01083', 'C06010', 'C00332', 'C00198', 'C02191', 'C00237', 'C00454', 'C00201', 'C01672', 'C00311', 'C00152', 'C00327', 'C01005', 'C00979', 'C00072', 'C01165', 'C00826', 'C00449', 'C00288', 'C00636', 'C00683', 'C00100', 'C02291', 'C00117', 'C00114', 'C05607', 'C00258', 'C00180', 'C00345', 'C02659', 'C00207', 'C00267', 'C00885', 'C00561', 'C00263', 'C00269', 'C01935', 'C10945', 'C01197', 'C00418', 'C00369', 'C00190', 'C01762', 'C00843', 'C00404', 'C00671', 'C01107', 'C00540', 'C03506', 'C01175', 'C04268', 'C00688', 'C00253', 'C01769', 'C02035', 'C03648', 'C05903', 'C03263', 'C01079', 'C01512', 'C05906', 'C02906', 'C01761', 'C04118', 'C04083', 'C02880', 'C00623', 'C04677', 'C05306', 'C04350', 'C11811', 'C11829', 'C11830', 'C11857', 'C00512', 'C11864', 'C09893', 'C11928', 'C11927', 'C11926', 'C11912', 'C11994', 'C11998', 'C11985', 'C12203', 'C12204', 'C12213', 'C12318', 'C12354', 'C01907', 'C12458', 'C12481', 'C06082', 'C15485', 'C12093', 'C04145', 'C15800', 'C15966', 'C11389', 'C16321', 'C16357', 'C16430', 'C16431', 'C17742', 'C08540', 'C08539', 'C22151', 'C22150', 'C06451', 'C17580', 'C17581', 'C01441', 'C01759', 'C09315', 'C05307', 'C18678', 'C19714', 'C20345', 'C00825', 'C20543', 'C01822', 'C20715', 'C03401', 'C20966', 'C21134', 'C17697', 'C21205', 'C21284', 'C21796', 'C22165']
+Degree: 4
+Nodes: 11913 Edges: 11228
+
+
+map01120.oriented
+It 0
+Initial number of nodes: 2628
+Final number of nodes: 3200
+Largest CC size: 2628
+Num CCs 1
+Nodes info: ['C00001']
+Degree: 573
+Nodes: 3200 Edges: 6561
+It 1
+Initial number of nodes: 3200
+Final number of nodes: 3757
+Largest CC size: 3200
+Num CCs 1
+Nodes info: ['C00080']
+Degree: 558
+Nodes: 3757 Edges: 6561
+It 2
+Initial number of nodes: 3757
+Final number of nodes: 4098
+Largest CC size: 3757
+Num CCs 1
+Nodes info: ['C00007']
+Degree: 342
+Nodes: 4098 Edges: 6561
+It 3
+Initial number of nodes: 4098
+Final number of nodes: 4742
+Largest CC size: 4098
+Num CCs 1
+Nodes info: ['C00003', 'C00004']
+Degree: 323
+Nodes: 4742 Edges: 6561
+It 4
+Initial number of nodes: 4742
+Final number of nodes: 5048
+Largest CC size: 4742
+Num CCs 1
+Nodes info: ['C00006', 'C00005']
+Degree: 154
+Nodes: 5048 Edges: 6561
+It 5
+Initial number of nodes: 5048
+Final number of nodes: 5166
+Largest CC size: 5048
+Num CCs 1
+Nodes info: ['C00011']
+Degree: 119
+Nodes: 5166 Edges: 6561
+It 6
+Initial number of nodes: 5166
+Final number of nodes: 5242
+Largest CC size: 5166
+Num CCs 1
+Nodes info: ['C00002']
+Degree: 77
+Nodes: 5242 Edges: 6561
+It 7
+Initial number of nodes: 5242
+Final number of nodes: 5311
+Largest CC size: 5242
+Num CCs 1
+Nodes info: ['C00010']
+Degree: 70
+Nodes: 5311 Edges: 6561
+It 8
+Initial number of nodes: 5311
+Final number of nodes: 5375
+Largest CC size: 5311
+Num CCs 1
+Nodes info: ['C00014']
+Degree: 65
+Nodes: 5375 Edges: 6561
+It 9
+Initial number of nodes: 5375
+Final number of nodes: 5428
+Largest CC size: 5375
+Num CCs 1
+Nodes info: ['C00009']
+Degree: 54
+Nodes: 5428 Edges: 6561
+It 10
+Initial number of nodes: 5428
+Final number of nodes: 5532
+Largest CC size: 5428
+Num CCs 1
+Nodes info: ['C00008', 'C01327']
+Degree: 53
+Nodes: 5532 Edges: 6561
+It 11
+Initial number of nodes: 5532
+Final number of nodes: 5573
+Largest CC size: 5451
+Num CCs 3
+Nodes info: ['C00067']
+Degree: 42
+Nodes: 5573 Edges: 6561
+It 12
+Initial number of nodes: 5573
+Final number of nodes: 5613
+Largest CC size: 5487
+Num CCs 4
+Nodes info: ['C00022']
+Degree: 41
+Nodes: 5613 Edges: 6561
+It 13
+Initial number of nodes: 5613
+Final number of nodes: 5652
+Largest CC size: 5527
+Num CCs 4
+Nodes info: ['C00024']
+Degree: 40
+Nodes: 5652 Edges: 6561
+It 14
+Initial number of nodes: 5652
+Final number of nodes: 5682
+Largest CC size: 5558
+Num CCs 5
+Nodes info: ['C00020']
+Degree: 31
+Nodes: 5682 Edges: 6561
+It 15
+Initial number of nodes: 5682
+Final number of nodes: 5710
+Largest CC size: 5588
+Num CCs 5
+Nodes info: ['C00026']
+Degree: 29
+Nodes: 5710 Edges: 6561
+It 16
+Initial number of nodes: 5710
+Final number of nodes: 5788
+Largest CC size: 5616
+Num CCs 5
+Nodes info: ['C00013', 'C00030', 'C00028']
+Degree: 27
+Nodes: 5788 Edges: 6561
+It 17
+Initial number of nodes: 5788
+Final number of nodes: 5838
+Largest CC size: 5694
+Num CCs 5
+Nodes info: ['C00139', 'C00138']
+Degree: 26
+Nodes: 5838 Edges: 6561
+It 18
+Initial number of nodes: 5838
+Final number of nodes: 5862
+Largest CC size: 5736
+Num CCs 6
+Nodes info: ['C00025']
+Degree: 25
+Nodes: 5862 Edges: 6561
+It 19
+Initial number of nodes: 5862
+Final number of nodes: 5906
+Largest CC size: 5744
+Num CCs 8
+Nodes info: ['C00042', 'C00027']
+Degree: 23
+Nodes: 5906 Edges: 6561
+It 20
+Initial number of nodes: 5906
+Final number of nodes: 5925
+Largest CC size: 5746
+Num CCs 9
+Nodes info: ['C00058']
+Degree: 20
+Nodes: 5925 Edges: 6561
+It 21
+Initial number of nodes: 5925
+Final number of nodes: 5976
+Largest CC size: 5678
+Num CCs 14
+Nodes info: ['C00094', 'C00088', 'C00090']
+Degree: 18
+Nodes: 5976 Edges: 6561
+It 22
+Initial number of nodes: 5976
+Final number of nodes: 6008
+Largest CC size: 5676
+Num CCs 20
+Nodes info: ['C00091', 'C00230']
+Degree: 17
+Nodes: 6008 Edges: 6561
+It 23
+Initial number of nodes: 6008
+Final number of nodes: 6068
+Largest CC size: 5685
+Num CCs 23
+Nodes info: ['C00084', 'C00033', 'C00126', 'C00125']
+Degree: 16
+Nodes: 6068 Edges: 6561
+It 24
+Initial number of nodes: 6068
+Final number of nodes: 6110
+Largest CC size: 5610
+Num CCs 31
+Nodes info: ['C00048', 'C00156', 'C03576']
+Degree: 15
+Nodes: 6110 Edges: 6561
+It 25
+Initial number of nodes: 6110
+Final number of nodes: 6136
+Largest CC size: 5628
+Num CCs 34
+Nodes info: ['C00036', 'C00596']
+Degree: 14
+Nodes: 6136 Edges: 6561
+It 26
+Initial number of nodes: 6136
+Final number of nodes: 6148
+Largest CC size: 5614
+Num CCs 35
+Nodes info: ['C00698']
+Degree: 13
+Nodes: 6148 Edges: 6561
+It 27
+Initial number of nodes: 6148
+Final number of nodes: 6225
+Largest CC size: 5618
+Num CCs 36
+Nodes info: ['C00283', 'C00118', 'C00016', 'C01352', 'C00180', 'C02814', 'C02222']
+Degree: 12
+Nodes: 6225 Edges: 6561
+It 28
+Initial number of nodes: 6225
+Final number of nodes: 6255
+Largest CC size: 5488
+Num CCs 51
+Nodes info: ['C00074', 'C00149', 'C00122']
+Degree: 11
+Nodes: 6255 Edges: 6561
+It 29
+Initial number of nodes: 6255
+Final number of nodes: 6291
+Largest CC size: 5393
+Num CCs 67
+Nodes info: ['C00132', 'C00232', 'C00085', 'C00877']
+Degree: 10
+Nodes: 6291 Edges: 6561
+It 30
+Initial number of nodes: 6291
+Final number of nodes: 6331
+Largest CC size: 5317
+Num CCs 77
+Nodes info: ['C00051', 'C00059', 'C00218', 'C00111', 'C00530']
+Degree: 9
+Nodes: 6331 Edges: 6561
+It 31
+Initial number of nodes: 6331
+Final number of nodes: 6394
+Largest CC size: 5230
+Num CCs 90
+Nodes info: ['C00533', 'C15602', 'C15603', 'C00805', 'C00512', 'C00250', 'C04628', 'C07480', 'C07481']
+Degree: 8
+Nodes: 6394 Edges: 6561
+It 32
+Initial number of nodes: 6394
+Final number of nodes: 6496
+Largest CC size: 4962
+Num CCs 105
+Nodes info: ['C00197', 'C00047', 'C00587', 'C00221', 'C00345', 'C04253', 'C04570', 'C00320', 'C00385', 'C00628', 'C00544', 'C00876', 'C02923', 'C03920', 'C04832', 'C06790', 'C16353']
+Degree: 7
+Nodes: 6496 Edges: 6561
+It 33
+Initial number of nodes: 6496
+Final number of nodes: 6636
+Largest CC size: 4145
+Num CCs 149
+Nodes info: ['C00288', 'C00887', 'C00160', 'C00224', 'C00222', 'C00146', 'C00108', 'C00101', 'C00668', 'C00199', 'C00440', 'C00633', 'C03024', 'C03161', 'C01172', 'C00441', 'C00280', 'C06322', 'C07086', 'C01455', 'C00577', 'C00282', 'C00019', 'C06730', 'C16357', 'C07130', 'C16396', 'C11148']
+Degree: 6
+Nodes: 6636 Edges: 6561
+It 34
+Initial number of nodes: 6636
+Final number of nodes: 6812
+Largest CC size: 1254
+Num CCs 239
+Nodes info: ['C00064', 'C00311', 'C00158', 'C00044', 'C00603', 'C00065', 'C00186', 'C00469', 'C00354', 'C00244', 'C00682', 'C00267', 'C00231', 'C00691', 'C02949', 'C00258', 'C00424', 'C00257', 'C00543', 'C00697', 'C00870', 'C01080', 'C01198', 'C01217', 'C01606', 'C01847', 'C00061', 'C03671', 'C04434', 'C04377', 'C06102', 'C00127', 'C06672', 'C06712', 'C07097', 'C01504', 'C06554', 'C13624', 'C00237', 'C16392', 'C16398', 'C07535', 'C14519', 'C11006']
+Degree: 5
+Nodes: 6812 Edges: 6561
