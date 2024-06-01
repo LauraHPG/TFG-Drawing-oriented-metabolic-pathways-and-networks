@@ -50,7 +50,7 @@ for filename in sorted(filenames):
 
             # for i in range(0, highestDegree):
             i = 0
-            while highestDegree > 0:
+            while highestDegree > 1:
 
                 poses = funcs.getGraphPositions(G, 1.5)
                 numCrossings = funcs.countCrossings(G, poses)
@@ -78,7 +78,6 @@ for filename in sorted(filenames):
                 funcs.splitHighDegreeComponents(G, highestDegree)
                 highestDegreeNode, highestDegree = funcs.getHighestDegreeNode(G) 
 
-                highestDegree -= 1
                 i += 1
 
             plt.tight_layout()  # Automatically adjust subplot parameters to give specified padding

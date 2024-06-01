@@ -15,6 +15,11 @@ import json
 
 import requests
 
+import numpy as np
+
+import math
+from scipy.stats import hmean
+
 DEBUG = False
 
 def read_graph(graph, check = True):
@@ -41,6 +46,8 @@ def read_graph_from_txt(graph, path):
         for product in products.split(" "):
             graph.add_edge(reaction, product, relationship='reaction-substrate')
             graph.add_node(product, node_type='component')
+    
+    checkMaxCCSize(graph)
 
     return [node for node, data in graph.nodes(data=True) if data['node_type'] == 'reaction'], [node for node, data in graph.nodes(data=True) if data['node_type'] == 'component']
 
@@ -571,23 +578,29 @@ def staggerLayers(graph, poses):
     return countLevels(poses)
 
 def checkMaxCCSize(graph):
-    H = graph.to_undirected()
-    S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
-    it = 0
-    while len(S[0].nodes()) > 1000:
-        print("It",it)
-        node, degree = getHighestDegreeNodes(graph)
-        splitHighDegreeComponents(graph,degree)
-
-        if DEBUG: print("Largest CC size:", len(S[0].nodes()))
-        if DEBUG: print("Num CCs", len(S))
-        if DEBUG: print("Nodes info:", node,)
-        if DEBUG: print("Degree:", degree)
-        if DEBUG: print("Nodes:", len(graph.nodes()), "Edges:", len(graph.edges()))
-
+    if len(graph.nodes()) > 999:
+        print("Large Graph")
         H = graph.to_undirected()
         S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
-        it += 1
+        it = 0
+        while len(S[0].nodes()) > 1000:
+            print("It",it)
+            node, degree = getHighestDegreeNodes(graph)
+            splitHighDegreeComponents(graph,degree)
+
+            if DEBUG: print("Largest CC size:", len(S[0].nodes()))
+            if DEBUG: print("Num CCs", len(S))
+            if DEBUG: print("Nodes info:", node,)
+            if DEBUG: print("Degree:", degree)
+            if DEBUG: print("Nodes:", len(graph.nodes()), "Edges:", len(graph.edges()))
+
+            H = graph.to_undirected()
+            S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+            it += 1
+    elif len(graph.nodes()) > 300:
+        print("Medium Graph")
+
+        splitHighDegreeComponents(graph,5)
 
 
 def defineNodeCID(graph, nodes, cid):
@@ -624,5 +637,34 @@ def getGraphPositions(graph, N = 1.5):
 
                 defineNodeCID(graph, subGraph.nodes(), cid)
 
-    # poses = staggerLayers(graph, poses)
+    poses = staggerLayers(graph, poses)
     return poses
+
+def computeDistances(graph,poses):
+    res = []
+    for edge in graph.edges():
+        euclid_dist = np.linalg.norm(np.array(poses[edge[0]]) - np.array(poses[edge[1]]))
+        res.append(euclid_dist)
+    
+    
+    print(np.mean(res))
+
+
+def computeAngles(graph,poses):
+    res = []
+    for edge in graph.edges():
+        
+        vector_1 = np.array(poses[edge[0]]) - np.array(poses[edge[1]])
+        vector_2 = [1, 0]
+
+        unit_vector_1 = vector_1 / np.linalg.norm(vector_1)
+        print(unit_vector_1)
+        unit_vector_2 = vector_2 / np.linalg.norm(vector_2)
+        dot_product = np.dot(unit_vector_1, unit_vector_2)
+        angle = np.arccos(dot_product)
+
+        res.append(angle)
+        print(angle)
+
+    print(hmean(res))
+    print(np.mean(res), np.std(res))

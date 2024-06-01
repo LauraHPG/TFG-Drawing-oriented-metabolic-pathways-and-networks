@@ -207,6 +207,7 @@ def duplicate_node(request):
       start_time = time.time()
       pathwayName = request.POST.get('name')
       node = request.POST.get('node')
+      print(node)
       if node[0] != 'D' :
          pathway = Pathway.objects.get(name=pathwayName) 
 

@@ -191,6 +191,14 @@ def main():
                 plt.ioff()
                 plt.show()
 
+            case '11':
+                poses = funcs.getGraphPositions(G)
+                funcs.computeDistances(G, poses)
+            
+            case '12':
+                poses = funcs.getGraphPositions(G)
+                funcs.computeAngles(G, poses)
+                
             case 'p':
 
                 funcs.changeSourceAndSinkNodeType(G)

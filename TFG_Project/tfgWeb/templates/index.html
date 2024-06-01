@@ -512,7 +512,7 @@
                     numCyclesElement.innerHTML += "<br> Node appearing in most cycles: ";
                     numCyclesElement.appendChild(document.createTextNode(data.nodeInMostCycles.id + " " + data.nodeInMostCycles.name));
 
-                    nodeInMostCycles = data.nodeInMostCycles;
+                    nodeInMostCycles = data.nodeInMostCycles.id;
                     $("#breakCycleButton").prop('disabled', false);
 
                     if (data.numCycles == 0)
