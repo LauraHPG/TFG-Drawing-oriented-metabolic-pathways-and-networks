@@ -47,7 +47,7 @@ def read_graph_from_txt(graph, path):
             graph.add_edge(reaction, product, relationship='reaction-substrate')
             graph.add_node(product, node_type='component')
     
-    checkMaxCCSize(graph)
+    # checkMaxCCSize(graph)
 
     return [node for node, data in graph.nodes(data=True) if data['node_type'] == 'reaction'], [node for node, data in graph.nodes(data=True) if data['node_type'] == 'component']
 
@@ -342,7 +342,10 @@ def getGraphInfo(graph,poses):
     highestDegreeNodes, highestDegree = getHighestDegreeNodes(graph)
     if DEBUG: print("High Degree nodes:", highestDegreeNodes)
 
-    return numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC
+    avgEdgeLength = computeDistances(graph, poses)
+    angleFactor = computeAngles(graph, poses)
+
+    return numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC, avgEdgeLength, angleFactor
 
 def getCyclesInfo(graph):
     numCycles = len(nx.recursive_simple_cycles(graph))
@@ -647,7 +650,8 @@ def computeDistances(graph,poses):
         res.append(euclid_dist)
     
     
-    print(np.mean(res))
+    if DEBUG: print(np.mean(res))
+    return np.mean(res)
 
 
 def computeAngles(graph,poses):
@@ -658,13 +662,16 @@ def computeAngles(graph,poses):
         vector_2 = [1, 0]
 
         unit_vector_1 = vector_1 / np.linalg.norm(vector_1)
-        print(unit_vector_1)
         unit_vector_2 = vector_2 / np.linalg.norm(vector_2)
         dot_product = np.dot(unit_vector_1, unit_vector_2)
         angle = np.arccos(dot_product)
 
         res.append(angle)
+
+        # if angle > math.pi/2:
+        #     angle = math.pi - angle
         print(angle)
 
-    print(hmean(res))
-    print(np.mean(res), np.std(res))
+    if DEBUG: print(hmean(res))
+    if DEBUG: print(np.mean(res), np.std(res))
+    return round(np.mean(res), 2),  round(np.std(res),2)

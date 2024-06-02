@@ -182,6 +182,8 @@
                                 <p id="numEdges"></p>
                                 <p id="numCrossings"></p>
                                 <p id="numCCs"></p>
+                                <p id="avgEdgeLength"></p>
+                                <p id="angleFactor"></p>
                             </div>
                                    
                         </div>
@@ -475,6 +477,14 @@
                     //     console.log(data, graphInfo.numNodesCC)
                     //     clusterByCid(network, i, data, graphInfo.numNodesCC[i]);
                     // }
+                    
+                    var avgEdgeLengthElement = document.getElementById("avgEdgeLength");
+                    avgEdgeLengthElement.innerHTML = "Average Edge Length: ";
+                    avgEdgeLengthElement.appendChild(document.createTextNode(graphInfo.avgEdgeLength.toFixed(2)));
+                    
+                    var angleFactorElement = document.getElementById("angleFactor");
+                    angleFactorElement.innerHTML = "Average Edge Angle: ";
+                    angleFactorElement.appendChild(document.createTextNode(graphInfo.angleFactor));
 
                 },
                 error: (error) => {

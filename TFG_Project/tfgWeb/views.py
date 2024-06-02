@@ -130,7 +130,7 @@ def get_graph_info(request):
 
       poses = getGraphPositions(G)
       
-      numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC = getGraphInfo(G, poses) 
+      numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC, avgEdgeLength, angleFactor = getGraphInfo(G, poses) 
       
       highestDegreeNodesResult = {} 
 
@@ -147,7 +147,7 @@ def get_graph_info(request):
       elapsed_time = end_time - start_time
       print("Elapsed time get_graph_info: {:.6f} seconds".format(elapsed_time))
       
-      return JsonResponse({'numNodes': numNodes, 'numEdges': numEdges, 'numCrossings': numCrossings, 'numCCs': numCCs, 'highestDegreeNodes':highestDegreeNodesResult, 'highestDegree': highestDegree, 'numNodesCC':numNodesCC})
+      return JsonResponse({'numNodes': numNodes, 'numEdges': numEdges, 'numCrossings': numCrossings, 'numCCs': numCCs, 'highestDegreeNodes':highestDegreeNodesResult, 'highestDegree': highestDegree, 'numNodesCC':numNodesCC, 'avgEdgeLength': avgEdgeLength, 'angleFactor': angleFactor})
 
 
 def get_cycles_info(request):
