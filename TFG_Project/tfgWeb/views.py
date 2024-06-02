@@ -25,7 +25,11 @@ def add_pathway(request):
       name = request.POST.get('name')
       pathway = {}
       try:
-         pathway = Pathway.objects.get(name=name)    
+         pathway = Pathway.objects.get(name=name)  
+          
+         G = nx.DiGraph()
+         info = pathway.graphInfo.replace("'", '"')
+         G = parseJsonToNx(info)
 
       except:
          
@@ -48,12 +52,14 @@ def add_pathway(request):
 
 
       info = pathway.graphInfo.replace("'", '"')
-
+      
+      numCCs = getNumCCs(G)
+      
       end_time = time.time()
       elapsed_time = end_time - start_time
       print("Elapsed time add_pathway: {:.6f} seconds".format(elapsed_time))
 
-      return JsonResponse({'status': 'success', 'graphInfo': info})
+      return JsonResponse({'status': 'success', 'graphInfo': info, "numCCs": numCCs})
    
    return JsonResponse({'status': 'error'})
 
@@ -201,11 +207,13 @@ def split_high_degree(request):
 
       info = pthwy.graphInfo.replace("'", '"')
 
+      numCCs = getNumCCs(G)
+
       end_time = time.time()
       elapsed_time = end_time - start_time
       print("Elapsed time split_high_degree: {:.6f} seconds".format(elapsed_time))
 
-      return JsonResponse({'graphInfo':info})
+      return JsonResponse({'graphInfo':info, 'numCCs':numCCs})
 
 def duplicate_node(request):
    if request.method == 'POST':
@@ -232,12 +240,14 @@ def duplicate_node(request):
 
          info = pthwy.graphInfo.replace("'", '"')
 
+         numCCs = getNumCCs(G)
+
 
          end_time = time.time()
          elapsed_time = end_time - start_time
          print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
 
-         return JsonResponse({'graphInfo':info})
+         return JsonResponse({'graphInfo':info, 'numCCs':numCCs})
          
       else:
          return JsonResponse({'status': 'error'})
@@ -290,11 +300,13 @@ def reset_graph(request):
 
       info = pthwy.graphInfo.replace("'", '"')
 
+      numCCs = getNumCCs(G)
+
       end_time = time.time()
       elapsed_time = end_time - start_time
       print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
    
-      return JsonResponse({'graphInfo':info})
+      return JsonResponse({'graphInfo':info, 'numCCs':numCCs})
    
 def update_compounds(request):
    if request.method == 'POST':
@@ -329,8 +341,10 @@ def recompute_positions(request):
 
       info = pthwy.graphInfo.replace("'", '"')
 
+      numCCs = getNumCCs(G)
+
       end_time = time.time()
       elapsed_time = end_time - start_time
       print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
 
-      return JsonResponse({'graphInfo':info})
+      return JsonResponse({'graphInfo':info, 'numCCs':numCCs})

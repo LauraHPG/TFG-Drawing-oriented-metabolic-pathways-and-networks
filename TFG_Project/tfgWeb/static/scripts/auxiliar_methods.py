@@ -328,6 +328,11 @@ def isConnected(graph):
 
     return True
 
+def getNumCCs(graph):
+    H = graph.to_undirected()
+    return  nx.number_connected_components(H)
+
+
 def getGraphInfo(graph,poses):
     numNodes = len(graph.nodes())
     if DEBUG: print("Num Nodes:", numNodes)
@@ -405,11 +410,9 @@ def getLargestCC(graph):
         return subGraph
     return -1
 
-def getConnectedComponents(graph):
+def getConnectedComponents(graph, n):
     H = graph.to_undirected()
     S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
-    nth = input("Select nth CC:\n")
-    n = int(nth)
     subGraph = graph.subgraph(S[n]).copy()
     subGraph.to_directed()
 

@@ -86,8 +86,10 @@ def main():
                 G.remove_edge(origin_node, destination_node)
 
             case '8':
+                nth = input("Select nth CC:")
+                n = int(nth)
 
-                subGraph = funcs.getConnectedComponents(G)
+                subGraph = funcs.getConnectedComponents(G, n)
                 
                 funcs.changeSourceAndSinkNodeType(subGraph)
                 colors = funcs.setColorNodeType(subGraph)                

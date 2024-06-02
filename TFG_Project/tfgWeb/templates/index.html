@@ -104,10 +104,6 @@
 
 </head>
 <body>
-
-    <nav>
-       
-      </nav>
       
 
     <div id="overlay"></div> 
@@ -415,7 +411,7 @@
             network.nodes
         }
 
-        function loadGraph(inputNodes, inputEdges)
+        function loadSingleGraph(inputNodes, inputEdges)
         {
             console.log(inputNodes)
             var nodes = new vis.DataSet(
@@ -697,6 +693,332 @@
             
         }
 
+        function createCarousel(numCCs)
+        {
+            // var container = document.getElementById('mynetwork');
+            document.getElementById('mynetwork').innerHTML('');
+            $('#mynetwork').append(`
+
+            <div id="carouselExampleIndicators" class="carousel slide" style="width: 100%; height: 100%;">
+                <div class="carousel-indicators" id=""clusterCarouselIndicators>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                </div>
+                <div class="carousel-inner" style="width: 100%; height: 100%;">
+                    <div class="carousel-item active" style="width: 100%; height: 100%;">
+                        <div class="d-block w-100" id="mynetwork0" style="width: 100%; height: 100%;"></div></div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+            `)
+
+            for(var i = 1; i < numCCs; ++i)
+            {
+                $('#clusterCarouselIndicators').append('<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="' + 1 + '" ></button>')
+                $('#clusterCarouselInner').append(
+                `<div class="carousel-item" style="width: 100%; height: 100%;">                        
+                    <div class="d-block w-100" id="mynetwork` + i + `" style="width: 100%; height: 100%;"></div>
+                </div>
+                
+                `)
+            }
+        }
+
+        function loadConnectedComponent(inputNodes, inputEdges, cid)
+        {
+
+            console.log(inputNodes)
+            var nodes = new vis.DataSet(
+                inputNodes
+            );
+
+            // create an array with edges
+            var edges = new vis.DataSet(
+                inputEdges
+                
+            );
+
+            // create a network
+            var container = document.getElementById('mynetwork' + cid);
+            
+
+            // provide the data in the vis format
+            var data = {
+                nodes: nodes,
+                edges: edges
+            };
+
+            var options = {
+                nodes: {
+                    shape: 'box',
+                },
+                edges: {
+                    smooth: false
+                },
+                physics: false,
+                interaction: {
+                    // dragNodes: false,// do not allow dragging nodes
+                    // zoomView: false, // do not allow zooming
+                    // dragView: false  // do not allow dragging
+                }
+        
+            };
+            // initialize your network!
+            var network = new vis.Network(container, data, options);
+            
+            document.getElementById("overlay").style.display = "block";
+
+            if(cid == 0)
+            {
+                $.ajax({
+                    type: "POST",
+                    url: "/get_graph_info/",
+                    data:{
+                        pathwayName: $("#pathwaysList option:selected").text(),
+                        csrfmiddlewaretoken: csrf_token_value
+                    },
+                    success: (graphInfo) => {
+                        console.log(graphInfo);
+
+                        var numNodesElement = document.getElementById("numNodes");
+                        numNodesElement.innerHTML = "Number of Nodes: ";
+                        numNodesElement.appendChild(document.createTextNode(graphInfo.numNodes));
+
+                        var numEdgesElement = document.getElementById("numEdges");
+                        numEdgesElement.innerHTML = "Number of Edges: ";
+                        numEdgesElement.appendChild(document.createTextNode(graphInfo.numEdges));
+
+                        var numCrossingsElement = document.getElementById("numCrossings");
+                        numCrossingsElement.innerHTML = "Number of Crossings: ";
+                        numCrossingsElement.appendChild(document.createTextNode(graphInfo.numCrossings));
+
+                        var numCCsElement = document.getElementById("numCCs");
+                        numCCsElement.innerHTML = "Number of Connected Components: ";
+                        numCCsElement.appendChild(document.createTextNode(graphInfo.numCCs));
+                        
+                        document.getElementById("selectedValue").innerHTML = "Split nodes with degree greater than " + graphInfo.highestDegree;
+                        var highestDegreeNodeList = document.getElementById("highestDegreeNode");
+                        highestDegreeNodeList.innerHTML = "";
+                        var highestDegreeNodes = graphInfo.highestDegreeNodes;
+
+                        for(var i = 0; i < highestDegreeNodes.length; ++i)
+                        {
+                            var li = document.createElement("li");
+                            li.appendChild(document.createTextNode(highestDegreeNodes[i]));
+                            highestDegreeNodeList.appendChild(li);
+
+                        }  
+                                
+                        
+                        document.getElementById("degreeThreshhold").max = graphInfo.highestDegree;
+                        document.getElementById("degreeThreshhold").value = graphInfo.highestDegree;
+
+                        document.getElementById("overlay").style.display = "none";
+                        
+                        if ($('#clusterCCs').is(':checked'))
+                        {
+                            for(var i = 0; i < graphInfo.numCCs; ++i)
+                            {
+                                console.log(data, graphInfo.numNodesCC)
+                                clusterByCid(network, i, data, graphInfo.numNodesCC[i]);
+                            }
+                        }
+                        
+                        
+                        var avgEdgeLengthElement = document.getElementById("avgEdgeLength");
+                        avgEdgeLengthElement.innerHTML = "Average Edge Length: ";
+                        avgEdgeLengthElement.appendChild(document.createTextNode(graphInfo.avgEdgeLength[0]));
+                        
+                        var angleFactorElement = document.getElementById("angleFactor");
+                        angleFactorElement.innerHTML = "Average Edge Angle: ";
+                        angleFactorElement.appendChild(document.createTextNode(graphInfo.angleFactor));
+
+                    },
+                    error: (error) => {
+                        document.getElementById("overlay").style.display = "none";
+                        alert('Error');document.getElementById("overlay").style.display = "none";
+
+                    }
+                });
+                
+                var numCyclesElement = document.getElementById("componentInMostCycles");
+                numCyclesElement.innerHTML = "Number of Cycles:" + `<div class="spinner-border spinner-border-sm mx-1" role="status">
+                                                                        <span class="sr-only"></span>
+                                                                    </div>
+                                                                    `;            
+                numCyclesElement.innerHTML += "<br> Node appearing in most cycles:"  + `<div class="spinner-border spinner-border-sm  mx-1" role="status">
+                                                                                            <span class="sr-only"></span>
+                                                                                        </div>
+                                                                                        `; ;
+
+                $("#breakCycleButton").prop('disabled', true);
+                
+                $.ajax({
+                    type: "POST",
+                    url: "/get_cycles_info/",
+                    data:{
+                        pathwayName: $("#pathwaysList option:selected").text(),
+                        csrfmiddlewaretoken: csrf_token_value
+                    },
+                    success: (data) => {
+
+                        var numCyclesElement = document.getElementById("componentInMostCycles");
+                        
+                        $("#breakCycleButton").prop('disabled', false);
+                        
+                        console.log(data.numCycles)
+                        if (data.numCycles == 0)
+                        {
+                            $("#breakCycleButton").prop('disabled', true);
+                            numCyclesElement.innerHTML = "Number of Cycles: ";
+                            numCyclesElement.appendChild(document.createTextNode(data.numCycles));
+                            
+                            numCyclesElement.innerHTML += "<br> Node appearing in most cycles: None";
+                        }
+                        else
+                        {
+                            numCyclesElement.innerHTML = "Number of Cycles: ";
+                            numCyclesElement.appendChild(document.createTextNode(data.numCycles));
+                            
+                            numCyclesElement.innerHTML += "<br> Node appearing in most cycles: ";
+                            numCyclesElement.appendChild(document.createTextNode(data.nodeInMostCycles.id + " " + data.nodeInMostCycles.name));
+
+                            nodeInMostCycles = data.nodeInMostCycles.id;
+
+                        }
+
+                    },
+                    error: (error) => {
+                        $("#breakCycleButton").prop('disabled', false);
+                        alert('Error');
+                    }
+                });
+
+
+            }
+            
+            network.on("click", function(params) {
+                console.log(params)
+                if (params.nodes.length != 0) {
+                    document.getElementById('nodeInfo').hidden = false;
+
+                    selectedNode = params.nodes[0];
+
+                    
+                    if(selectedNode[0] == 'C')
+                    {
+                        $("#duplicateSelectedNodeButton").prop('disabled', false);
+                    }
+
+                    
+                    $.ajax({
+                        type: "POST",
+                        url: "/get_node_info/",
+                        data:{
+                            pathwayName: $("#pathwaysList option:selected").text(),
+                            nodeName: params.nodes[0],
+                            csrfmiddlewaretoken: csrf_token_value
+                        },
+                        success: (data) => {
+                            console.log(data);
+
+                            var nodeIdHeader = document.getElementById("nodeId");
+                            nodeIdHeader.textContent = selectedNode + ": " + data.nodeName;
+
+                            var selectedNodeIdHeader = document.getElementById("selectedNode");
+                            selectedNodeIdHeader.textContent = "Selected Node: " + selectedNode + ": " + data.nodeName;
+                            
+                            var predList = document.getElementById("predList");
+                            
+
+                            var predList = document.getElementById("predList");
+                            predList.innerHTML = "";
+                            
+                            var predecessors = data.predecessors;
+
+                            for(var i = 0; i < predecessors.length; ++i)
+                            {
+                                var li = document.createElement("li");
+                                li.appendChild(document.createTextNode(predecessors[i]));
+                                predList.appendChild(li);
+
+                            }  
+                            
+                            var succList = document.getElementById("succList");
+                            succList.innerHTML = "";
+
+                            var successors = data.successors;
+
+                            for(var i = 0; i < successors.length; ++i)
+                            {
+                                var li = document.createElement("li");
+                                li.appendChild(document.createTextNode(successors[i]));
+                                succList.appendChild(li);
+
+                            } 
+                            
+                            var degree = document.getElementById("degree")
+                            degree.innerHTML = "Degree: " + (predecessors.length + successors.length);
+                            var nodeFigure = document.getElementById("nodeFigure");
+                            var url;
+                            var selectedNode_id = selectedNode;
+
+                            if (selectedNode.includes('_')) {
+                                selectedNode_id = selectedNode.split('_')[1]
+                            }
+
+                            if(selectedNode_id[0]=='C')
+                            {
+                                url = "https://www.kegg.jp/Fig/compound/" + selectedNode_id + ".gif"
+                                
+                            }
+                            else{
+                                url = "https://www.kegg.jp/Fig/reaction/" + selectedNode_id + ".gif"
+                            }
+                            nodeFigure.innerHTML = ' <img src=' + url + ' style="max-width: 400px;">'
+
+                        },
+                        error: (error) => {
+                            alert('Error');
+                        }
+                    });
+
+                }
+                else
+                {
+                    document.getElementById('nodeInfo').hidden = true;
+                    document.getElementById('selectedNode').innerHTML = "No node selected";
+                    $("#duplicateSelectedNodeButton").prop('disabled', true);
+                }
+
+                
+
+            });
+            
+            network.on("click", function (params) {
+                if (params.nodes.length == 1) {
+                    if (network.isCluster(params.nodes[0]) == true) {
+                        var openClusterObj = {};
+                        openClusterObj.releaseFunction = function(clusterPosition, containedNodesPositions) {
+                            return containedNodesPositions;
+                        }
+
+                        network.openCluster(params.nodes[0], openClusterObj);
+                    }
+                }   
+            });
+
+
+            
+        }
+
         $("#pathwayForm").submit(function (e) {
             // preventing from page reload and default actions
             e.preventDefault();
@@ -715,7 +1037,15 @@
                 },
                 success: function (response) {
                     const graphInfo = JSON.parse(response.graphInfo);
-                    loadGraph(graphInfo.nodes, graphInfo.edges);
+                    console.log(graphInfo)
+                    if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                    else{
+                        createCarousel(response.numCCs);
+                        for(var i = 0; i < response.numCCs; ++i)
+                        {
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, i);
+                        }
+                    }
                 },
                 error: function (response) {
                     // alert the error if any error occured
@@ -742,7 +1072,7 @@
                 },
                 success: function (response) {
                     const graphInfo = JSON.parse(response.graphInfo)
-                    loadGraph(graphInfo.nodes, graphInfo.edges)
+                    loadSingleGraph(graphInfo.nodes, graphInfo.edges)
                 },
                 error: function (response) {
                     // alert the error if any error occured
@@ -769,7 +1099,7 @@
                 },
                 success: function (response) {
                     const graphInfo = JSON.parse(response.graphInfo)
-                    loadGraph(graphInfo.nodes, graphInfo.edges)
+                    loadSingleGraph(graphInfo.nodes, graphInfo.edges)
                 },
                 error: function (response) {
                     // alert the error if any error occured
@@ -797,7 +1127,7 @@
                 },
                 success: function (response) {
                     const graphInfo = JSON.parse(response.graphInfo)
-                    loadGraph(graphInfo.nodes, graphInfo.edges)
+                    loadSingleGraph(graphInfo.nodes, graphInfo.edges)
                 },
                 error: function (response) {
                     // alert the error if any error occured
@@ -825,7 +1155,7 @@
                 },
                 success: function (response) {
                     const graphInfo = JSON.parse(response.graphInfo)
-                    loadGraph(graphInfo.nodes, graphInfo.edges)
+                    loadSingleGraph(graphInfo.nodes, graphInfo.edges)
                 },
                 error: function (response) {
                     // alert the error if any error occured
@@ -853,7 +1183,7 @@
                 },
                 success: function (response) {
                     const graphInfo = JSON.parse(response.graphInfo)
-                    loadGraph(graphInfo.nodes, graphInfo.edges)
+                    loadSingleGraph(graphInfo.nodes, graphInfo.edges)
                 },
                 error: function (response) {
                     // alert the error if any error occured
