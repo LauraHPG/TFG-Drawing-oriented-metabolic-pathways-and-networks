@@ -63,7 +63,7 @@ def splitHighDegreeComponents(graph, threshhold):
 
 
 def duplicateNode(graph, node):
-    if node[0] != 'D':
+    if node[0] != 'D' and graph.degree(node) != 1:
         out_edges = graph.out_edges([node])
         in_edges = graph.in_edges([node])
         node_type = graph.nodes[node]['node_type']
@@ -342,10 +342,10 @@ def getGraphInfo(graph,poses):
     highestDegreeNodes, highestDegree = getHighestDegreeNodes(graph)
     if DEBUG: print("High Degree nodes:", highestDegreeNodes)
 
-    avgEdgeLength = computeDistances(graph, poses)
-    angleFactor = computeAngles(graph, poses)
+    infoEdgeLengths = computeDistances(graph, poses)
+    infoEdgeAngles = computeAngles(graph, poses)
 
-    return numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC, avgEdgeLength, angleFactor
+    return numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC, infoEdgeLengths, infoEdgeAngles
 
 def getCyclesInfo(graph):
     numCycles = len(nx.recursive_simple_cycles(graph))
@@ -417,6 +417,7 @@ def getConnectedComponents(graph):
 
 def getNodeLabel(name):
     return name.split("_")[-1]
+ 
 
 def retrieveNodeNames():
     url = "https://rest.kegg.jp/list/compound"
@@ -645,21 +646,25 @@ def getGraphPositions(graph, N = 1.5):
 
 def computeDistances(graph,poses):
     res = []
+    maxLengthEdge = 0
     for edge in graph.edges():
         euclid_dist = np.linalg.norm(np.array(poses[edge[0]]) - np.array(poses[edge[1]]))
         res.append(euclid_dist)
-    
+
+        if euclid_dist > maxLengthEdge:
+            maxLengthEdge = euclid_dist
     
     if DEBUG: print(np.mean(res))
-    return np.mean(res)
+    return round(np.mean(res),2), round(maxLengthEdge,2)
 
 
 def computeAngles(graph,poses):
     res = []
+    horizontalLines = 0
     for edge in graph.edges():
         
         vector_1 = np.array(poses[edge[0]]) - np.array(poses[edge[1]])
-        vector_2 = [1, 0]
+        vector_2 = [0, -1]
 
         unit_vector_1 = vector_1 / np.linalg.norm(vector_1)
         unit_vector_2 = vector_2 / np.linalg.norm(vector_2)
@@ -667,11 +672,12 @@ def computeAngles(graph,poses):
         angle = np.arccos(dot_product)
 
         res.append(angle)
+        
+        if angle > math.pi/4 and angle < 3*math.pi/4: horizontalLines += 1
 
-        # if angle > math.pi/2:
-        #     angle = math.pi - angle
-        print(angle)
+        if DEBUG: print(angle)
 
     if DEBUG: print(hmean(res))
     if DEBUG: print(np.mean(res), np.std(res))
-    return round(np.mean(res), 2),  round(np.std(res),2)
+    if DEBUG: print("Percentage 'horizontal' lines", horizontalLines/len(res))
+    return round(np.mean(res), 2),  round(np.std(res),2), round(horizontalLines/len(res),2)

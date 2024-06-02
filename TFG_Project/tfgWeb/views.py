@@ -68,53 +68,56 @@ def getNodeName(label):
 
 def get_node_info(request):
    if request.method == 'POST':
-      start_time = time.time()
+      try:
+         start_time = time.time()
 
-      nodeName = request.POST.get('nodeName')
-      pathwayName = request.POST.get('pathwayName')
-      pathway = Pathway.objects.get(name=pathwayName) 
+         nodeName = request.POST.get('nodeName')
+         pathwayName = request.POST.get('pathwayName')
+         pathway = Pathway.objects.get(name=pathwayName) 
 
-      G = nx.DiGraph()
-      info = pathway.graphInfo.replace("'", '"')
-      G = parseJsonToNx(info)
+         G = nx.DiGraph()
+         info = pathway.graphInfo.replace("'", '"')
+         G = parseJsonToNx(info)
 
-      poses = sugiyama(G)
-      pred, succ = getNodeInfo(G,nodeName) 
+         poses = sugiyama(G)
+         pred, succ = getNodeInfo(G,nodeName) 
 
 
-      predecessors = pred
-      successors = succ
-      
-      if nodeName[0] == 'R':
-
-         predecessors = dict()
-         successors = dict()
-
-         for node in pred:
-            
-            label = getNodeLabel(node)
-            nodeName = getNodeName(label)
-
-            predecessors[label] = nodeName
+         predecessors = pred
+         successors = succ
          
+         if nodeName[0] == 'R':
 
-         for node in succ:
-            label = getNodeLabel(node)
-            nodeName = getNodeName(label)
+            predecessors = dict()
+            successors = dict()
+
+            for node in pred:
                
-            successors[label] = nodeName
-      
-         predecessors = [f"{key}: {value}" for key, value in predecessors.items()]
-         successors = [f"{key}: {value}" for key, value in successors.items()]
-      
-      label = getNodeLabel(nodeName)
-      nodeNameRes = getNodeName(label)
-      
-      end_time = time.time()
-      elapsed_time = end_time - start_time
-      print("Elapsed time get_node_info: {:.6f} seconds".format(elapsed_time))
+               label = getNodeLabel(node)
+               nodeName = getNodeName(label)
 
-      return JsonResponse({"nodeName":nodeNameRes,'predecessors':predecessors , 'successors': successors})
+               predecessors[label] = nodeName
+            
+
+            for node in succ:
+               label = getNodeLabel(node)
+               nodeName = getNodeName(label)
+                  
+               successors[label] = nodeName
+         
+            predecessors = [f"{key}: {value}" for key, value in predecessors.items()]
+            successors = [f"{key}: {value}" for key, value in successors.items()]
+         
+         label = getNodeLabel(nodeName)
+         nodeNameRes = getNodeName(label)
+         
+         end_time = time.time()
+         elapsed_time = end_time - start_time
+         print("Elapsed time get_node_info: {:.6f} seconds".format(elapsed_time))
+
+         return JsonResponse({"nodeName":nodeNameRes,'predecessors':predecessors , 'successors': successors})
+      except:
+         return JsonResponse({"nodeName":"ConnectedComponent",'predecessors':[] , 'successors': []})
 
 def get_graph_info(request):
    if request.method == 'POST':
@@ -130,7 +133,7 @@ def get_graph_info(request):
 
       poses = getGraphPositions(G)
       
-      numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC, avgEdgeLength, angleFactor = getGraphInfo(G, poses) 
+      numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC, infoEdgeLengths, infoEdgeAngles = getGraphInfo(G, poses) 
       
       highestDegreeNodesResult = {} 
 
@@ -147,7 +150,7 @@ def get_graph_info(request):
       elapsed_time = end_time - start_time
       print("Elapsed time get_graph_info: {:.6f} seconds".format(elapsed_time))
       
-      return JsonResponse({'numNodes': numNodes, 'numEdges': numEdges, 'numCrossings': numCrossings, 'numCCs': numCCs, 'highestDegreeNodes':highestDegreeNodesResult, 'highestDegree': highestDegree, 'numNodesCC':numNodesCC, 'avgEdgeLength': avgEdgeLength, 'angleFactor': angleFactor})
+      return JsonResponse({'numNodes': numNodes, 'numEdges': numEdges, 'numCrossings': numCrossings, 'numCCs': numCCs, 'highestDegreeNodes':highestDegreeNodesResult, 'highestDegree': highestDegree, 'numNodesCC':numNodesCC, 'avgEdgeLength': infoEdgeLengths, 'angleFactor': infoEdgeAngles})
 
 
 def get_cycles_info(request):
@@ -162,15 +165,17 @@ def get_cycles_info(request):
       G = parseJsonToNx(info)
 
       numCycles, nodeInMostCycles = getCyclesInfo(G)
-      
-      nodeInMostCyclesLabel = getNodeLabel(nodeInMostCycles)
-      nodeInMostCyclesName = getNodeName(nodeInMostCyclesLabel)
+      try:
+         nodeInMostCyclesLabel = getNodeLabel(nodeInMostCycles)
+         nodeInMostCyclesName = getNodeName(nodeInMostCyclesLabel)
 
-      end_time = time.time()
-      elapsed_time = end_time - start_time
-      print("Elapsed time get_cycles_info: {:.6f} seconds".format(elapsed_time))
-      
-      return JsonResponse({'numCycles': numCycles, 'nodeInMostCycles': {"id": nodeInMostCycles, "name": nodeInMostCyclesName}})
+         end_time = time.time()
+         elapsed_time = end_time - start_time
+         print("Elapsed time get_cycles_info: {:.6f} seconds".format(elapsed_time))
+         
+         return JsonResponse({'numCycles': numCycles, 'nodeInMostCycles': {"id": nodeInMostCycles, "name": nodeInMostCyclesName}})
+      except:
+         return JsonResponse({'numCycles': 0})
 
 
 def split_high_degree(request):
