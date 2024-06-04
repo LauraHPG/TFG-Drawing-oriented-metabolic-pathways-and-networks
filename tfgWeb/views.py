@@ -22,6 +22,7 @@ def add_pathway(request):
    start_time = time.time()
 
    if request.method == 'POST':
+      relative = request.POST.get('relative') == 'false'
       name = request.POST.get('name')
       pathway = {}
       try:
@@ -42,7 +43,7 @@ def add_pathway(request):
          
          checkMaxCCSize(G)
 
-         poses = getGraphPositions(G)
+         poses = getGraphPositions(G, relative)
          
          graphInfo = parseGraph(G,poses, getCompoundNames(G))
 
@@ -188,6 +189,7 @@ def split_high_degree(request):
    if request.method == 'POST':
       start_time = time.time()
       pathwayName = request.POST.get('name')
+      relative = request.POST.get('relative') == 'false'
       threshhold = int(request.POST.get('threshhold'))
       pathway = Pathway.objects.get(name=pathwayName) 
 
@@ -197,7 +199,7 @@ def split_high_degree(request):
 
       splitHighDegreeComponents(G,threshhold)
 
-      poses = getGraphPositions(G)      
+      poses = getGraphPositions(G, relative)      
 
       graphInfo = parseGraph(G,poses, getCompoundNames(G))
 
@@ -219,6 +221,7 @@ def duplicate_node(request):
    if request.method == 'POST':
       start_time = time.time()
       pathwayName = request.POST.get('name')
+      relative = request.POST.get('relative') == 'false'
       node = request.POST.get('node')
       print(node)
       if node[0] != 'D' :
@@ -230,7 +233,7 @@ def duplicate_node(request):
 
          duplicateNode(G,node)
 
-         poses = getGraphPositions(G)      
+         poses = getGraphPositions(G, relative)      
 
          graphInfo = parseGraph(G,poses, getCompoundNames(G))
 
@@ -283,14 +286,14 @@ def reset_graph(request):
       start_time = time.time()
 
       name = request.POST.get('name')
-      
+      relative = request.POST.get('relative') == 'false'
       G = nx.DiGraph()
 
       dirname = os.path.dirname(__file__)
       directory = os.path.join(dirname, 'static/inputGraphs', name)
       read_graph_from_txt(G, directory)
-      
-      poses = getGraphPositions(G)
+      checkMaxCCSize(G)
+      poses = getGraphPositions(G, relative)
 
       graphInfo = parseGraph(G,poses, getCompoundNames(G))
 
@@ -324,6 +327,8 @@ def recompute_positions(request):
       start_time = time.time()
 
       name = request.POST.get('name')
+      relative = request.POST.get('relative') == 'false'
+
       
       pathway = Pathway.objects.get(name=name) 
    
@@ -331,7 +336,7 @@ def recompute_positions(request):
       info = pathway.graphInfo.replace("'", '"')
       G = parseJsonToNx(info)
 
-      poses = getGraphPositions(G)      
+      poses = getGraphPositions(G, relative)      
 
       graphInfo = parseGraph(G,poses, getCompoundNames(G))
 
@@ -348,3 +353,35 @@ def recompute_positions(request):
       print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
 
       return JsonResponse({'graphInfo':info, 'numCCs':numCCs})
+   
+
+def default_sugiyama(request):
+   if request.method == 'POST':
+      start_time = time.time()
+
+      name = request.POST.get('name')
+      G = nx.DiGraph()
+
+      dirname = os.path.dirname(__file__)
+      directory = os.path.join(dirname, 'static/inputGraphs', name)
+      read_graph_from_txt(G, directory)
+
+      try:
+         poses = getDefaultSugiyamaPositions(G)
+
+         graphInfo = parseGraph(G,poses, getCompoundNames(G))
+
+         pthwy = Pathway.objects.get(pk=name)
+         pthwy.graphInfo = graphInfo
+         pthwy.save()
+
+         info = pthwy.graphInfo.replace("'", '"')
+
+         end_time = time.time()
+         elapsed_time = end_time - start_time
+         print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
+      
+         return JsonResponse({'graphInfo':info})
+      except:
+         return JsonResponse({'status': 'error'})
+         

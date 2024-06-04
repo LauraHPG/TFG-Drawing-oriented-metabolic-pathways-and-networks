@@ -20,7 +20,7 @@ import numpy as np
 import math
 from scipy.stats import hmean
 
-DEBUG = False
+DEBUG = True
 
 def read_graph(graph, check = True):
     nx.set_node_attributes(graph, {})
@@ -47,8 +47,6 @@ def read_graph_from_txt(graph, path):
             graph.add_edge(reaction, product, relationship='reaction-substrate')
             graph.add_node(product, node_type='component')
     
-    # checkMaxCCSize(graph)
-
     return [node for node, data in graph.nodes(data=True) if data['node_type'] == 'reaction'], [node for node, data in graph.nodes(data=True) if data['node_type'] == 'component']
 
 def splitHighDegreeComponents(graph, threshhold):
@@ -376,6 +374,31 @@ def getHighestDegreeNodes(graph):
             result.append(node[0])
     return result, ordered_nodes[0][1]
 
+def getDefaultSugiyamaPositions(graph):
+    poses = {}
+    changeSourceAndSinkNodeType(graph)
+    setColorNodeType(graph)
+    defineNodeCID(graph, graph.nodes(), 0)
+
+    g = grandalf.utils.convert_nextworkx_graph_to_grandalf(graph)
+
+
+    class defaultview(object):
+        w, h = 20, 20
+
+
+    for v in g.C[0].sV:
+        v.view = defaultview()
+
+    sug = SugiyamaLayout(g.C[0])
+    sug.init_all()  # roots = [V[0]])
+    sug.draw()  # Calculate positions
+
+    poses = {v.data: (v.view.xy[0], v.view.xy[1]) for v in g.C[0].sV}  # Extract positions
+
+    return poses
+
+
 def sugiyama(graph, N = 1.5):
 
     g = grandalf.utils.convert_nextworkx_graph_to_grandalf(graph)
@@ -394,6 +417,7 @@ def sugiyama(graph, N = 1.5):
 
     poses = {v.data: (v.view.xy[0], v.view.xy[1]) for v in g.C[0].sV}  # Extract positions
     poses  = rearangeSources(graph,poses)
+    poses = staggerLayers(poses)
 
     return poses
 
@@ -434,7 +458,7 @@ def retrieveNodeNames():
             info = compound.split("\t")
             if len(info) > 1:
                 compoundId = info[0]
-                compoundName = info[1].split(';')[0]
+                compoundName = info[1].split(';')[0].replace("'", '`')
                 compounds[compoundId] = compoundName
 
     else:
@@ -525,7 +549,7 @@ def getNodeInfo(graph, node):
 
     return predecessors, successors
 
-def countLevels(poses):
+def staggerLayers(poses):
 
     # for node in centralNodes:
     #     centralLevel = poses[node][1]
@@ -568,21 +592,7 @@ def countLevels(poses):
     for i, key in enumerate(sorted(levels)):
         if DEBUG: print(i,':',key)
     return new_poses
-    # if DEBUG: print(levels)
 
-def staggerLayers(graph, poses):
-    #Computing betweeness
-    # betCent = nx.betweenness_centrality(graph, normalized=True, endpoints=True)
-
-    #Descending order sorting betweeness
-    # betCent_sorted=sorted(betCent.items(), key=lambda item: item[1],reverse=True)
-
-    # if DEBUG: print("Bet centrality", betCent_sorted)
-
-    # H = graph.to_undirected()
-    # center = nx.center(H)
-
-    return countLevels(poses)
 
 def checkMaxCCSize(graph):
     if len(graph.nodes()) > 999:
@@ -615,7 +625,7 @@ def defineNodeCID(graph, nodes, cid):
         graph.nodes[node]['cid'] = cid
         if DEBUG: print(node, graph.nodes[node]['cid'])
 
-def getGraphPositions(graph, N = 1.5):
+def getGraphPositions(graph, relative = True, N = 1.5):
     connected = isConnected(graph)
     poses = {}
     changeSourceAndSinkNodeType(graph)
@@ -635,16 +645,17 @@ def getGraphPositions(graph, N = 1.5):
                 subGraph = graph.subgraph(c).copy()
                 subGraph.to_directed()
                 new_poses = sugiyama(subGraph)
-                for pos in new_poses:
-                    new_poses[pos] = (currentMaxX + new_poses[pos][0], new_poses[pos][1])
-                    if new_poses[pos][0] > xMax:
-                        xMax = new_poses[pos][0]
+                if relative:
+                    for pos in new_poses:
+                        new_poses[pos] = (currentMaxX + new_poses[pos][0], new_poses[pos][1])
+                        if new_poses[pos][0] > xMax:
+                            xMax = new_poses[pos][0]
+                    currentMaxX = xMax + 200
+                
                 poses.update(new_poses)
-                currentMaxX = xMax + 200
 
                 defineNodeCID(graph, subGraph.nodes(), cid)
 
-    poses = staggerLayers(graph, poses)
     return poses
 
 def computeDistances(graph,poses):

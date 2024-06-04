@@ -67,7 +67,7 @@
         }
 
         .legend{
-            margin-bottom: 2em;
+            margin-bottom: 6em;
             margin-left: 0.5em;
             padding: 1em;
             list-style: none;
@@ -95,6 +95,11 @@
             margin-top: 1em;
 
         }
+
+        /* .carousel-control-next, .carousel-control-prev, */.carousel-indicators{ 
+            filter: invert(100%);
+        }
+
     </style>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -153,10 +158,16 @@
         
         <form id="recomputePositions">
             <input type="submit" value="Recompute Positions" class="btn btn-primary" disabled>
+            
+            <form id="resetPathway">
+                <input type="submit" value="Reset" class="btn btn-danger" disabled>
+            </form>
         </form>
 
-        <form id="resetPathway">
-            <input type="submit" value="Reset" class="btn btn-danger" disabled>
+        <div style="margin-top: 10px; margin-right: 10px; margin-left: -2px; border:1px solid lightgray;height:2.2em"></div>
+
+        <form id="defaultSugiyama">
+            <input type="submit" value="Default Sugiyama" class="btn btn-primary" disabled>
         </form>
 
 
@@ -257,19 +268,24 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
-                          <h5>Other</h5>
+                          <h5>Settings</h5>
                       </button>
                     </h2>
                     <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse">
                       <div class="accordion-body">
                           <div id="Actions">
-                              <h4>Other options</h4>
-                              <div title="To be improved" id="clusterDiv">
-                                <input class="form-check-input" type="checkbox" value="" id="clusterCCs">
-                                <label class="form-check-label" for="clusterCCs">
-                                    Cluster Connected Components
-                                </label>
-                            </div>
+                                <div title="To be improved" id="clusterDiv">
+                                    <input class="form-check-input" type="checkbox" value="" id="clusterCCs">
+                                    <label class="form-check-label" for="clusterCCs">
+                                        Cluster Connected Components
+                                    </label>
+                                </div>
+                                <div>
+                                    <input class="form-check-input" type="checkbox" value="" id="divideIntoCarousel" checked="true">
+                                    <label class="form-check-label" for="divideIntoCarousel">
+                                        Render connected components in separate windows
+                                    </label>
+                                </div>
                           </div>
                       </div>
                     </div>
@@ -396,7 +412,8 @@
         })
 
         var nodeInMostCycles, selectedNode;
-
+        var inputNodes, inputEdges;
+        var networks = [];
         function clusterByCid(network, cid, data, numNodesCC) {
             // network.setData(data);
 
@@ -697,46 +714,57 @@
         {
             // var container = document.getElementById('mynetwork');
             document.getElementById('mynetwork').innerHTML = '';
-            $('#mynetwork').append(`
-
-            <div id="carouselExampleIndicators" class="carousel slide" style="width: 100%; height: 100%;">
-                <div class="carousel-indicators" id=""clusterCarouselIndicators>
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                </div>
-                <div class="carousel-inner" style="width: 100%; height: 100%;">
+            $('#mynetwork').append(`<div id="carouselExampleIndicators" class="carousel slide" style="width: 100%; height: 100%;">
+                    <div class="carousel-indicators" id="clusterCarouselIndicators">
+                        
+                    </div>
+                <div class="carousel-inner" style="width: 100%; height: 100%;" id="clusterCarouselInner">
                     <div class="carousel-item active" style="width: 100%; height: 100%;">
                         <div class="d-block w-100" id="mynetwork0" style="width: 100%; height: 100%;"></div></div>
                     </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-                </button>
-            </div>
+                
+            </div>            
             `)
 
+            if(numCCs < 51)  $('#clusterCarouselIndicators').append('<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>');
+                
             for(var i = 1; i < numCCs; ++i)
             {
-                $('#clusterCarouselIndicators').append('<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="' + 1 + '" ></button>')
+                console.log(i)
+                if(numCCs < 51) 
+                {
+                    $('#clusterCarouselIndicators').append('<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="' + i + '" ></button>');
+                }
                 $('#clusterCarouselInner').append(
                 `<div class="carousel-item" style="width: 100%; height: 100%;">                        
                     <div class="d-block w-100" id="mynetwork` + i + `" style="width: 100%; height: 100%;"></div>
-                </div>
-                
+                </div>                
                 `)
             }
+
+            const myCarousel = document.getElementById('carouselExampleIndicators')
+
+            myCarousel.addEventListener('slid.bs.carousel', event => {
+                if(networks[event.to] == undefined)
+                {
+                    loadConnectedComponent(inputNodes, inputEdges, event.to)
+                }
+            })
+
+            // if(numCCs >= 51)
+            // {
+            //     $('#clusterCarouselIndicators').append('<input type="number" id="tentacles" name="tentacles" min="10" max="100" />')
+            // }
         }
 
         function loadConnectedComponent(inputNodes, inputEdges, cid)
         {
 
-            console.log(inputNodes)
+            filteredInputNodes = inputNodes.filter(item => item.cid === cid)
+            console.log(filteredInputNodes)
             var nodes = new vis.DataSet(
-                inputNodes
+                filteredInputNodes
             );
 
             // create an array with edges
@@ -747,7 +775,6 @@
 
             // create a network
             var container = document.getElementById('mynetwork' + cid);
-            
 
             // provide the data in the vis format
             var data = {
@@ -772,8 +799,8 @@
             };
             // initialize your network!
             var network = new vis.Network(container, data, options);
+            networks[cid] = network;
             
-            document.getElementById("overlay").style.display = "block";
 
             if(cid == 0)
             {
@@ -1015,7 +1042,6 @@
                 }   
             });
 
-
             
         }
 
@@ -1033,17 +1059,23 @@
                 url: '/add_pathway/',
                 data: {
                     name: $("#pathwaysList option:selected").text(),
+                    relative: $('#divideIntoCarousel').is(':checked'),
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {
                     const graphInfo = JSON.parse(response.graphInfo);
-                    console.log(graphInfo)
-                    if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
-                    else{
-                        createCarousel(response.numCCs);
-                        for(var i = 0; i < response.numCCs; ++i)
-                        {
-                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, i);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
                         }
                     }
                 },
@@ -1068,11 +1100,26 @@
                 url: '/reset_graph/',
                 data: {
                     name: $("#pathwaysList option:selected").text(),
+                    relative: $('#divideIntoCarousel').is(':checked'),
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {
-                    const graphInfo = JSON.parse(response.graphInfo)
-                    loadSingleGraph(graphInfo.nodes, graphInfo.edges)
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
+
+                        }
+                    }
                 },
                 error: function (response) {
                     // alert the error if any error occured
@@ -1095,11 +1142,26 @@
                 url: '/recompute_positions/',
                 data: {
                     name: $("#pathwaysList option:selected").text(),
+                    relative: $('#divideIntoCarousel').is(':checked'),
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {
-                    const graphInfo = JSON.parse(response.graphInfo)
-                    loadSingleGraph(graphInfo.nodes, graphInfo.edges)
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
+
+                        }
+                    }
                 },
                 error: function (response) {
                     // alert the error if any error occured
@@ -1123,11 +1185,26 @@
                 data: {
                     name: $("#pathwaysList option:selected").text(),
                     threshhold: $("#degreeThreshhold").val(),
+                    relative: $('#divideIntoCarousel').is(':checked'),
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {
-                    const graphInfo = JSON.parse(response.graphInfo)
-                    loadSingleGraph(graphInfo.nodes, graphInfo.edges)
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
+
+                        }
+                    }
                 },
                 error: function (response) {
                     // alert the error if any error occured
@@ -1151,11 +1228,26 @@
                 data: {
                     name: $("#pathwaysList option:selected").text(),
                     node: nodeInMostCycles,
+                    relative: $('#divideIntoCarousel').is(':checked'),
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {
-                    const graphInfo = JSON.parse(response.graphInfo)
-                    loadSingleGraph(graphInfo.nodes, graphInfo.edges)
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
+
+                        }
+                    }
                 },
                 error: function (response) {
                     // alert the error if any error occured
@@ -1179,11 +1271,26 @@
                 data: {
                     name: $("#pathwaysList option:selected").text(),
                     node: selectedNode,
+                    relative: $('#divideIntoCarousel').is(':checked'),
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {
-                    const graphInfo = JSON.parse(response.graphInfo)
-                    loadSingleGraph(graphInfo.nodes, graphInfo.edges)
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
+
+                        }
+                    }
                 },
                 error: function (response) {
                     // alert the error if any error occured
@@ -1195,7 +1302,43 @@
             })
         })
 
-        
+
+        $('#defaultSugiyama').submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+
+            document.getElementById("overlay").style.display = "block";
+
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/default_sugiyama/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+
+                    console.log(response);
+                    
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    
+                    loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                    
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error while computing default Sugiyama');
+                    document.getElementById("overlay").style.display = "none";
+
+                }
+
+            })
+        })
+
+
     </script>
     {% endblock javascript %}
 

@@ -11,6 +11,7 @@ urlpatterns = [
     path('split_high_degree/', views.split_high_degree, name='split_high_degree'), 
     path('duplicate_node/', views.duplicate_node, name='duplicate_node'), 
     path('reset_graph/', views.reset_graph, name='reset_graph'),
-    path('recompute_positions/', views.recompute_positions, name='recompute_positions')   
+    path('recompute_positions/', views.recompute_positions, name='recompute_positions'), 
+    path('default_sugiyama/', views.default_sugiyama, name='default_sugiyama')   
     # path('tfgWeb/', views.index, name='index'),
 ]

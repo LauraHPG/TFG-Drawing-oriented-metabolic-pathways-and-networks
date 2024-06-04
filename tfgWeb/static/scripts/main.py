@@ -200,7 +200,16 @@ def main():
             case '12':
                 poses = funcs.getGraphPositions(G)
                 funcs.computeAngles(G, poses)
+            
+            case '13':
+                poses = funcs.getDefaultSugiyamaPositions(G)
+                colors = funcs.setColorNodeType(G)  
+
+                # depth = input("Do you want to arrange it by depth? (y/n)")
+
+                nx.draw(G, pos=poses, with_labels=True, node_color=colors)
                 
+                plt.show()
             case 'p':
 
                 funcs.changeSourceAndSinkNodeType(G)
