@@ -20,7 +20,7 @@ import numpy as np
 import math
 from scipy.stats import hmean
 
-DEBUG = True
+DEBUG = False
 
 def read_graph(graph, check = True):
     nx.set_node_attributes(graph, {})
@@ -295,26 +295,37 @@ def getNumSources(graph):
 
     return sources
 def countCrossings(graph,pos):
-    numCrossings = 0
 
-    segments_x = []
-    segments_y = []
-    for edge in graph.edges():
-        # bentley ottman does not cover vertial lines -> change x by y, no two adjacent nodes will be at the same height
+    numCCs = getNumCCs(graph)
+    totalNumCrossings = 0
+
+    H = graph.to_undirected()
+    S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+
+    for i in range(0,numCCs):
+        numCrossings = 0
+        
+
+        segments_x = []
+        # segments_y = []
+        for edge in S[i].edges():
+            # bentley ottman does not cover vertial lines -> change x by y, no two adjacent nodes will be at the same height
             segments_x.append(((pos[edge[0]][1],pos[edge[0]][0]), (pos[edge[1]][1],pos[edge[1]][0])))
-            segments_y.append(((pos[edge[0]][0],pos[edge[0]][1]), (pos[edge[1]][0],pos[edge[1]][1])))
+                # segments_y.append(((pos[edge[0]][0],pos[edge[0]][1]), (pos[edge[1]][0],pos[edge[1]][1])))
 
-    try:
         numCrossings = bent.isect_segments(segments_x, validate=True)
-    except:
-        try:
-            numCrossings = bent.isect_segments(segments_y, validate=True)
-        except:
-            numCrossings = []
-            if DEBUG: print("Could not compute number of crossings")
+        print(f"{len(numCrossings)} in CC {i}")
+        totalNumCrossings += len(numCrossings)
+        # try:
+        # except:
+        #     try:
+        #         numCrossings = bent.isect_segments(segments_y, validate=True)
+        #     except:
+        #         numCrossings = []
+        #         if DEBUG: print("Could not compute number of crossings")
 
-    if DEBUG: print("Number of crossings:", len(numCrossings))
-    return len(numCrossings)
+    if DEBUG: print("Number of crossings:", numCrossings)
+    return totalNumCrossings
 
 def isConnected(graph):
     H = graph.to_undirected()
@@ -661,15 +672,17 @@ def getGraphPositions(graph, relative = True, N = 1.5):
 def computeDistances(graph,poses):
     res = []
     maxLengthEdge = 0
+    sumLengths = 0
     for edge in graph.edges():
         euclid_dist = np.linalg.norm(np.array(poses[edge[0]]) - np.array(poses[edge[1]]))
         res.append(euclid_dist)
+        sumLengths += euclid_dist
 
         if euclid_dist > maxLengthEdge:
             maxLengthEdge = euclid_dist
     
     if DEBUG: print(np.mean(res))
-    return round(np.mean(res),2), round(maxLengthEdge,2)
+    return round(np.mean(res),2), round(maxLengthEdge,2), round(sumLengths,2)
 
 
 def computeAngles(graph,poses):
