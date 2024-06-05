@@ -636,7 +636,7 @@ def defineNodeCID(graph, nodes, cid):
         graph.nodes[node]['cid'] = cid
         if DEBUG: print(node, graph.nodes[node]['cid'])
 
-def getGraphPositions(graph, relative = True, N = 1.5):
+def getGraphPositions(graph, N = 1.5):
     connected = isConnected(graph)
     poses = {}
     changeSourceAndSinkNodeType(graph)
@@ -656,13 +656,13 @@ def getGraphPositions(graph, relative = True, N = 1.5):
                 subGraph = graph.subgraph(c).copy()
                 subGraph.to_directed()
                 new_poses = sugiyama(subGraph)
-                if relative:
-                    for pos in new_poses:
-                        new_poses[pos] = (currentMaxX + new_poses[pos][0], new_poses[pos][1])
-                        if new_poses[pos][0] > xMax:
-                            xMax = new_poses[pos][0]
-                    currentMaxX = xMax + 200
                 
+                for pos in new_poses:
+                    new_poses[pos] = (currentMaxX + new_poses[pos][0], new_poses[pos][1])
+                    if new_poses[pos][0] > xMax:
+                        xMax = new_poses[pos][0]
+                currentMaxX = xMax + 200
+            
                 poses.update(new_poses)
 
                 defineNodeCID(graph, subGraph.nodes(), cid)

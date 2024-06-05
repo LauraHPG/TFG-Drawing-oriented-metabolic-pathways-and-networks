@@ -3,7 +3,6 @@ import networkx as nx
 import sys
 
 import auxiliar_methods as funcs
-import layouts as lyts
 
 import matplotlib.pyplot as plt
 
@@ -48,10 +47,9 @@ def main():
                 plt.show()
 
             case '1':
-                N = input("Introduce iterations (default = 1.5):\n")
 
 
-                poses = funcs.getGraphPositions(G, float(N))
+                poses = funcs.getGraphPositions(G, 1.5)
 
 
                 funcs.getGraphInfo(G, poses)

@@ -158,10 +158,9 @@
         
         <form id="recomputePositions">
             <input type="submit" value="Recompute Positions" class="btn btn-primary" disabled>
-            
-            <form id="resetPathway">
-                <input type="submit" value="Reset" class="btn btn-danger" disabled>
-            </form>
+        </form>
+        <form id="resetPathway">
+            <input type="submit" value="Reset" class="btn btn-danger" disabled>
         </form>
 
         <div style="margin-top: 10px; margin-right: 10px; margin-left: -2px; border:1px solid lightgray;height:2.2em"></div>
@@ -261,6 +260,12 @@
                             <form id="duplicateSelectedNode">
                                 <input type="submit" value="Split" class="btn btn-outline-primary" id="duplicateSelectedNodeButton" />
                             </form>
+                            <hr>
+                            <h4>Reverse selected reaction</h4>
+                            <p id="selectedReaction"></p>
+                            <form id="reverseReaction">
+                                <input type="submit" value="Split" class="btn btn-outline-primary" id="reverseSelectedReaction" />
+                            </form>
                         </div>
                     </div>
                   </div>
@@ -320,6 +325,7 @@
                 var loadForm = document.getElementById("pathwayForm");
                 var recomputeForm = document.getElementById("recomputePositions");
                 var resetForm = document.getElementById("resetPathway");
+                var defSugForm = document.getElementById("defaultSugiyama");
 
                 loadForm.querySelectorAll("input[type=submit]").forEach(function(input) {
                     input.disabled = isDisabled;
@@ -328,6 +334,9 @@
                     input.disabled = isDisabled;
                 });
                 resetForm.querySelectorAll("input[type=submit]").forEach(function(input) {
+                    input.disabled = isDisabled;
+                });
+                defSugForm.querySelectorAll("input[type=submit]").forEach(function(input) {
                     input.disabled = isDisabled;
                 });
             });
@@ -597,15 +606,37 @@
 
             network.on("click", function(params) {
                 console.log(params)
+
+                var nodeIdHeader = document.getElementById("nodeId");
+                var selectedNodeIdHeader = document.getElementById("selectedNode");
+                var selectedReactionIdHeader = document.getElementById("selectedReaction");
+
                 if (params.nodes.length != 0) {
                     document.getElementById('nodeInfo').hidden = false;
 
                     selectedNode = params.nodes[0];
 
-                    
+
+                    var isCompound;
                     if(selectedNode[0] == 'C')
                     {
                         $("#duplicateSelectedNodeButton").prop('disabled', false);
+                    }
+                    else{
+                        $("#duplicateSelectedNodeButton").prop('disabled', true);
+                    }
+                    if(selectedNode[0] == 'R'){
+                        $("#reverseSelectedReaction").prop('disabled', false);
+                        selectedReactionIdHeader.textContent = "Selected Reaction: " + selectedNode;
+                        nodeIdHeader.textContent = "No compound selected";
+                        isCompound = false;
+                    }
+                    else {
+                        $("#reverseSelectedReaction").prop('disabled', true);
+                        isCompound = true;
+                        selectedNodeIdHeader.textContent = "Selected Node: " + selectedNode;
+                        selectedReactionIdHeader.textContent = "No reaction selected";
+                        nodeIdHeader.textContent = selectedNode;
                     }
 
                     
@@ -620,11 +651,11 @@
                         success: (data) => {
                             console.log(data);
 
-                            var nodeIdHeader = document.getElementById("nodeId");
-                            nodeIdHeader.textContent = selectedNode + ": " + data.nodeName;
-
-                            var selectedNodeIdHeader = document.getElementById("selectedNode");
-                            selectedNodeIdHeader.textContent = "Selected Node: " + selectedNode + ": " + data.nodeName;
+                            if(isCompound)
+                                nodeIdHeader.textContent = selectedNode + ": " + data.nodeName;
+                              
+                            if(isCompound)
+                                selectedNodeIdHeader.textContent = "Selected Node: " + selectedNode + ": " + data.nodeName;
                             
                             var predList = document.getElementById("predList");
                             
@@ -685,8 +716,11 @@
                 else
                 {
                     document.getElementById('nodeInfo').hidden = true;
-                    document.getElementById('selectedNode').innerHTML = "No node selected";
+                    selectedNodeIdHeader.textContent = "No node selected";
+                    nodeIdHeader.textContent = "No node selected";
+                    selectedReactionIdHeader.textContent = "No node selected";
                     $("#duplicateSelectedNodeButton").prop('disabled', true);
+                    $("#reverseSelectedReaction").prop('disabled', true);
                 }
 
                 
@@ -1228,7 +1262,6 @@
                 data: {
                     name: $("#pathwaysList option:selected").text(),
                     node: nodeInMostCycles,
-                    relative: $('#divideIntoCarousel').is(':checked'),
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {
@@ -1271,7 +1304,6 @@
                 data: {
                     name: $("#pathwaysList option:selected").text(),
                     node: selectedNode,
-                    relative: $('#divideIntoCarousel').is(':checked'),
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {
@@ -1302,7 +1334,50 @@
             })
         })
 
+        $("#reverseReaction").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            document.getElementById("overlay").style.display = "block";
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/reverse_reaction/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    node: selectedNode,
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
 
+                        }
+                    }
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('You cannot duplicate an already duplicated compound.');
+                    document.getElementById("overlay").style.display = "none";
+
+                }
+
+            })
+        })
+
+        
         $('#defaultSugiyama').submit(function (e) {
             // preventing from page reload and default actions
             e.preventDefault();
