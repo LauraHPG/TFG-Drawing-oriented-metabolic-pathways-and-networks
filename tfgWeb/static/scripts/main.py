@@ -208,6 +208,9 @@ def main():
                 nx.draw(G, pos=poses, with_labels=True, node_color=colors)
                 
                 plt.show()
+
+            case '14':
+                funcs.reverseReaction(G, 'R00710')
             case 'p':
 
                 funcs.changeSourceAndSinkNodeType(G)

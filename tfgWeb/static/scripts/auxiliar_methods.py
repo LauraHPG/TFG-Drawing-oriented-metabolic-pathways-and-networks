@@ -251,6 +251,7 @@ def rearangeSources(graph, pos):
         if graph.in_degree(node) == 0:
             # if DEBUG: print("source node:", node, "out degree:", graph.out_degree(node))
             neighbors = [n for n in graph.neighbors(node)]
+            print(node, neighbors)
             neighbor = neighbors[0]
 
             posNeigh = pos[neighbor]
@@ -708,3 +709,17 @@ def computeAngles(graph,poses):
     if DEBUG: print(np.mean(res), np.std(res))
     if DEBUG: print("Percentage 'horizontal' lines", horizontalLines/len(res))
     return round(np.mean(res), 2),  round(np.std(res),2), round(horizontalLines/len(res),2)
+
+def reverseReaction(graph, reaction):
+
+    in_edges = list(graph.in_edges(reaction))
+    out_edges = list(graph.out_edges(reaction))
+
+    graph.remove_edges_from(in_edges)
+    graph.remove_edges_from(out_edges)
+
+    for edge in in_edges:
+        graph.add_edge(edge[1],edge[0], relationship='reaction-substrate')
+
+    for edge in out_edges:
+        graph.add_edge(edge[1],edge[0], relationship='substrate-reaction')

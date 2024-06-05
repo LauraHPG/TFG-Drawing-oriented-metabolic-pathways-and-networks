@@ -379,3 +379,37 @@ def default_sugiyama(request):
       except:
          return JsonResponse({'status': 'error'})
          
+   
+def reverse_reaction(request):
+   if request.method == 'POST':
+      start_time = time.time()
+
+      name = request.POST.get('name')
+      reaction = request.POST.get('node')
+
+      pathway = Pathway.objects.get(name=name) 
+   
+      G = nx.DiGraph()
+      info = pathway.graphInfo.replace("'", '"')
+      G = parseJsonToNx(info)
+
+      reverseReaction(G, reaction)
+
+      poses = getGraphPositions(G)      
+
+      graphInfo = parseGraph(G,poses, getCompoundNames(G))
+
+      pthwy = Pathway.objects.get(pk=name)
+      pthwy.graphInfo = graphInfo
+      pthwy.save()
+
+      info = pthwy.graphInfo.replace("'", '"')
+
+      numCCs = getNumCCs(G)
+
+      end_time = time.time()
+      elapsed_time = end_time - start_time
+      print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
+
+      return JsonResponse({'graphInfo':info, 'numCCs':numCCs})
+   

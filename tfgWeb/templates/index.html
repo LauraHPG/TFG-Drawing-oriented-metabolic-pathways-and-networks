@@ -56,7 +56,7 @@
             margin-right: 3px;
         }
 
-        .btn{
+        .btn, .row,.form-control{
             margin-right:1em;
             margin-top: 0.5em;
             margin-bottom: 1em;
@@ -170,8 +170,16 @@
         </form>
 
 
+        <div class='cc-carousel' style="margin-top: 10px; margin-right: 10px; margin-left: -2px; border:1px solid lightgray;height:2.2em"></div>
 
+        <form class='cc-carousel' id="loadSelectedCCInput">
+            <input min='0' type="number" id="selectedCCId" class="form-control" value="Select CCs ID" />
+        </form>
 
+        <form id="loadSelectedCCButton" class='cc-carousel'>
+            <input type="submit" value="Select CCs ID" class="btn btn-primary">
+        </form>
+        
 
     </div>
 
@@ -304,6 +312,12 @@
     <script>var csrf_token_value = "{{ csrf_token }}";</script>
     
     <script>
+
+        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+            el.style.visibility = 'hidden';
+        });
+
+
         document.addEventListener("DOMContentLoaded", function() {
             var rangeInput = document.getElementById("degreeThreshhold");
             var selectedValueDisplay = document.getElementById("selectedValue");
@@ -746,6 +760,11 @@
 
         function createCarousel(numCCs)
         {
+            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                el.style.visibility = 'visible';
+            });
+            document.getElementById("selectedCCId").max = numCCs - 1;
+
             // var container = document.getElementById('mynetwork');
             document.getElementById('mynetwork').innerHTML = '';
             $('#mynetwork').append(`<div id="carouselExampleIndicators" class="carousel slide" style="width: 100%; height: 100%;">
@@ -785,7 +804,8 @@
                     loadConnectedComponent(inputNodes, inputEdges, event.to)
                 }
             })
-
+            
+            
             // if(numCCs >= 51)
             // {
             //     $('#clusterCarouselIndicators').append('<input type="number" id="tentacles" name="tentacles" min="10" max="100" />')
@@ -794,7 +814,7 @@
 
         function loadConnectedComponent(inputNodes, inputEdges, cid)
         {
-
+            
             filteredInputNodes = inputNodes.filter(item => item.cid === cid)
             console.log(filteredInputNodes)
             var nodes = new vis.DataSet(
@@ -1093,7 +1113,6 @@
                 url: '/add_pathway/',
                 data: {
                     name: $("#pathwaysList option:selected").text(),
-                    relative: $('#divideIntoCarousel').is(':checked'),
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {
@@ -1101,15 +1120,25 @@
                     if (!$('#divideIntoCarousel').is(':checked'))
                     {
                         loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
                     }
                     else
                     {
-                        if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
                         else{
                             createCarousel(response.numCCs);
                             loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
                             inputNodes = graphInfo.nodes;
                             inputEdges = graphInfo.edges;
+
                         }
                     }
                 },
@@ -1134,7 +1163,6 @@
                 url: '/reset_graph/',
                 data: {
                     name: $("#pathwaysList option:selected").text(),
-                    relative: $('#divideIntoCarousel').is(':checked'),
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {
@@ -1142,10 +1170,19 @@
                     if (!$('#divideIntoCarousel').is(':checked'))
                     {
                         loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
                     }
                     else
                     {
-                        if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
                         else{
                             createCarousel(response.numCCs);
                             loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
@@ -1184,10 +1221,19 @@
                     if (!$('#divideIntoCarousel').is(':checked'))
                     {
                         loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
                     }
                     else
                     {
-                        if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
                         else{
                             createCarousel(response.numCCs);
                             loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
@@ -1227,10 +1273,19 @@
                     if (!$('#divideIntoCarousel').is(':checked'))
                     {
                         loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
                     }
                     else
                     {
-                        if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
                         else{
                             createCarousel(response.numCCs);
                             loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
@@ -1269,10 +1324,19 @@
                     if (!$('#divideIntoCarousel').is(':checked'))
                     {
                         loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
                     }
                     else
                     {
-                        if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
                         else{
                             createCarousel(response.numCCs);
                             loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
@@ -1311,10 +1375,19 @@
                     if (!$('#divideIntoCarousel').is(':checked'))
                     {
                         loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
                     }
                     else
                     {
-                        if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
                         else{
                             createCarousel(response.numCCs);
                             loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
@@ -1354,10 +1427,19 @@
                     if (!$('#divideIntoCarousel').is(':checked'))
                     {
                         loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
                     }
                     else
                     {
-                        if(response.numCCs == 1) loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
                         else{
                             createCarousel(response.numCCs);
                             loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
@@ -1369,7 +1451,7 @@
                 },
                 error: function (response) {
                     // alert the error if any error occured
-                    alert('You cannot duplicate an already duplicated compound.');
+                    alert('Error while reversing reaction.');
                     document.getElementById("overlay").style.display = "none";
 
                 }
@@ -1400,6 +1482,10 @@
                     
                     const graphInfo = JSON.parse(response.graphInfo);
                     
+                    [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                        el.style.visibility = 'hidden';
+                    });
+                    
                     loadSingleGraph(graphInfo.nodes, graphInfo.edges);
                     
                 },
@@ -1413,6 +1499,25 @@
             })
         })
 
+        $('#loadSelectedCCInput').submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+             
+            var cid = parseInt($("#selectedCCId").val());
+            console.log(cid);
+            $('#carouselExampleIndicators').carousel(cid);
+            loadConnectedComponent(inputNodes, inputEdges, cid);
+        })
+
+        $('#loadSelectedCCButton').submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+             
+            var cid = parseInt($("#selectedCCId").val());
+            console.log(cid);
+            $('#carouselExampleIndicators').carousel(cid);
+            loadConnectedComponent(inputNodes, inputEdges, cid);
+        })
 
     </script>
     {% endblock javascript %}
