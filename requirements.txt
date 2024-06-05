@@ -1,0 +1,5 @@
+Django==5.0.3
+grandalf==0.8
+matplotlib==3.8.1
+networkx==3.2
+numpy==1.26.2
