@@ -33,17 +33,17 @@ def read_graph_from_file(graph, path):
     for line in open(path):
         reaction, substrates, products = line.rstrip().split(" : ")
 
-        graph.add_node(reaction, node_type='reaction')
+        graph.add_node(reaction, node_type='reaction', status='original')
 
         for substrate in substrates.split(" "):
 
             graph.add_edge(substrate, reaction, relationship='substrate-reaction')
-            graph.add_node(substrate, node_type='component')
+            graph.add_node(substrate, node_type='component', status='original')
 
 
         for product in products.split(" "):
             graph.add_edge(reaction, product, relationship='reaction-substrate')
-            graph.add_node(product, node_type='component')
+            graph.add_node(product, node_type='component', status='original')
 
 '''
 Parsing the graph
@@ -54,6 +54,7 @@ def parseGraph(graph, node_positions, compounds):
     node_colors = nx.get_node_attributes(graph, "color")
     node_types = nx.get_node_attributes(graph, "node_type")
     node_cids = nx.get_node_attributes(graph, "cid")
+    node_status = nx.get_node_attributes(graph, "status")
 
     # if DEBUG: print(compounds)
     graphInfo['nodes'] = []
@@ -70,6 +71,7 @@ def parseGraph(graph, node_positions, compounds):
         nodeInfo['color'] = node_colors[node]
         nodeInfo['type'] = node_types[node]
         nodeInfo['cid'] = node_cids[node]
+        nodeInfo['status'] = node_status[node]
 
         graphInfo['nodes'].append(nodeInfo)
 
@@ -101,7 +103,8 @@ def parseJsonToNx(graphInfo):
         node_color = node_info['color']
         node_type = node_info['type']
         node_position = (node_info['x'], node_info['y'])
-        graph.add_node(node_id, label=node_label, color=node_color, node_type=node_type, position=node_position)
+        status= node_info['status']
+        graph.add_node(node_id, label=node_label, color=node_color, node_type=node_type, position=node_position, status=status)
 
     # Add edges
     for edge_info in json_data['edges']:
@@ -153,7 +156,7 @@ def splitHighDegreeComponents(graph, threshhold):
 
 
 def duplicateNode(graph, node):
-    if node[0] != 'D' and graph.degree(node) != 1:
+    if graph.nodes[node]['status'] != 'duplicated':
         out_edges = graph.out_edges([node])
         in_edges = graph.in_edges([node])
         node_type = graph.nodes[node]['node_type']
@@ -163,13 +166,13 @@ def duplicateNode(graph, node):
             new_node = "D" + str(i) + '_' + node
             i += 1
             graph.add_edge(new_node, out_edge[1], relationship='substrate-reaction')
-            graph.add_node(new_node, node_type=node_type)
+            graph.add_node(new_node, node_type=node_type, status='duplicated')
 
         for in_edge in in_edges:
             new_node = "D" + str(i) + '_'  + node
             i += 1
             graph.add_edge(in_edge[0], new_node, relationship='reaction-substrate')
-            graph.add_node(new_node, node_type=node_type)
+            graph.add_node(new_node, node_type=node_type, status='duplicated')
 
         graph.remove_node(node)
 
@@ -210,13 +213,13 @@ def removeCyclesByNodeInMostCycles(graph):
                 i += 1
 
                 graph.add_edge(new_node, out_edge[1], relationship='substrate-reaction')
-                graph.add_node(new_node, node_type='component')
+                graph.add_node(new_node, node_type='component', status='duplicated')
 
             for in_edge in in_edges:
                 new_node = "D" + str(i) + '_'  + node
                 i += 1
                 graph.add_edge(in_edge[0], new_node, relationship='reaction-substrate')
-                graph.add_node(new_node, node_type='component')
+                graph.add_node(new_node, node_type='component', status='duplicated')
 
             graph.remove_node(node)
 
@@ -278,6 +281,11 @@ def reverseReaction(graph, reaction):
     in_edges = list(graph.in_edges(reaction))
     out_edges = list(graph.out_edges(reaction))
 
+    if graph.nodes(reaction)['status'] == 'reversed':
+        graph.nodes(reaction)['status'] = 'original'
+    else:
+        graph.nodes(reaction)['status'] = 'reversed'
+        
     graph.remove_edges_from(in_edges)
     graph.remove_edges_from(out_edges)
 
@@ -286,6 +294,7 @@ def reverseReaction(graph, reaction):
 
     for edge in out_edges:
         graph.add_edge(edge[1],edge[0], relationship='substrate-reaction')
+
 
 '''
 Information
@@ -501,7 +510,6 @@ def rearangeSources(graph, pos):
         if graph.in_degree(node) == 0:
             # if DEBUG: print("source node:", node, "out degree:", graph.out_degree(node))
             neighbors = [n for n in graph.neighbors(node)]
-            print(node, neighbors)
             neighbor = neighbors[0]
 
             posNeigh = pos[neighbor]
