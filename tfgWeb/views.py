@@ -38,7 +38,7 @@ def add_pathway(request):
          dirname = os.path.dirname(__file__)
          directory = os.path.join(dirname, 'static/inputGraphs', name)
          
-         read_graph_from_txt(G, directory)
+         read_graph_from_file(G, directory)
          
          checkMaxCCSize(G)
 
@@ -287,7 +287,7 @@ def reset_graph(request):
 
       dirname = os.path.dirname(__file__)
       directory = os.path.join(dirname, 'static/inputGraphs', name)
-      read_graph_from_txt(G, directory)
+      read_graph_from_file(G, directory)
       checkMaxCCSize(G)
       poses = getGraphPositions(G)
 
@@ -358,7 +358,7 @@ def default_sugiyama(request):
 
       dirname = os.path.dirname(__file__)
       directory = os.path.join(dirname, 'static/inputGraphs', name)
-      read_graph_from_txt(G, directory)
+      read_graph_from_file(G, directory)
 
       try:
          poses = getDefaultSugiyamaPositions(G)
