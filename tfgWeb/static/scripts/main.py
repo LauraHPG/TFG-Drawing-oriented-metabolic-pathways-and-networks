@@ -13,7 +13,7 @@ poses = {}
 
 def main():
     print("Reading Graph")
-    reactions, components = funcs.read_graph(G)
+    funcs.read_graph(G)
     while True:
         op = input('''
 ┌───────────────────────────────────────────────────────────┐
@@ -225,7 +225,7 @@ def main():
                 
 def oldExecution():
 
-    reactions, components = funcs.read_graph(G)
+    funcs.read_graph(G)
 
     funcs.isConnected(G)
     

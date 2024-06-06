@@ -29,8 +29,6 @@ def read_graph(graph, check = True):
     if check:
         checkMaxCCSize(graph)
 
-    return info
-
 def read_graph_from_txt(graph, path):
     for line in open(path):
         reaction, substrates, products = line.rstrip().split(" : ")
@@ -47,8 +45,6 @@ def read_graph_from_txt(graph, path):
             graph.add_edge(reaction, product, relationship='reaction-substrate')
             graph.add_node(product, node_type='component')
     
-    return [node for node, data in graph.nodes(data=True) if data['node_type'] == 'reaction'], [node for node, data in graph.nodes(data=True) if data['node_type'] == 'component']
-
 def splitHighDegreeComponents(graph, threshhold):
 
     ordered_nodes = nodes_ordered_by_degree(graph)
