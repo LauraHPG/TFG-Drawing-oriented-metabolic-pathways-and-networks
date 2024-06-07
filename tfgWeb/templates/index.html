@@ -67,7 +67,7 @@
         }
 
         .legend{
-            margin-bottom: 6em;
+            margin-bottom: 2em;
             margin-left: 0.5em;
             padding: 1em;
             list-style: none;
@@ -137,6 +137,10 @@
             <span>Reaction</span>
         </li>
         <li class="legend-item">
+            <div class="color-box" style="background-color: #800080;"></div>
+            <span>Reversed reaction</span>
+        </li>
+        <li class="legend-item">
             <div class="color-box" style="background-color: #ff0000;"></div>
             <span>Compound</span>
         </li>
@@ -165,8 +169,14 @@
 
         <div style="margin-top: 10px; margin-right: 10px; margin-left: -2px; border:1px solid lightgray;height:2.2em"></div>
 
+        <form id="loadOriginal">
+            <input type="submit" value="Load Original Pathway" class="btn btn-primary" disabled>
+        </form>
+
+        <div style="margin-top: 10px; margin-right: 10px; margin-left: -2px; border:1px solid lightgray;height:2.2em"></div>
+
         <form id="defaultSugiyama">
-            <input type="submit" value="Default Sugiyama" class="btn btn-primary" disabled>
+            <input type="submit" value="Default Sugiyama" class="btn btn-secondary" disabled>
         </form>
 
 
@@ -244,7 +254,7 @@
                   </h2>
                   <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
                     <div class="accordion-body">
-                        <div id="Actions">
+                        <div>
                             <h4>Split high degree components</h4>
                             <p id="highestDegree"></p>
                             <form id="splitHighDegreeForm">
@@ -281,18 +291,27 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
-                          <h5>Settings</h5>
+                          <h5>History</h5>
                       </button>
                     </h2>
                     <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse">
                       <div class="accordion-body">
-                          <div id="Actions">
-                                <div title="To be improved" id="clusterDiv">
-                                    <input class="form-check-input" type="checkbox" value="" id="clusterCCs">
-                                    <label class="form-check-label" for="clusterCCs">
-                                        Cluster Connected Components
-                                    </label>
-                                </div>
+                        <div>
+                            <ul class="list-group list-group-flush" id="actionHistory">
+                            </ul>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+                          <h5>Settings</h5>
+                      </button>
+                    </h2>
+                    <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse">
+                      <div class="accordion-body">
+                          <div>
                                 <div>
                                     <input class="form-check-input" type="checkbox" value="" id="divideIntoCarousel" checked="true">
                                     <label class="form-check-label" for="divideIntoCarousel">
@@ -302,8 +321,8 @@
                           </div>
                       </div>
                     </div>
-                  </div>
-              </div>
+                </div>
+            </div>
 
         </div>
 
@@ -312,6 +331,8 @@
     <script>var csrf_token_value = "{{ csrf_token }}";</script>
     
     <script>
+
+        const MAX_NUM_CC = 35;
 
         [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
             el.style.visibility = 'hidden';
@@ -339,6 +360,7 @@
                 var loadForm = document.getElementById("pathwayForm");
                 var recomputeForm = document.getElementById("recomputePositions");
                 var resetForm = document.getElementById("resetPathway");
+                var loadOriginalForm = document.getElementById("loadOriginal");
                 var defSugForm = document.getElementById("defaultSugiyama");
 
                 loadForm.querySelectorAll("input[type=submit]").forEach(function(input) {
@@ -348,6 +370,9 @@
                     input.disabled = isDisabled;
                 });
                 resetForm.querySelectorAll("input[type=submit]").forEach(function(input) {
+                    input.disabled = isDisabled;
+                });
+                loadOriginalForm.querySelectorAll("input[type=submit]").forEach(function(input) {
                     input.disabled = isDisabled;
                 });
                 defSugForm.querySelectorAll("input[type=submit]").forEach(function(input) {
@@ -449,6 +474,133 @@
             network.cluster(clusterOptionsByData);
             
             network.nodes
+        }
+
+        function interactWithNetwork(network)
+        {
+            network.on("click", function(params) {
+                console.log(params)
+
+                var nodeIdHeader = document.getElementById("nodeId");
+                var selectedNodeIdHeader = document.getElementById("selectedNode");
+                var selectedReactionIdHeader = document.getElementById("selectedReaction");
+
+                if (params.nodes.length != 0) {
+                    document.getElementById('nodeInfo').hidden = false;
+
+                    selectedNode = params.nodes[0];
+
+
+                    var isCompound;
+                    if(selectedNode[0] == 'C')
+                    {
+                        $("#duplicateSelectedNodeButton").prop('disabled', false);
+                    }
+                    else{
+                        $("#duplicateSelectedNodeButton").prop('disabled', true);
+                    }
+                    if(selectedNode[0] == 'R'){
+                        $("#reverseSelectedReaction").prop('disabled', false);
+                        selectedReactionIdHeader.textContent = "Selected Reaction: " + selectedNode;
+                        nodeIdHeader.textContent = "No compound selected";
+                        isCompound = false;
+                    }
+                    else {
+                        $("#reverseSelectedReaction").prop('disabled', true);
+                        isCompound = true;
+                        selectedNodeIdHeader.textContent = "Selected Node: " + selectedNode;
+                        selectedReactionIdHeader.textContent = "No reaction selected";
+                        nodeIdHeader.textContent = selectedNode;
+                    }
+
+                    
+                    $.ajax({
+                        type: "POST",
+                        url: "/get_node_info/",
+                        data:{
+                            pathwayName: $("#pathwaysList option:selected").text(),
+                            nodeName: params.nodes[0],
+                            csrfmiddlewaretoken: csrf_token_value
+                        },
+                        success: (data) => {
+                            console.log(data);
+
+                            if(isCompound)
+                                nodeIdHeader.textContent = selectedNode + ": " + data.nodeName;
+                              
+                            if(isCompound)
+                                selectedNodeIdHeader.textContent = "Selected Node: " + selectedNode + ": " + data.nodeName;
+                            
+                            var predList = document.getElementById("predList");
+                            
+
+                            var predList = document.getElementById("predList");
+                            predList.innerHTML = "";
+                            
+                            var predecessors = data.predecessors;
+
+                            for(var i = 0; i < predecessors.length; ++i)
+                            {
+                                var li = document.createElement("li");
+                                li.appendChild(document.createTextNode(predecessors[i]));
+                                predList.appendChild(li);
+
+                            }  
+                            
+                            var succList = document.getElementById("succList");
+                            succList.innerHTML = "";
+
+                            var successors = data.successors;
+
+                            for(var i = 0; i < successors.length; ++i)
+                            {
+                                var li = document.createElement("li");
+                                li.appendChild(document.createTextNode(successors[i]));
+                                succList.appendChild(li);
+
+                            } 
+                            
+                            var degree = document.getElementById("degree")
+                            degree.innerHTML = "Degree: " + (predecessors.length + successors.length);
+                            var nodeFigure = document.getElementById("nodeFigure");
+                            var url;
+                            var selectedNode_id = selectedNode;
+
+                            if (selectedNode.includes('_')) {
+                                selectedNode_id = selectedNode.split('_')[1]
+                            }
+
+                            if(selectedNode_id[0]=='C')
+                            {
+                                url = "https://www.kegg.jp/Fig/compound/" + selectedNode_id + ".gif"
+                                
+                            }
+                            else{
+                                url = "https://www.kegg.jp/Fig/reaction/" + selectedNode_id + ".gif"
+                            }
+                            nodeFigure.innerHTML = ' <img src=' + url + ' style="max-width: 400px;">'
+
+                        },
+                        error: (error) => {
+                            alert('Error');
+                        }
+                    });
+
+                }
+                else
+                {
+                    document.getElementById('nodeInfo').hidden = true;
+                    selectedNodeIdHeader.textContent = "No node selected";
+                    nodeIdHeader.textContent = "No node selected";
+                    selectedReactionIdHeader.textContent = "No reaction selected";
+                    $("#duplicateSelectedNodeButton").prop('disabled', true);
+                    $("#reverseSelectedReaction").prop('disabled', true);
+                }
+
+                
+
+            });
+            
         }
 
         function loadSingleGraph(inputNodes, inputEdges)
@@ -617,130 +769,8 @@
                 }
             });
 
+            interactWithNetwork(network);
 
-            network.on("click", function(params) {
-                console.log(params)
-
-                var nodeIdHeader = document.getElementById("nodeId");
-                var selectedNodeIdHeader = document.getElementById("selectedNode");
-                var selectedReactionIdHeader = document.getElementById("selectedReaction");
-
-                if (params.nodes.length != 0) {
-                    document.getElementById('nodeInfo').hidden = false;
-
-                    selectedNode = params.nodes[0];
-
-
-                    var isCompound;
-                    if(selectedNode[0] == 'C')
-                    {
-                        $("#duplicateSelectedNodeButton").prop('disabled', false);
-                    }
-                    else{
-                        $("#duplicateSelectedNodeButton").prop('disabled', true);
-                    }
-                    if(selectedNode[0] == 'R'){
-                        $("#reverseSelectedReaction").prop('disabled', false);
-                        selectedReactionIdHeader.textContent = "Selected Reaction: " + selectedNode;
-                        nodeIdHeader.textContent = "No compound selected";
-                        isCompound = false;
-                    }
-                    else {
-                        $("#reverseSelectedReaction").prop('disabled', true);
-                        isCompound = true;
-                        selectedNodeIdHeader.textContent = "Selected Node: " + selectedNode;
-                        selectedReactionIdHeader.textContent = "No reaction selected";
-                        nodeIdHeader.textContent = selectedNode;
-                    }
-
-                    
-                    $.ajax({
-                        type: "POST",
-                        url: "/get_node_info/",
-                        data:{
-                            pathwayName: $("#pathwaysList option:selected").text(),
-                            nodeName: params.nodes[0],
-                            csrfmiddlewaretoken: csrf_token_value
-                        },
-                        success: (data) => {
-                            console.log(data);
-
-                            if(isCompound)
-                                nodeIdHeader.textContent = selectedNode + ": " + data.nodeName;
-                              
-                            if(isCompound)
-                                selectedNodeIdHeader.textContent = "Selected Node: " + selectedNode + ": " + data.nodeName;
-                            
-                            var predList = document.getElementById("predList");
-                            
-
-                            var predList = document.getElementById("predList");
-                            predList.innerHTML = "";
-                            
-                            var predecessors = data.predecessors;
-
-                            for(var i = 0; i < predecessors.length; ++i)
-                            {
-                                var li = document.createElement("li");
-                                li.appendChild(document.createTextNode(predecessors[i]));
-                                predList.appendChild(li);
-
-                            }  
-                            
-                            var succList = document.getElementById("succList");
-                            succList.innerHTML = "";
-
-                            var successors = data.successors;
-
-                            for(var i = 0; i < successors.length; ++i)
-                            {
-                                var li = document.createElement("li");
-                                li.appendChild(document.createTextNode(successors[i]));
-                                succList.appendChild(li);
-
-                            } 
-                            
-                            var degree = document.getElementById("degree")
-                            degree.innerHTML = "Degree: " + (predecessors.length + successors.length);
-                            var nodeFigure = document.getElementById("nodeFigure");
-                            var url;
-                            var selectedNode_id = selectedNode;
-
-                            if (selectedNode.includes('_')) {
-                                selectedNode_id = selectedNode.split('_')[1]
-                            }
-
-                            if(selectedNode_id[0]=='C')
-                            {
-                                url = "https://www.kegg.jp/Fig/compound/" + selectedNode_id + ".gif"
-                                
-                            }
-                            else{
-                                url = "https://www.kegg.jp/Fig/reaction/" + selectedNode_id + ".gif"
-                            }
-                            nodeFigure.innerHTML = ' <img src=' + url + ' style="max-width: 400px;">'
-
-                        },
-                        error: (error) => {
-                            alert('Error');
-                        }
-                    });
-
-                }
-                else
-                {
-                    document.getElementById('nodeInfo').hidden = true;
-                    selectedNodeIdHeader.textContent = "No node selected";
-                    nodeIdHeader.textContent = "No node selected";
-                    selectedReactionIdHeader.textContent = "No node selected";
-                    $("#duplicateSelectedNodeButton").prop('disabled', true);
-                    $("#reverseSelectedReaction").prop('disabled', true);
-                }
-
-                
-
-            });
-            
             network.on("click", function (params) {
                 if (params.nodes.length == 1) {
                     if (network.isCluster(params.nodes[0]) == true) {
@@ -780,12 +810,12 @@
             </div>            
             `)
 
-            if(numCCs < 51)  $('#clusterCarouselIndicators').append('<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>');
+            if(numCCs < MAX_NUM_CC)  $('#clusterCarouselIndicators').append('<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>');
                 
             for(var i = 1; i < numCCs; ++i)
             {
                 console.log(i)
-                if(numCCs < 51) 
+                if(numCCs < MAX_NUM_CC) 
                 {
                     $('#clusterCarouselIndicators').append('<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="' + i + '" ></button>');
                 }
@@ -985,117 +1015,7 @@
 
             }
             
-            network.on("click", function(params) {
-                console.log(params)
-                if (params.nodes.length != 0) {
-                    document.getElementById('nodeInfo').hidden = false;
-
-                    selectedNode = params.nodes[0];
-
-                    
-                    if(selectedNode[0] == 'C')
-                    {
-                        $("#duplicateSelectedNodeButton").prop('disabled', false);
-                    }
-
-                    
-                    $.ajax({
-                        type: "POST",
-                        url: "/get_node_info/",
-                        data:{
-                            pathwayName: $("#pathwaysList option:selected").text(),
-                            nodeName: params.nodes[0],
-                            csrfmiddlewaretoken: csrf_token_value
-                        },
-                        success: (data) => {
-                            console.log(data);
-
-                            var nodeIdHeader = document.getElementById("nodeId");
-                            nodeIdHeader.textContent = selectedNode + ": " + data.nodeName;
-
-                            var selectedNodeIdHeader = document.getElementById("selectedNode");
-                            selectedNodeIdHeader.textContent = "Selected Node: " + selectedNode + ": " + data.nodeName;
-                            
-                            var predList = document.getElementById("predList");
-                            
-
-                            var predList = document.getElementById("predList");
-                            predList.innerHTML = "";
-                            
-                            var predecessors = data.predecessors;
-
-                            for(var i = 0; i < predecessors.length; ++i)
-                            {
-                                var li = document.createElement("li");
-                                li.appendChild(document.createTextNode(predecessors[i]));
-                                predList.appendChild(li);
-
-                            }  
-                            
-                            var succList = document.getElementById("succList");
-                            succList.innerHTML = "";
-
-                            var successors = data.successors;
-
-                            for(var i = 0; i < successors.length; ++i)
-                            {
-                                var li = document.createElement("li");
-                                li.appendChild(document.createTextNode(successors[i]));
-                                succList.appendChild(li);
-
-                            } 
-                            
-                            var degree = document.getElementById("degree")
-                            degree.innerHTML = "Degree: " + (predecessors.length + successors.length);
-                            var nodeFigure = document.getElementById("nodeFigure");
-                            var url;
-                            var selectedNode_id = selectedNode;
-
-                            if (selectedNode.includes('_')) {
-                                selectedNode_id = selectedNode.split('_')[1]
-                            }
-
-                            if(selectedNode_id[0]=='C')
-                            {
-                                url = "https://www.kegg.jp/Fig/compound/" + selectedNode_id + ".gif"
-                                
-                            }
-                            else{
-                                url = "https://www.kegg.jp/Fig/reaction/" + selectedNode_id + ".gif"
-                            }
-                            nodeFigure.innerHTML = ' <img src=' + url + ' style="max-width: 400px;">'
-
-                        },
-                        error: (error) => {
-                            alert('Error');
-                        }
-                    });
-
-                }
-                else
-                {
-                    document.getElementById('nodeInfo').hidden = true;
-                    document.getElementById('selectedNode').innerHTML = "No node selected";
-                    $("#duplicateSelectedNodeButton").prop('disabled', true);
-                }
-
-                
-
-            });
-            
-            network.on("click", function (params) {
-                if (params.nodes.length == 1) {
-                    if (network.isCluster(params.nodes[0]) == true) {
-                        var openClusterObj = {};
-                        openClusterObj.releaseFunction = function(clusterPosition, containedNodesPositions) {
-                            return containedNodesPositions;
-                        }
-
-                        network.openCluster(params.nodes[0], openClusterObj);
-                    }
-                }   
-            });
-
+            interactWithNetwork(network);
             
         }
 
@@ -1144,7 +1064,8 @@
                 },
                 error: function (response) {
                     // alert the error if any error occured
-                    alert('Error');document.getElementById("overlay").style.display = "none";
+                    alert('Error');
+                    document.getElementById("overlay").style.display = "none";
 
                 }
 
@@ -1163,6 +1084,7 @@
                 url: '/reset_graph/',
                 data: {
                     name: $("#pathwaysList option:selected").text(),
+                    original: false,
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {
@@ -1200,6 +1122,58 @@
 
             })
         })
+
+        $("#loadOriginal").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            document.getElementById("overlay").style.display = "block";
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/reset_graph/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    original: true,
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
+
+                        }
+                    }
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error');document.getElementById("overlay").style.display = "none";
+
+                }
+
+            })
+        })
+
 
         $("#recomputePositions").submit(function (e) {
             // preventing from page reload and default actions
@@ -1518,6 +1492,8 @@
             $('#carouselExampleIndicators').carousel(cid);
             loadConnectedComponent(inputNodes, inputEdges, cid);
         })
+
+        // <li class="list-group-item">Cras justo odio</li>
 
     </script>
     {% endblock javascript %}

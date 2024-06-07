@@ -120,29 +120,31 @@ Graph Modifiers
 '''
 
 def checkMaxCCSize(graph):
-    if len(graph.nodes()) > 999:
-        print("Large Graph")
-        H = graph.to_undirected()
-        S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
-        it = 0
-        while len(S[0].nodes()) > 1000:
-            print("It",it)
-            node, degree = getHighestDegreeNodes(graph)
-            splitHighDegreeComponents(graph,degree)
+    splitHighDegreeComponents(graph,5)
 
-            if DEBUG: print("Largest CC size:", len(S[0].nodes()))
-            if DEBUG: print("Num CCs", len(S))
-            if DEBUG: print("Nodes info:", node,)
-            if DEBUG: print("Degree:", degree)
-            if DEBUG: print("Nodes:", len(graph.nodes()), "Edges:", len(graph.edges()))
+    # if len(graph.nodes()) > 999:
+    #     print("Large Graph")
+    #     H = graph.to_undirected()
+    #     S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+    #     it = 0
+    #     while len(S[0].nodes()) > 1000:
+    #         print("It",it)
+    #         node, degree = getHighestDegreeNodes(graph)
+    #         splitHighDegreeComponents(graph,degree)
 
-            H = graph.to_undirected()
-            S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
-            it += 1
-    elif len(graph.nodes()) > 300:
-        print("Medium Graph")
+    #         if DEBUG: print("Largest CC size:", len(S[0].nodes()))
+    #         if DEBUG: print("Num CCs", len(S))
+    #         if DEBUG: print("Nodes info:", node,)
+    #         if DEBUG: print("Degree:", degree)
+    #         if DEBUG: print("Nodes:", len(graph.nodes()), "Edges:", len(graph.edges()))
 
-        splitHighDegreeComponents(graph,5)
+    #         H = graph.to_undirected()
+    #         S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+    #         it += 1
+    # elif len(graph.nodes()) > 300:
+    #     print("Medium Graph")
+
+    #     splitHighDegreeComponents(graph,5)
 
 def splitHighDegreeComponents(graph, threshhold):
 
@@ -253,7 +255,7 @@ def removeCyclesByNodeInMostCycles(graph):
 
 def setColorNodeType(graph):
 
-    node_colors = {node: get_color(data['node_type']) for node, data in graph.nodes(data=True)}
+    node_colors = {node: get_color(data['node_type'],data['status']) for node, data in graph.nodes(data=True)}
     nx.set_node_attributes(graph, node_colors, 'color')
 
     colors = [data['color'] for _, data in graph.nodes(data=True)]
@@ -281,10 +283,10 @@ def reverseReaction(graph, reaction):
     in_edges = list(graph.in_edges(reaction))
     out_edges = list(graph.out_edges(reaction))
 
-    if graph.nodes(reaction)['status'] == 'reversed':
-        graph.nodes(reaction)['status'] = 'original'
+    if graph.nodes[reaction]['status'] == 'reversed':
+        graph.nodes[reaction]['status'] = 'original'
     else:
-        graph.nodes(reaction)['status'] = 'reversed'
+        graph.nodes[reaction]['status'] = 'reversed'
         
     graph.remove_edges_from(in_edges)
     graph.remove_edges_from(out_edges)
@@ -352,9 +354,12 @@ def getNodeInMostCycles(graph):
     return sortedAppearances[0][0]
 
 
-def get_color(node_type):
+def get_color(node_type, status):
     if node_type == 'reaction':
-        return 'blue'
+        if status == 'original':
+            return 'blue'
+        else:
+            return '#800080'
     if node_type == 'source':
         return 'orange'
     if node_type == 'sink':

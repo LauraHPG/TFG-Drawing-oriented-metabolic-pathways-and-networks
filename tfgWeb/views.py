@@ -283,12 +283,15 @@ def reset_graph(request):
       start_time = time.time()
 
       name = request.POST.get('name')
+      loadOriginal = request.POST.get('original')
+
+      original = loadOriginal == 'true'
       G = nx.DiGraph()
 
       dirname = os.path.dirname(__file__)
       directory = os.path.join(dirname, 'static/inputGraphs', name)
       read_graph_from_file(G, directory)
-      checkMaxCCSize(G)
+      if not original: checkMaxCCSize(G)
       poses = getGraphPositions(G)
 
       graphInfo = parseGraph(G,poses, getCompoundNames(G))
@@ -355,30 +358,45 @@ def default_sugiyama(request):
 
       name = request.POST.get('name')
       G = nx.DiGraph()
-
-      dirname = os.path.dirname(__file__)
-      directory = os.path.join(dirname, 'static/inputGraphs', name)
-      read_graph_from_file(G, directory)
-
       try:
+         pathway = Pathway.objects.get(name=name)  
+         
+         G = nx.DiGraph()
+         info = pathway.graphInfo.replace("'", '"')
+         G = parseJsonToNx(info)
+
          poses = getDefaultSugiyamaPositions(G)
 
          graphInfo = parseGraph(G,poses, getCompoundNames(G))
-
          pthwy = Pathway.objects.get(pk=name)
          pthwy.graphInfo = graphInfo
          pthwy.save()
 
-         info = pthwy.graphInfo.replace("'", '"')
-
-         end_time = time.time()
-         elapsed_time = end_time - start_time
-         print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
-      
-         return JsonResponse({'graphInfo':info})
       except:
-         return JsonResponse({'status': 'error'})
+
+         dirname = os.path.dirname(__file__)
+         directory = os.path.join(dirname, 'static/inputGraphs', name)
+         read_graph_from_file(G, directory)
+
+         try:
+            poses = getDefaultSugiyamaPositions(G)
+
+            graphInfo = parseGraph(G,poses, getCompoundNames(G))
+
+            pthwy = Pathway.objects.get(pk=name)
+            pthwy.graphInfo = graphInfo
+            pthwy.save()
+
+            info = pthwy.graphInfo.replace("'", '"')
+
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
          
+            return JsonResponse({'graphInfo':info})
+         except:
+            return JsonResponse({'status': 'error'})
+     
    
 def reverse_reaction(request):
    if request.method == 'POST':
