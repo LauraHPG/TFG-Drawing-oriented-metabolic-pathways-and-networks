@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TFG</title>
+    {% load static %}
+    
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 1em !important;
+        }
+
+        #container {
+            display: flex;
+            border: 1px solid #cbd5e0;
+            height: 80vh;
+            width: 100%;
+        }
+
+        #mynetwork {
+            width: 75%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .resizer {
+            background-color: #cbd5e0;
+            cursor: ew-resize;
+            height: 100%;
+            width: 3px;
+        }
+
+        #infoConfig {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        #overlay {
+            position: fixed;
+            display: none;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+            cursor: wait;
+        }
+
+        form, select, h5{
+            margin-left: 3px;
+            margin-right: 3px;
+        }
+
+        .btn, .row,.form-control{
+            margin-right:1em;
+            margin-top: 0.5em;
+            margin-bottom: 1em;
+        }
+
+        .tab-pane{
+            padding: 1em;
+        }
+
+        .legend{
+            margin-bottom: 2em;
+            margin-left: 0.5em;
+            padding: 1em;
+            list-style: none;
+            background-color: white;
+            border-radius: 3px;
+            border: 1px solid lightgrey;
+
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .legend-item .color-box {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 3px;
+            border: transparent;
+        }
+
+        #clusterDiv{
+            margin-top: 1em;
+
+        }
+
+        /* .carousel-control-next, .carousel-control-prev, */.carousel-indicators{ 
+            filter: invert(100%);
+        }
+
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+</head>
+<body>
+      
+
+    <div id="overlay"></div> 
+
+    <h1 >Drawing Metabolic Pathways and Networks</h1>
+
+    <div style="display: flex">
+        <label class="form-label"> </label> 
+        {% csrf_token %}
+        
+        <select id="pathwaysList" class="form-select" name="pathwayNames">
+
+            <option selected>Select a metabolic pathway/network</option>
+
+            {% for filename in filenames %}
+                <option value="{{filename}}">{{ filename }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+
+        
+    <ul class="position-absolute bottom-0 left-0 legend z-1 ">
+        <li class="legend-item">
+            <div class="color-box" style="background-color: #0000ff;"></div>
+            <span>Reaction</span>
+        </li>
+        <li class="legend-item">
+            <div class="color-box" style="background-color: #800080;"></div>
+            <span>Reversed reaction</span>
+        </li>
+        <li class="legend-item">
+            <div class="color-box" style="background-color: #ff0000;"></div>
+            <span>Compound</span>
+        </li>
+        <li class="legend-item">
+            <div class="color-box" style="background-color: #008000;"></div>
+            <span>Sink compound</span>
+        </li>
+        <li class="legend-item">
+            <div class="color-box" style="background-color: #ffa500;"></div>
+            <span>Source compound</span>
+        </li>
+    </ul>
+    
+    <div style="display: flex">       
+
+        <form id="pathwayForm">
+            <input type="submit" value="Load" class="btn btn-primary" disabled>            
+        </form>
+        
+        <form id="recomputePositions">
+            <input type="submit" value="Recompute Positions" class="btn btn-primary" disabled>
+        </form>
+        <form id="resetPathway">
+            <input type="submit" value="Reset" class="btn btn-danger" disabled>
+        </form>
+
+        <div style="margin-top: 10px; margin-right: 10px; margin-left: -2px; border:1px solid lightgray;height:2.2em"></div>
+
+        <form id="loadOriginal">
+            <input type="submit" value="Load Original Pathway" class="btn btn-primary" disabled>
+        </form>
+
+        <div style="margin-top: 10px; margin-right: 10px; margin-left: -2px; border:1px solid lightgray;height:2.2em"></div>
+
+        <form id="defaultSugiyama">
+            <input type="submit" value="Default Sugiyama" class="btn btn-secondary" disabled>
+        </form>
+
+
+        <div class='cc-carousel' style="margin-top: 10px; margin-right: 10px; margin-left: -2px; border:1px solid lightgray;height:2.2em"></div>
+
+        <form class='cc-carousel' id="loadSelectedCCInput">
+            <input min='0' type="number" id="selectedCCId" class="form-control" value="Select CCs ID" />
+        </form>
+
+        <form id="loadSelectedCCButton" class='cc-carousel'>
+            <input type="submit" value="Select CCs ID" class="btn btn-primary">
+        </form>
+        
+
+    </div>
+
+    <div id="container">
+        <div id="mynetwork"></div>
+        <div class="resizer" id="dragMe"></div> 
+        <div id="infoConfig">
+
+            <div class="accordion" id="accordionPanelsStayOpenExample">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                      <h5>Graph Information</h5>
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+
+                        <div id="Information">
+                            <div id="graphInfo">
+                                <p id="numNodes"></p>
+                                <p id="numEdges"></p>
+                                <p id="numCrossings"></p>
+                                <p id="numCCs"></p>
+                                <p id="avgEdgeLength"></p>
+                                <p id="angleFactor"></p>
+                            </div>
+                                   
+                        </div>
+                    
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="true" aria-controls="panelsStayOpen-collapseTwo">
+                        <h5>Node Information</h5>
+                      </button>
+                    </h2>
+                    <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+                      <div class="accordion-body">
+
+                        <div id="nodeInfo" hidden>
+                            <h4 id="nodeId"></h4>
+                            <p id="degree"></p>
+                            <p>Predecesors:</p>
+                            <ul id="predList"></ul>
+                            <p>Succesors:</p>
+                            <ul id="succList"></ul>
+                            <p>Figure:</p>
+                            <p id="nodeFigure"></p>
+                        </div>
+                      
+                      </div>
+                    </div>
+                  </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                        <h5>Actions</h5>
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <div>
+                            <h4>Split high degree components</h4>
+                            <p id="highestDegree"></p>
+                            <form id="splitHighDegreeForm">
+                                <p id="selectedValue"></p>
+
+
+                                    <ul id="highestDegreeNode"></ul>
+                                
+                                <input type="range" class="form-range" min="2" id="degreeThreshhold">
+                                <input type="submit" value="Split" class="btn btn-outline-primary" />
+                            </form>
+                            <hr>
+                            <h4>Break cycle</h4>
+                            <p id="componentInMostCycles"></p>
+                            <form id="breakCycle">
+                                <input type="submit" value="Split" class="btn btn-outline-primary" id="breakCycleButton"/>
+                            </form>
+                            <hr>
+                            <h4>Duplicate selected node</h4>
+                            <p id="selectedNode"></p>
+                            <form id="duplicateSelectedNode">
+                                <input type="submit" value="Duplicate" class="btn btn-outline-primary" id="duplicateSelectedNodeButton" />
+                            </form>
+                            <hr>
+                            <h4>Reverse selected reaction</h4>
+                            <p id="selectedReaction"></p>
+                            <form id="reverseReaction">
+                                <input type="submit" value="Reverse" class="btn btn-outline-primary" id="reverseSelectedReaction" />
+                            </form>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+                          <h5>History</h5>
+                      </button>
+                    </h2>
+                    <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse">
+                      <div class="accordion-body">
+                        <div>
+                            <ul class="list-group list-group-flush" id="actionHistory">
+                            </ul>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+                          <h5>Settings</h5>
+                      </button>
+                    </h2>
+                    <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse">
+                      <div class="accordion-body">
+                          <div>
+                                <div>
+                                    <input class="form-check-input" type="checkbox" value="" id="divideIntoCarousel" checked="true">
+                                    <label class="form-check-label" for="divideIntoCarousel">
+                                        Render connected components in separate windows
+                                    </label>
+                                </div>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    {% block javascript %}
+    <script>var csrf_token_value = "{{ csrf_token }}";</script>
+    
+    <script>
+
+        const MAX_NUM_CC = 35;
+
+        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+            el.style.visibility = 'hidden';
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var rangeInput = document.getElementById("degreeThreshhold");
+            var selectedValueDisplay = document.getElementById("selectedValue");
+
+            rangeInput.addEventListener("input", function() {
+                selectedValueDisplay.textContent = "Split nodes with degree greater than " + rangeInput.value;
+            });
+
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var selectElement = document.getElementById("pathwaysList");
+            var forms = document.querySelectorAll("form");
+
+            selectElement.addEventListener("change", function() {
+                var selectedOption = selectElement.options[selectElement.selectedIndex].text;
+                var isDisabled = selectedOption === "Select a metabolic pathway/network";
+                
+                var loadForm = document.getElementById("pathwayForm");
+                var recomputeForm = document.getElementById("recomputePositions");
+                var resetForm = document.getElementById("resetPathway");
+                var loadOriginalForm = document.getElementById("loadOriginal");
+                var defSugForm = document.getElementById("defaultSugiyama");
+
+                loadForm.querySelectorAll("input[type=submit]").forEach(function(input) {
+                    input.disabled = isDisabled;
+                });
+                recomputeForm.querySelectorAll("input[type=submit]").forEach(function(input) {
+                    input.disabled = isDisabled;
+                });
+                resetForm.querySelectorAll("input[type=submit]").forEach(function(input) {
+                    input.disabled = isDisabled;
+                });
+                loadOriginalForm.querySelectorAll("input[type=submit]").forEach(function(input) {
+                    input.disabled = isDisabled;
+                });
+                defSugForm.querySelectorAll("input[type=submit]").forEach(function(input) {
+                    input.disabled = isDisabled;
+                });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Query the element
+            const resizer = document.getElementById('dragMe');
+            const leftSide = resizer.previousElementSibling;
+            const rightSide = resizer.nextElementSibling;
+
+            // The current position of mouse
+            let x = 0;
+            let y = 0;
+            let leftWidth = 0;
+
+            // Handle the mousedown event
+            // that's triggered when user drags the resizer
+            const mouseDownHandler = function(e) {
+                // Get the current mouse position
+                x = e.clientX;
+                y = e.clientY;
+                leftWidth = leftSide.getBoundingClientRect().width;
+
+                // Attach the listeners to document
+                document.addEventListener('mousemove', mouseMoveHandler);
+                document.addEventListener('mouseup', mouseUpHandler);
+            };
+
+            const mouseMoveHandler = function(e) {
+                // How far the mouse has been moved
+                const dx = e.clientX - x;
+                const dy = e.clientY - y;
+
+                const newLeftWidth = ((leftWidth + dx) * 100) / resizer.parentNode.getBoundingClientRect().width;
+                leftSide.style.width = newLeftWidth + '%';
+
+                resizer.style.cursor = 'col-resize';
+                document.body.style.cursor = 'col-resize';
+
+                leftSide.style.userSelect = 'none';
+                leftSide.style.pointerEvents = 'none';
+
+                rightSide.style.userSelect = 'none';
+                rightSide.style.pointerEvents = 'none';
+            };
+
+            const mouseUpHandler = function() {
+                resizer.style.removeProperty('cursor');
+                document.body.style.removeProperty('cursor');
+
+                leftSide.style.removeProperty('user-select');
+                leftSide.style.removeProperty('pointer-events');
+
+                rightSide.style.removeProperty('user-select');
+                rightSide.style.removeProperty('pointer-events');
+
+                // Remove the handlers of mousemove and mouseup
+                document.removeEventListener('mousemove', mouseMoveHandler);
+                document.removeEventListener('mouseup', mouseUpHandler);
+            };
+
+            // Attach the handler
+            resizer.addEventListener('mousedown', mouseDownHandler);
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: '/update_compounds/',
+            data: {
+                csrfmiddlewaretoken: csrf_token_value
+            },
+            success: function (response) {
+                console.log("Compounds updated")
+            },
+            error: function (response) {
+                // alert the error if any error occured
+                alert('Error');document.getElementById("overlay").style.display = "none";
+
+            }
+
+        })
+
+        var nodeInMostCycles, selectedNode;
+        var inputNodes, inputEdges;
+        var networks = [];
+        function clusterByCid(network, cid, data, numNodesCC) {
+            // network.setData(data);
+
+            var clusterOptionsByData = {
+                joinCondition: function(childOptions) {
+                    return childOptions.cid == cid
+                },
+                clusterNodeProperties: {id:cid, label:cid,size:numNodesCC*8, shape: 'square'}
+            }
+            network.cluster(clusterOptionsByData);
+            
+            network.nodes
+        }
+
+        function interactWithNetwork(network)
+        {
+            network.on("click", function(params) {
+                console.log(params)
+
+                var nodeIdHeader = document.getElementById("nodeId");
+                var selectedNodeIdHeader = document.getElementById("selectedNode");
+                var selectedReactionIdHeader = document.getElementById("selectedReaction");
+
+                if (params.nodes.length != 0) {
+                    document.getElementById('nodeInfo').hidden = false;
+
+                    selectedNode = params.nodes[0];
+
+
+                    var isCompound;
+                    if(selectedNode[0] == 'C')
+                    {
+                        $("#duplicateSelectedNodeButton").prop('disabled', false);
+                    }
+                    else{
+                        $("#duplicateSelectedNodeButton").prop('disabled', true);
+                    }
+                    if(selectedNode[0] == 'R'){
+                        $("#reverseSelectedReaction").prop('disabled', false);
+                        selectedReactionIdHeader.textContent = "Selected Reaction: " + selectedNode;
+                        nodeIdHeader.textContent = "No compound selected";
+                        isCompound = false;
+                    }
+                    else {
+                        $("#reverseSelectedReaction").prop('disabled', true);
+                        isCompound = true;
+                        selectedNodeIdHeader.textContent = "Selected Node: " + selectedNode;
+                        selectedReactionIdHeader.textContent = "No reaction selected";
+                        nodeIdHeader.textContent = selectedNode;
+                    }
+
+                    
+                    $.ajax({
+                        type: "POST",
+                        url: "/get_node_info/",
+                        data:{
+                            pathwayName: $("#pathwaysList option:selected").text(),
+                            nodeName: params.nodes[0],
+                            csrfmiddlewaretoken: csrf_token_value
+                        },
+                        success: (data) => {
+                            console.log(data);
+
+                            if(isCompound)
+                                nodeIdHeader.textContent = selectedNode + ": " + data.nodeName;
+                              
+                            if(isCompound)
+                                selectedNodeIdHeader.textContent = "Selected Node: " + selectedNode + ": " + data.nodeName;
+                            
+                            var predList = document.getElementById("predList");
+                            
+
+                            var predList = document.getElementById("predList");
+                            predList.innerHTML = "";
+                            
+                            var predecessors = data.predecessors;
+
+                            for(var i = 0; i < predecessors.length; ++i)
+                            {
+                                var li = document.createElement("li");
+                                li.appendChild(document.createTextNode(predecessors[i]));
+                                predList.appendChild(li);
+
+                            }  
+                            
+                            var succList = document.getElementById("succList");
+                            succList.innerHTML = "";
+
+                            var successors = data.successors;
+
+                            for(var i = 0; i < successors.length; ++i)
+                            {
+                                var li = document.createElement("li");
+                                li.appendChild(document.createTextNode(successors[i]));
+                                succList.appendChild(li);
+
+                            } 
+                            
+                            var degree = document.getElementById("degree")
+                            degree.innerHTML = "Degree: " + (predecessors.length + successors.length);
+                            var nodeFigure = document.getElementById("nodeFigure");
+                            var url;
+                            var selectedNode_id = selectedNode;
+
+                            if (selectedNode.includes('_')) {
+                                selectedNode_id = selectedNode.split('_')[1]
+                            }
+
+                            if(selectedNode_id[0]=='C')
+                            {
+                                url = "https://www.kegg.jp/Fig/compound/" + selectedNode_id + ".gif"
+                                
+                            }
+                            else{
+                                url = "https://www.kegg.jp/Fig/reaction/" + selectedNode_id + ".gif"
+                            }
+                            nodeFigure.innerHTML = ' <img src=' + url + ' style="max-width: 400px;">'
+
+                        },
+                        error: (error) => {
+                            alert('Error');
+                        }
+                    });
+
+                }
+                else
+                {
+                    document.getElementById('nodeInfo').hidden = true;
+                    selectedNodeIdHeader.textContent = "No node selected";
+                    nodeIdHeader.textContent = "No node selected";
+                    selectedReactionIdHeader.textContent = "No reaction selected";
+                    $("#duplicateSelectedNodeButton").prop('disabled', true);
+                    $("#reverseSelectedReaction").prop('disabled', true);
+                }
+
+                
+
+            });
+            
+        }
+
+        function loadSingleGraph(inputNodes, inputEdges)
+        {
+            console.log(inputNodes)
+            var nodes = new vis.DataSet(
+                inputNodes
+            );
+
+            // create an array with edges
+            var edges = new vis.DataSet(
+                inputEdges
+                
+            );
+            // create a network
+            var container = document.getElementById('mynetwork');
+
+            // provide the data in the vis format
+            var data = {
+                nodes: nodes,
+                edges: edges
+            };
+
+            var options = {
+                nodes: {
+                    shape: 'box',
+                },
+                edges: {
+                    smooth: false
+                },
+                physics: false,
+                interaction: {
+                    // dragNodes: false,// do not allow dragging nodes
+                    // zoomView: false, // do not allow zooming
+                    // dragView: false  // do not allow dragging
+                }
+        
+            };
+            // initialize your network!
+            var network = new vis.Network(container, data, options);
+            
+            document.getElementById("overlay").style.display = "block";
+
+
+            $.ajax({
+                type: "POST",
+                url: "/get_graph_info/",
+                data:{
+                    pathwayName: $("#pathwaysList option:selected").text(),
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: (graphInfo) => {
+                    console.log(graphInfo);
+
+                    var numNodesElement = document.getElementById("numNodes");
+                    numNodesElement.innerHTML = "Number of Nodes: ";
+                    numNodesElement.appendChild(document.createTextNode(graphInfo.numNodes));
+
+                    var numEdgesElement = document.getElementById("numEdges");
+                    numEdgesElement.innerHTML = "Number of Edges: ";
+                    numEdgesElement.appendChild(document.createTextNode(graphInfo.numEdges));
+
+                    var numCrossingsElement = document.getElementById("numCrossings");
+                    numCrossingsElement.innerHTML = "Number of Crossings: ";
+                    numCrossingsElement.appendChild(document.createTextNode(graphInfo.numCrossings));
+
+                    var numCCsElement = document.getElementById("numCCs");
+                    numCCsElement.innerHTML = "Number of Connected Components: ";
+                    numCCsElement.appendChild(document.createTextNode(graphInfo.numCCs));
+                    
+                    document.getElementById("selectedValue").innerHTML = "Split nodes with degree greater than " + graphInfo.highestDegree;
+                    var highestDegreeNodeList = document.getElementById("highestDegreeNode");
+                    highestDegreeNodeList.innerHTML = "";
+                    var highestDegreeNodes = graphInfo.highestDegreeNodes;
+
+                    for(var i = 0; i < highestDegreeNodes.length; ++i)
+                    {
+                        var li = document.createElement("li");
+                        li.appendChild(document.createTextNode(highestDegreeNodes[i]));
+                        highestDegreeNodeList.appendChild(li);
+
+                    }  
+                            
+                    
+                    document.getElementById("degreeThreshhold").max = graphInfo.highestDegree;
+                    document.getElementById("degreeThreshhold").value = graphInfo.highestDegree;
+
+                    document.getElementById("overlay").style.display = "none";
+                    
+                    if ($('#clusterCCs').is(':checked'))
+                    {
+                        for(var i = 0; i < graphInfo.numCCs; ++i)
+                        {
+                            console.log(data, graphInfo.numNodesCC)
+                            clusterByCid(network, i, data, graphInfo.numNodesCC[i]);
+                        }
+                    }
+                    
+                    
+                    var avgEdgeLengthElement = document.getElementById("avgEdgeLength");
+                    avgEdgeLengthElement.innerHTML = "Average Edge Length: ";
+                    avgEdgeLengthElement.appendChild(document.createTextNode(graphInfo.avgEdgeLength[0]));
+                    
+                    var angleFactorElement = document.getElementById("angleFactor");
+                    angleFactorElement.innerHTML = "Average Edge Angle: ";
+                    angleFactorElement.appendChild(document.createTextNode(graphInfo.angleFactor));
+
+                },
+                error: (error) => {
+                    document.getElementById("overlay").style.display = "none";
+                    alert('Error');document.getElementById("overlay").style.display = "none";
+
+                }
+            });
+            
+            var numCyclesElement = document.getElementById("componentInMostCycles");
+            numCyclesElement.innerHTML = "Number of Cycles:" + `<div class="spinner-border spinner-border-sm mx-1" role="status">
+                                                                    <span class="sr-only"></span>
+                                                                </div>
+                                                                `;            
+            numCyclesElement.innerHTML += "<br> Node appearing in most cycles:"  + `<div class="spinner-border spinner-border-sm  mx-1" role="status">
+                                                                                        <span class="sr-only"></span>
+                                                                                    </div>
+                                                                                    `; ;
+
+            $("#breakCycleButton").prop('disabled', true);
+            
+            $.ajax({
+                type: "POST",
+                url: "/get_cycles_info/",
+                data:{
+                    pathwayName: $("#pathwaysList option:selected").text(),
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: (data) => {
+
+                    var numCyclesElement = document.getElementById("componentInMostCycles");
+                    
+                    $("#breakCycleButton").prop('disabled', false);
+                    
+                    console.log(data.numCycles)
+                    if (data.numCycles == 0)
+                    {
+                        $("#breakCycleButton").prop('disabled', true);
+                        numCyclesElement.innerHTML = "Number of Cycles: ";
+                        numCyclesElement.appendChild(document.createTextNode(data.numCycles));
+                        
+                        numCyclesElement.innerHTML += "<br> Node appearing in most cycles: None";
+                    }
+                    else
+                    {
+                        numCyclesElement.innerHTML = "Number of Cycles: ";
+                        numCyclesElement.appendChild(document.createTextNode(data.numCycles));
+                        
+                        numCyclesElement.innerHTML += "<br> Node appearing in most cycles: ";
+                        numCyclesElement.appendChild(document.createTextNode(data.nodeInMostCycles.id + " " + data.nodeInMostCycles.name));
+
+                        nodeInMostCycles = data.nodeInMostCycles.id;
+
+                    }
+
+                },
+                error: (error) => {
+                    $("#breakCycleButton").prop('disabled', false);
+                    alert('Error');
+                }
+            });
+
+            interactWithNetwork(network);
+
+            network.on("click", function (params) {
+                if (params.nodes.length == 1) {
+                    if (network.isCluster(params.nodes[0]) == true) {
+                        var openClusterObj = {};
+                        openClusterObj.releaseFunction = function(clusterPosition, containedNodesPositions) {
+                            return containedNodesPositions;
+                        }
+
+                        network.openCluster(params.nodes[0], openClusterObj);
+                    }
+                }   
+            });
+
+
+            
+        }
+
+        function createCarousel(numCCs)
+        {
+            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                el.style.visibility = 'visible';
+            });
+            document.getElementById("selectedCCId").max = numCCs - 1;
+
+            // var container = document.getElementById('mynetwork');
+            document.getElementById('mynetwork').innerHTML = '';
+            $('#mynetwork').append(`<div id="carouselExampleIndicators" class="carousel slide" style="width: 100%; height: 100%;">
+                    <div class="carousel-indicators" id="clusterCarouselIndicators">
+                        
+                    </div>
+                <div class="carousel-inner" style="width: 100%; height: 100%;" id="clusterCarouselInner">
+                    <div class="carousel-item active" style="width: 100%; height: 100%;">
+                        <div class="d-block w-100" id="mynetwork0" style="width: 100%; height: 100%;"></div></div>
+                    </div>
+                </div>
+                
+            </div>            
+            `)
+
+            if(numCCs < MAX_NUM_CC)  $('#clusterCarouselIndicators').append('<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>');
+                
+            for(var i = 1; i < numCCs; ++i)
+            {
+                console.log(i)
+                if(numCCs < MAX_NUM_CC) 
+                {
+                    $('#clusterCarouselIndicators').append('<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="' + i + '" ></button>');
+                }
+                $('#clusterCarouselInner').append(
+                `<div class="carousel-item" style="width: 100%; height: 100%;">                        
+                    <div class="d-block w-100" id="mynetwork` + i + `" style="width: 100%; height: 100%;"></div>
+                </div>                
+                `)
+            }
+
+            const myCarousel = document.getElementById('carouselExampleIndicators')
+
+            myCarousel.addEventListener('slid.bs.carousel', event => {
+                if(networks[event.to] == undefined)
+                {
+                    loadConnectedComponent(inputNodes, inputEdges, event.to)
+                }
+            })
+            
+            
+            // if(numCCs >= 51)
+            // {
+            //     $('#clusterCarouselIndicators').append('<input type="number" id="tentacles" name="tentacles" min="10" max="100" />')
+            // }
+        }
+
+        function loadConnectedComponent(inputNodes, inputEdges, cid)
+        {
+            
+            filteredInputNodes = inputNodes.filter(item => item.cid === cid)
+            console.log(filteredInputNodes)
+            var nodes = new vis.DataSet(
+                filteredInputNodes
+            );
+
+            // create an array with edges
+            var edges = new vis.DataSet(
+                inputEdges
+                
+            );
+
+            // create a network
+            var container = document.getElementById('mynetwork' + cid);
+
+            // provide the data in the vis format
+            var data = {
+                nodes: nodes,
+                edges: edges
+            };
+
+            var options = {
+                nodes: {
+                    shape: 'box',
+                },
+                edges: {
+                    smooth: false
+                },
+                physics: false,
+                interaction: {
+                    // dragNodes: false,// do not allow dragging nodes
+                    // zoomView: false, // do not allow zooming
+                    // dragView: false  // do not allow dragging
+                }
+        
+            };
+            // initialize your network!
+            var network = new vis.Network(container, data, options);
+            networks[cid] = network;
+            
+
+            if(cid == 0)
+            {
+                $.ajax({
+                    type: "POST",
+                    url: "/get_graph_info/",
+                    data:{
+                        pathwayName: $("#pathwaysList option:selected").text(),
+                        csrfmiddlewaretoken: csrf_token_value
+                    },
+                    success: (graphInfo) => {
+                        console.log(graphInfo);
+
+                        var numNodesElement = document.getElementById("numNodes");
+                        numNodesElement.innerHTML = "Number of Nodes: ";
+                        numNodesElement.appendChild(document.createTextNode(graphInfo.numNodes));
+
+                        var numEdgesElement = document.getElementById("numEdges");
+                        numEdgesElement.innerHTML = "Number of Edges: ";
+                        numEdgesElement.appendChild(document.createTextNode(graphInfo.numEdges));
+
+                        var numCrossingsElement = document.getElementById("numCrossings");
+                        numCrossingsElement.innerHTML = "Number of Crossings: ";
+                        numCrossingsElement.appendChild(document.createTextNode(graphInfo.numCrossings));
+
+                        var numCCsElement = document.getElementById("numCCs");
+                        numCCsElement.innerHTML = "Number of Connected Components: ";
+                        numCCsElement.appendChild(document.createTextNode(graphInfo.numCCs));
+                        
+                        document.getElementById("selectedValue").innerHTML = "Split nodes with degree greater than " + graphInfo.highestDegree;
+                        var highestDegreeNodeList = document.getElementById("highestDegreeNode");
+                        highestDegreeNodeList.innerHTML = "";
+                        var highestDegreeNodes = graphInfo.highestDegreeNodes;
+
+                        for(var i = 0; i < highestDegreeNodes.length; ++i)
+                        {
+                            var li = document.createElement("li");
+                            li.appendChild(document.createTextNode(highestDegreeNodes[i]));
+                            highestDegreeNodeList.appendChild(li);
+
+                        }  
+                                
+                        
+                        document.getElementById("degreeThreshhold").max = graphInfo.highestDegree;
+                        document.getElementById("degreeThreshhold").value = graphInfo.highestDegree;
+
+                        document.getElementById("overlay").style.display = "none";
+                        
+                        if ($('#clusterCCs').is(':checked'))
+                        {
+                            for(var i = 0; i < graphInfo.numCCs; ++i)
+                            {
+                                console.log(data, graphInfo.numNodesCC)
+                                clusterByCid(network, i, data, graphInfo.numNodesCC[i]);
+                            }
+                        }
+                        
+                        
+                        var avgEdgeLengthElement = document.getElementById("avgEdgeLength");
+                        avgEdgeLengthElement.innerHTML = "Average Edge Length: ";
+                        avgEdgeLengthElement.appendChild(document.createTextNode(graphInfo.avgEdgeLength[0]));
+                        
+                        var angleFactorElement = document.getElementById("angleFactor");
+                        angleFactorElement.innerHTML = "Average Edge Angle: ";
+                        angleFactorElement.appendChild(document.createTextNode(graphInfo.angleFactor));
+
+                    },
+                    error: (error) => {
+                        document.getElementById("overlay").style.display = "none";
+                        alert('Error');document.getElementById("overlay").style.display = "none";
+
+                    }
+                });
+                
+                var numCyclesElement = document.getElementById("componentInMostCycles");
+                numCyclesElement.innerHTML = "Number of Cycles:" + `<div class="spinner-border spinner-border-sm mx-1" role="status">
+                                                                        <span class="sr-only"></span>
+                                                                    </div>
+                                                                    `;            
+                numCyclesElement.innerHTML += "<br> Node appearing in most cycles:"  + `<div class="spinner-border spinner-border-sm  mx-1" role="status">
+                                                                                            <span class="sr-only"></span>
+                                                                                        </div>
+                                                                                        `; ;
+
+                $("#breakCycleButton").prop('disabled', true);
+                
+                $.ajax({
+                    type: "POST",
+                    url: "/get_cycles_info/",
+                    data:{
+                        pathwayName: $("#pathwaysList option:selected").text(),
+                        csrfmiddlewaretoken: csrf_token_value
+                    },
+                    success: (data) => {
+
+                        var numCyclesElement = document.getElementById("componentInMostCycles");
+                        
+                        $("#breakCycleButton").prop('disabled', false);
+                        
+                        console.log(data.numCycles)
+                        if (data.numCycles == 0)
+                        {
+                            $("#breakCycleButton").prop('disabled', true);
+                            numCyclesElement.innerHTML = "Number of Cycles: ";
+                            numCyclesElement.appendChild(document.createTextNode(data.numCycles));
+                            
+                            numCyclesElement.innerHTML += "<br> Node appearing in most cycles: None";
+                        }
+                        else
+                        {
+                            numCyclesElement.innerHTML = "Number of Cycles: ";
+                            numCyclesElement.appendChild(document.createTextNode(data.numCycles));
+                            
+                            numCyclesElement.innerHTML += "<br> Node appearing in most cycles: ";
+                            numCyclesElement.appendChild(document.createTextNode(data.nodeInMostCycles.id + " " + data.nodeInMostCycles.name));
+
+                            nodeInMostCycles = data.nodeInMostCycles.id;
+
+                        }
+
+                    },
+                    error: (error) => {
+                        $("#breakCycleButton").prop('disabled', false);
+                        alert('Error');
+                    }
+                });
+
+
+            }
+            
+            interactWithNetwork(network);
+            
+        }
+
+        $("#pathwayForm").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+
+            document.getElementById("overlay").style.display = "block";
+
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/add_pathway/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
+
+                        }
+                    }
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error');
+                    document.getElementById("overlay").style.display = "none";
+
+                }
+
+            })
+        })
+
+        $("#resetPathway").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            document.getElementById("overlay").style.display = "block";
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/reset_graph/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    original: false,
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
+
+                        }
+                    }
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error');document.getElementById("overlay").style.display = "none";
+
+                }
+
+            })
+        })
+
+        $("#loadOriginal").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            document.getElementById("overlay").style.display = "block";
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/reset_graph/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    original: true,
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
+
+                        }
+                    }
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error');document.getElementById("overlay").style.display = "none";
+
+                }
+
+            })
+        })
+
+
+        $("#recomputePositions").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            document.getElementById("overlay").style.display = "block";
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/recompute_positions/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    relative: $('#divideIntoCarousel').is(':checked'),
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
+
+                        }
+                    }
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error');document.getElementById("overlay").style.display = "none";
+
+                }
+
+            })
+        })
+
+        $("#splitHighDegreeForm").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            document.getElementById("overlay").style.display = "block";
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/split_high_degree/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    threshhold: $("#degreeThreshhold").val(),
+                    relative: $('#divideIntoCarousel').is(':checked'),
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
+
+                        }
+                    }
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error');document.getElementById("overlay").style.display = "none";
+
+                }
+
+            })
+        })
+
+        $("#breakCycle").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            document.getElementById("overlay").style.display = "block";
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/duplicate_node/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    node: nodeInMostCycles,
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
+
+                        }
+                    }
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error');document.getElementById("overlay").style.display = "none";
+
+                }
+
+            })
+        })
+
+        $("#duplicateSelectedNode").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            document.getElementById("overlay").style.display = "block";
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/duplicate_node/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    node: selectedNode,
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
+
+                        }
+                    }
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('You cannot duplicate an already duplicated compound.');
+                    document.getElementById("overlay").style.display = "none";
+
+                }
+
+            })
+        })
+
+        $("#reverseReaction").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            document.getElementById("overlay").style.display = "block";
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/reverse_reaction/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    node: selectedNode,
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    if (!$('#divideIntoCarousel').is(':checked'))
+                    {
+                        loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                        [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                    }
+                    else
+                    {
+                        if(response.numCCs == 1) 
+                        {
+                            loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                        }
+                        else{
+                            createCarousel(response.numCCs);
+                            loadConnectedComponent(graphInfo.nodes, graphInfo.edges, 0);
+                            inputNodes = graphInfo.nodes;
+                            inputEdges = graphInfo.edges;
+
+                        }
+                    }
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error while reversing reaction.');
+                    document.getElementById("overlay").style.display = "none";
+
+                }
+
+            })
+        })
+
+        
+        $('#defaultSugiyama').submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+
+            document.getElementById("overlay").style.display = "block";
+
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: '/default_sugiyama/',
+                data: {
+                    name: $("#pathwaysList option:selected").text(),
+                    csrfmiddlewaretoken: csrf_token_value
+                },
+                success: function (response) {
+
+                    console.log(response);
+                    
+                    const graphInfo = JSON.parse(response.graphInfo);
+                    
+                    [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                        el.style.visibility = 'hidden';
+                    });
+                    
+                    loadSingleGraph(graphInfo.nodes, graphInfo.edges);
+                    
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert('Error while computing default Sugiyama');
+                    document.getElementById("overlay").style.display = "none";
+
+                }
+
+            })
+        })
+
+        $('#loadSelectedCCInput').submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+             
+            var cid = parseInt($("#selectedCCId").val());
+            console.log(cid);
+            $('#carouselExampleIndicators').carousel(cid);
+            loadConnectedComponent(inputNodes, inputEdges, cid);
+        })
+
+        $('#loadSelectedCCButton').submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+             
+            var cid = parseInt($("#selectedCCId").val());
+            console.log(cid);
+            $('#carouselExampleIndicators').carousel(cid);
+            loadConnectedComponent(inputNodes, inputEdges, cid);
+        })
+
+        // <li class="list-group-item">Cras justo odio</li>
+
+    </script>
+    {% endblock javascript %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

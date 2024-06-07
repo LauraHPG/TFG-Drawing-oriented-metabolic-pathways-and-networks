@@ -3,7 +3,6 @@ import networkx as nx
 import sys
 
 import auxiliar_methods as funcs
-import layouts as lyts
 
 import matplotlib.pyplot as plt
 
@@ -14,7 +13,7 @@ poses = {}
 
 def main():
     print("Reading Graph")
-    reactions, components = funcs.read_graph(G)
+    funcs.read_graph(G)
     while True:
         op = input('''
 ┌───────────────────────────────────────────────────────────┐
@@ -48,10 +47,9 @@ def main():
                 plt.show()
 
             case '1':
-                N = input("Introduce iterations (default = 1.5):\n")
 
 
-                poses = funcs.getGraphPositions(G, float(N))
+                poses = funcs.getGraphPositions(G, 1.5)
 
 
                 funcs.getGraphInfo(G, poses)
@@ -86,8 +84,10 @@ def main():
                 G.remove_edge(origin_node, destination_node)
 
             case '8':
+                nth = input("Select nth CC:")
+                n = int(nth)
 
-                subGraph = funcs.getConnectedComponents(G)
+                subGraph = funcs.getConnectedComponents(G, n)
                 
                 funcs.changeSourceAndSinkNodeType(subGraph)
                 colors = funcs.setColorNodeType(subGraph)                
@@ -198,7 +198,19 @@ def main():
             case '12':
                 poses = funcs.getGraphPositions(G)
                 funcs.computeAngles(G, poses)
+            
+            case '13':
+                poses = funcs.getDefaultSugiyamaPositions(G)
+                colors = funcs.setColorNodeType(G)  
+
+                # depth = input("Do you want to arrange it by depth? (y/n)")
+
+                nx.draw(G, pos=poses, with_labels=True, node_color=colors)
                 
+                plt.show()
+
+            case '14':
+                funcs.reverseReaction(G, 'R00710')
             case 'p':
 
                 funcs.changeSourceAndSinkNodeType(G)
@@ -213,7 +225,7 @@ def main():
                 
 def oldExecution():
 
-    reactions, components = funcs.read_graph(G)
+    funcs.read_graph(G)
 
     funcs.isConnected(G)
     

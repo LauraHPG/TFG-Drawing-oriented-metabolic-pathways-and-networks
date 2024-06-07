@@ -25,7 +25,11 @@ def add_pathway(request):
       name = request.POST.get('name')
       pathway = {}
       try:
-         pathway = Pathway.objects.get(name=name)    
+         pathway = Pathway.objects.get(name=name)  
+          
+         G = nx.DiGraph()
+         info = pathway.graphInfo.replace("'", '"')
+         G = parseJsonToNx(info)
 
       except:
          
@@ -34,7 +38,7 @@ def add_pathway(request):
          dirname = os.path.dirname(__file__)
          directory = os.path.join(dirname, 'static/inputGraphs', name)
          
-         read_graph_from_txt(G, directory)
+         read_graph_from_file(G, directory)
          
          checkMaxCCSize(G)
 
@@ -48,12 +52,14 @@ def add_pathway(request):
 
 
       info = pathway.graphInfo.replace("'", '"')
-
+      
+      numCCs = getNumCCs(G)
+      
       end_time = time.time()
       elapsed_time = end_time - start_time
       print("Elapsed time add_pathway: {:.6f} seconds".format(elapsed_time))
 
-      return JsonResponse({'status': 'success', 'graphInfo': info})
+      return JsonResponse({'status': 'success', 'graphInfo': info, "numCCs": numCCs})
    
    return JsonResponse({'status': 'error'})
 
@@ -201,11 +207,13 @@ def split_high_degree(request):
 
       info = pthwy.graphInfo.replace("'", '"')
 
+      numCCs = getNumCCs(G)
+
       end_time = time.time()
       elapsed_time = end_time - start_time
       print("Elapsed time split_high_degree: {:.6f} seconds".format(elapsed_time))
 
-      return JsonResponse({'graphInfo':info})
+      return JsonResponse({'graphInfo':info, 'numCCs':numCCs})
 
 def duplicate_node(request):
    if request.method == 'POST':
@@ -232,12 +240,14 @@ def duplicate_node(request):
 
          info = pthwy.graphInfo.replace("'", '"')
 
+         numCCs = getNumCCs(G)
+
 
          end_time = time.time()
          elapsed_time = end_time - start_time
          print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
 
-         return JsonResponse({'graphInfo':info})
+         return JsonResponse({'graphInfo':info, 'numCCs':numCCs})
          
       else:
          return JsonResponse({'status': 'error'})
@@ -273,13 +283,15 @@ def reset_graph(request):
       start_time = time.time()
 
       name = request.POST.get('name')
-      
+      loadOriginal = request.POST.get('original')
+
+      original = loadOriginal == 'true'
       G = nx.DiGraph()
 
       dirname = os.path.dirname(__file__)
       directory = os.path.join(dirname, 'static/inputGraphs', name)
-      read_graph_from_txt(G, directory)
-      
+      read_graph_from_file(G, directory)
+      if not original: checkMaxCCSize(G)
       poses = getGraphPositions(G)
 
       graphInfo = parseGraph(G,poses, getCompoundNames(G))
@@ -290,11 +302,13 @@ def reset_graph(request):
 
       info = pthwy.graphInfo.replace("'", '"')
 
+      numCCs = getNumCCs(G)
+
       end_time = time.time()
       elapsed_time = end_time - start_time
       print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
    
-      return JsonResponse({'graphInfo':info})
+      return JsonResponse({'graphInfo':info, 'numCCs':numCCs})
    
 def update_compounds(request):
    if request.method == 'POST':
@@ -329,8 +343,91 @@ def recompute_positions(request):
 
       info = pthwy.graphInfo.replace("'", '"')
 
+      numCCs = getNumCCs(G)
+
       end_time = time.time()
       elapsed_time = end_time - start_time
       print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
 
-      return JsonResponse({'graphInfo':info})
+      return JsonResponse({'graphInfo':info, 'numCCs':numCCs})
+   
+
+def default_sugiyama(request):
+   if request.method == 'POST':
+      start_time = time.time()
+
+      name = request.POST.get('name')
+      G = nx.DiGraph()
+      try:
+         pathway = Pathway.objects.get(name=name)  
+         
+         G = nx.DiGraph()
+         info = pathway.graphInfo.replace("'", '"')
+         G = parseJsonToNx(info)
+
+         poses = getDefaultSugiyamaPositions(G)
+
+         graphInfo = parseGraph(G,poses, getCompoundNames(G))
+         pthwy = Pathway.objects.get(pk=name)
+         pthwy.graphInfo = graphInfo
+         pthwy.save()
+
+      except:
+
+         dirname = os.path.dirname(__file__)
+         directory = os.path.join(dirname, 'static/inputGraphs', name)
+         read_graph_from_file(G, directory)
+
+         try:
+            poses = getDefaultSugiyamaPositions(G)
+
+            graphInfo = parseGraph(G,poses, getCompoundNames(G))
+
+            pthwy = Pathway.objects.get(pk=name)
+            pthwy.graphInfo = graphInfo
+            pthwy.save()
+
+            info = pthwy.graphInfo.replace("'", '"')
+
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
+         
+            return JsonResponse({'graphInfo':info})
+         except:
+            return JsonResponse({'status': 'error'})
+     
+   
+def reverse_reaction(request):
+   if request.method == 'POST':
+      start_time = time.time()
+
+      name = request.POST.get('name')
+      reaction = request.POST.get('node')
+
+      pathway = Pathway.objects.get(name=name) 
+   
+      G = nx.DiGraph()
+      info = pathway.graphInfo.replace("'", '"')
+      G = parseJsonToNx(info)
+
+      reverseReaction(G, reaction)
+
+      poses = getGraphPositions(G)      
+
+      graphInfo = parseGraph(G,poses, getCompoundNames(G))
+
+      pthwy = Pathway.objects.get(pk=name)
+      pthwy.graphInfo = graphInfo
+      pthwy.save()
+
+      info = pthwy.graphInfo.replace("'", '"')
+
+      numCCs = getNumCCs(G)
+
+      end_time = time.time()
+      elapsed_time = end_time - start_time
+      print("Elapsed time duplicate_node: {:.6f} seconds".format(elapsed_time))
+
+      return JsonResponse({'graphInfo':info, 'numCCs':numCCs})
+   
