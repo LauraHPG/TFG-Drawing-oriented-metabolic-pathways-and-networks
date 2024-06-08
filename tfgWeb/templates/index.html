@@ -482,6 +482,7 @@
         {
             network.on("click", function(params) {
                 console.log(params)
+                console.log(network.getConnectedNodes(params.edges[0]));
 
                 var nodeIdHeader = document.getElementById("nodeId");
                 var selectedNodeIdHeader = document.getElementById("selectedNode");
@@ -491,20 +492,29 @@
                     document.getElementById('nodeInfo').hidden = false;
 
                     selectedNode = params.nodes[0];
-
+                    console.log(selectedNode)
 
                     var isCompound;
-                    if(selectedNode[0] == 'C')
+                    if(selectedNode[0] != 'D')
                     {
                         $("#duplicateSelectedNodeButton").prop('disabled', false);
                     }
                     else{
                         $("#duplicateSelectedNodeButton").prop('disabled', true);
                     }
+
+                    var selectedNode_id = selectedNode;
+                    if (selectedNode.includes('_')) {
+                        var parts = selectedNode.split('_');
+                        selectedNode_id = parts[parts.length - 1];
+                    }
+
+                    console.log(selectedNode_id)
+
                     if(selectedNode[0] == 'R'){
                         $("#reverseSelectedReaction").prop('disabled', false);
                         selectedReactionIdHeader.textContent = "Selected Reaction: " + selectedNode;
-                        nodeIdHeader.textContent = "No compound selected";
+                        nodeIdHeader.textContent = selectedNode;
                         isCompound = false;
                     }
                     else {
@@ -515,7 +525,19 @@
                         nodeIdHeader.textContent = selectedNode;
                     }
 
-                    
+                    var nodeFigure = document.getElementById("nodeFigure");
+                    var url;                    
+
+                    if(selectedNode_id[0]=='C')
+                    {
+                        url = "https://www.kegg.jp/Fig/compound/" + selectedNode_id + ".gif"
+                        
+                    }
+                    else{
+                        url = "https://www.kegg.jp/Fig/reaction/" + selectedNode_id + ".gif"
+                    }
+                    nodeFigure.innerHTML = ' <img src=' + url + ' style="max-width: 400px;">'
+
                     $.ajax({
                         type: "POST",
                         url: "/get_node_info/",
@@ -564,23 +586,7 @@
                             
                             var degree = document.getElementById("degree")
                             degree.innerHTML = "Degree: " + (predecessors.length + successors.length);
-                            var nodeFigure = document.getElementById("nodeFigure");
-                            var url;
-                            var selectedNode_id = selectedNode;
-
-                            if (selectedNode.includes('_')) {
-                                selectedNode_id = selectedNode.split('_')[1]
-                            }
-
-                            if(selectedNode_id[0]=='C')
-                            {
-                                url = "https://www.kegg.jp/Fig/compound/" + selectedNode_id + ".gif"
-                                
-                            }
-                            else{
-                                url = "https://www.kegg.jp/Fig/reaction/" + selectedNode_id + ".gif"
-                            }
-                            nodeFigure.innerHTML = ' <img src=' + url + ' style="max-width: 400px;">'
+                            
 
                         },
                         error: (error) => {
@@ -647,6 +653,89 @@
             document.getElementById("overlay").style.display = "block";
 
 
+            getGraphInfo();
+
+            interactWithNetwork(network);
+
+            network.on("click", function (params) {
+                if (params.nodes.length == 1) {
+                    if (network.isCluster(params.nodes[0]) == true) {
+                        var openClusterObj = {};
+                        openClusterObj.releaseFunction = function(clusterPosition, containedNodesPositions) {
+                            return containedNodesPositions;
+                        }
+
+                        network.openCluster(params.nodes[0], openClusterObj);
+                    }
+                }   
+            });
+
+
+            
+        }
+
+        function createCarousel(numCCs)
+        {
+            networks = [];
+
+            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
+                el.style.visibility = 'visible';
+            });
+            document.getElementById("selectedCCId").max = numCCs - 1;
+
+            // var container = document.getElementById('mynetwork');
+            document.getElementById('mynetwork').innerHTML = '';
+            $('#mynetwork').append(`<div id="carouselExampleIndicators" class="carousel slide" style="width: 100%; height: 100%;">
+                    <div class="carousel-indicators" id="clusterCarouselIndicators">
+                        
+                    </div>
+                <div class="carousel-inner" style="width: 100%; height: 100%;" id="clusterCarouselInner">
+                    <div class="carousel-item active" style="width: 100%; height: 100%;">
+                        <div class="d-block w-100" id="mynetwork0" style="width: 100%; height: 100%;"></div></div>
+                    </div>
+                </div>
+                
+            </div>            
+            `)
+
+            if(numCCs < MAX_NUM_CC)  
+            {
+                $('#clusterCarouselIndicators').append('<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>');
+                    
+                for(var i = 1; i < numCCs; ++i)
+                {
+                    console.log(i)
+                    
+                    
+                    $('#clusterCarouselIndicators').append('<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="' + i + '" ></button>');
+                    
+                    $('#clusterCarouselInner').append(
+                    `<div class="carousel-item" style="width: 100%; height: 100%;">                        
+                        <div class="d-block w-100" id="mynetwork` + i + `" style="width: 100%; height: 100%;"></div>
+                    </div>                
+                    `)
+                }
+            }
+
+            const myCarousel = document.getElementById('carouselExampleIndicators')
+
+            myCarousel.addEventListener('slid.bs.carousel', event => {
+                console.log(event.to)
+                if(networks[event.to] == undefined)
+                {
+                    loadConnectedComponent(inputNodes, inputEdges, event.to, true)
+                }
+            })
+            
+            
+            // if(numCCs >= 51)
+            // {
+            //     $('#clusterCarouselIndicators').append('<input type="number" id="tentacles" name="tentacles" min="10" max="100" />')
+            // }
+        }
+
+        function getGraphInfo()
+        {
             $.ajax({
                 type: "POST",
                 url: "/get_graph_info/",
@@ -704,11 +793,55 @@
                     
                     var avgEdgeLengthElement = document.getElementById("avgEdgeLength");
                     avgEdgeLengthElement.innerHTML = "Average Edge Length: ";
-                    avgEdgeLengthElement.appendChild(document.createTextNode(graphInfo.avgEdgeLength[0]));
+                    avgEdgeLengthElement.appendChild(document.createTextNode(graphInfo.avgEdgeLength));
                     
                     var angleFactorElement = document.getElementById("angleFactor");
                     angleFactorElement.innerHTML = "Average Edge Angle: ";
                     angleFactorElement.appendChild(document.createTextNode(graphInfo.angleFactor));
+
+                    $("#breakCycleButton").prop('disabled', true);
+                    
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/get_cycles_info/",
+                        data:{
+                            pathwayName: $("#pathwaysList option:selected").text(),
+                            csrfmiddlewaretoken: csrf_token_value
+                        },
+                        success: (data) => {
+
+                            var numCyclesElement = document.getElementById("componentInMostCycles");
+                            
+                            $("#breakCycleButton").prop('disabled', false);
+                            
+                            console.log(data.numCycles)
+                            if (data.numCycles == 0)
+                            {
+                                $("#breakCycleButton").prop('disabled', true);
+                                numCyclesElement.innerHTML = "Number of Cycles: ";
+                                numCyclesElement.appendChild(document.createTextNode(data.numCycles));
+                                
+                                numCyclesElement.innerHTML += "<br> Node appearing in most cycles: None";
+                            }
+                            else
+                            {
+                                numCyclesElement.innerHTML = "Number of Cycles: ";
+                                numCyclesElement.appendChild(document.createTextNode(data.numCycles));
+                                
+                                numCyclesElement.innerHTML += "<br> Node appearing in most cycles: ";
+                                numCyclesElement.appendChild(document.createTextNode(data.nodeInMostCycles.id + " " + data.nodeInMostCycles.name));
+
+                                nodeInMostCycles = data.nodeInMostCycles.id;
+
+                            }
+
+                        },
+                        error: (error) => {
+                            $("#breakCycleButton").prop('disabled', false);
+                            alert('Error');
+                        }
+                    });
 
                 },
                 error: (error) => {
@@ -726,127 +859,12 @@
             numCyclesElement.innerHTML += "<br> Node appearing in most cycles:"  + `<div class="spinner-border spinner-border-sm  mx-1" role="status">
                                                                                         <span class="sr-only"></span>
                                                                                     </div>
-                                                                                    `; ;
-
-            $("#breakCycleButton").prop('disabled', true);
-            
-            $.ajax({
-                type: "POST",
-                url: "/get_cycles_info/",
-                data:{
-                    pathwayName: $("#pathwaysList option:selected").text(),
-                    csrfmiddlewaretoken: csrf_token_value
-                },
-                success: (data) => {
-
-                    var numCyclesElement = document.getElementById("componentInMostCycles");
-                    
-                    $("#breakCycleButton").prop('disabled', false);
-                    
-                    console.log(data.numCycles)
-                    if (data.numCycles == 0)
-                    {
-                        $("#breakCycleButton").prop('disabled', true);
-                        numCyclesElement.innerHTML = "Number of Cycles: ";
-                        numCyclesElement.appendChild(document.createTextNode(data.numCycles));
-                        
-                        numCyclesElement.innerHTML += "<br> Node appearing in most cycles: None";
-                    }
-                    else
-                    {
-                        numCyclesElement.innerHTML = "Number of Cycles: ";
-                        numCyclesElement.appendChild(document.createTextNode(data.numCycles));
-                        
-                        numCyclesElement.innerHTML += "<br> Node appearing in most cycles: ";
-                        numCyclesElement.appendChild(document.createTextNode(data.nodeInMostCycles.id + " " + data.nodeInMostCycles.name));
-
-                        nodeInMostCycles = data.nodeInMostCycles.id;
-
-                    }
-
-                },
-                error: (error) => {
-                    $("#breakCycleButton").prop('disabled', false);
-                    alert('Error');
-                }
-            });
-
-            interactWithNetwork(network);
-
-            network.on("click", function (params) {
-                if (params.nodes.length == 1) {
-                    if (network.isCluster(params.nodes[0]) == true) {
-                        var openClusterObj = {};
-                        openClusterObj.releaseFunction = function(clusterPosition, containedNodesPositions) {
-                            return containedNodesPositions;
-                        }
-
-                        network.openCluster(params.nodes[0], openClusterObj);
-                    }
-                }   
-            });
-
-
-            
-        }
-
-        function createCarousel(numCCs)
-        {
-            [].forEach.call(document.querySelectorAll('.cc-carousel'), function (el) {
-                el.style.visibility = 'visible';
-            });
-            document.getElementById("selectedCCId").max = numCCs - 1;
-
-            // var container = document.getElementById('mynetwork');
-            document.getElementById('mynetwork').innerHTML = '';
-            $('#mynetwork').append(`<div id="carouselExampleIndicators" class="carousel slide" style="width: 100%; height: 100%;">
-                    <div class="carousel-indicators" id="clusterCarouselIndicators">
-                        
-                    </div>
-                <div class="carousel-inner" style="width: 100%; height: 100%;" id="clusterCarouselInner">
-                    <div class="carousel-item active" style="width: 100%; height: 100%;">
-                        <div class="d-block w-100" id="mynetwork0" style="width: 100%; height: 100%;"></div></div>
-                    </div>
-                </div>
+                                                                                    `; 
                 
-            </div>            
-            `)
-
-            if(numCCs < MAX_NUM_CC)  
-            {
-                $('#clusterCarouselIndicators').append('<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>');
-                    
-                for(var i = 1; i < numCCs; ++i)
-                {
-                    console.log(i)
-                    
-                    
-                    $('#clusterCarouselIndicators').append('<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="' + i + '" ></button>');
-                    
-                    $('#clusterCarouselInner').append(
-                    `<div class="carousel-item" style="width: 100%; height: 100%;">                        
-                        <div class="d-block w-100" id="mynetwork` + i + `" style="width: 100%; height: 100%;"></div>
-                    </div>                
-                    `)
-                }
-            }
-
-            const myCarousel = document.getElementById('carouselExampleIndicators')
-
-            myCarousel.addEventListener('slid.bs.carousel', event => {
-                if(networks[event.to] == undefined)
-                {
-                    loadConnectedComponent(inputNodes, inputEdges, event.to, true)
-                }
-            })
             
             
-            // if(numCCs >= 51)
-            // {
-            //     $('#clusterCarouselIndicators').append('<input type="number" id="tentacles" name="tentacles" min="10" max="100" />')
-            // }
         }
-
+        
         function loadConnectedComponent(inputNodes, inputEdges, cid, useCarousel)
         {
             
@@ -894,135 +912,7 @@
             var network = new vis.Network(container, data, options);
             if(useCarousel) networks[cid] = network;
             
-
-            if(cid == 0)
-            {
-                $.ajax({
-                    type: "POST",
-                    url: "/get_graph_info/",
-                    data:{
-                        pathwayName: $("#pathwaysList option:selected").text(),
-                        csrfmiddlewaretoken: csrf_token_value
-                    },
-                    success: (graphInfo) => {
-                        console.log(graphInfo);
-
-                        var numNodesElement = document.getElementById("numNodes");
-                        numNodesElement.innerHTML = "Number of Nodes: ";
-                        numNodesElement.appendChild(document.createTextNode(graphInfo.numNodes));
-
-                        var numEdgesElement = document.getElementById("numEdges");
-                        numEdgesElement.innerHTML = "Number of Edges: ";
-                        numEdgesElement.appendChild(document.createTextNode(graphInfo.numEdges));
-
-                        var numCrossingsElement = document.getElementById("numCrossings");
-                        numCrossingsElement.innerHTML = "Number of Crossings: ";
-                        numCrossingsElement.appendChild(document.createTextNode(graphInfo.numCrossings));
-
-                        var numCCsElement = document.getElementById("numCCs");
-                        numCCsElement.innerHTML = "Number of Connected Components: ";
-                        numCCsElement.appendChild(document.createTextNode(graphInfo.numCCs));
-                        
-                        document.getElementById("selectedValue").innerHTML = "Split nodes with degree greater than " + graphInfo.highestDegree;
-                        var highestDegreeNodeList = document.getElementById("highestDegreeNode");
-                        highestDegreeNodeList.innerHTML = "";
-                        var highestDegreeNodes = graphInfo.highestDegreeNodes;
-
-                        for(var i = 0; i < highestDegreeNodes.length; ++i)
-                        {
-                            var li = document.createElement("li");
-                            li.appendChild(document.createTextNode(highestDegreeNodes[i]));
-                            highestDegreeNodeList.appendChild(li);
-
-                        }  
-                                
-                        
-                        document.getElementById("degreeThreshhold").max = graphInfo.highestDegree;
-                        document.getElementById("degreeThreshhold").value = graphInfo.highestDegree;
-
-                        document.getElementById("overlay").style.display = "none";
-                        
-                        if ($('#clusterCCs').is(':checked'))
-                        {
-                            for(var i = 0; i < graphInfo.numCCs; ++i)
-                            {
-                                console.log(data, graphInfo.numNodesCC)
-                                clusterByCid(network, i, data, graphInfo.numNodesCC[i]);
-                            }
-                        }
-                        
-                        
-                        var avgEdgeLengthElement = document.getElementById("avgEdgeLength");
-                        avgEdgeLengthElement.innerHTML = "Average Edge Length: ";
-                        avgEdgeLengthElement.appendChild(document.createTextNode(graphInfo.avgEdgeLength[0]));
-                        
-                        var angleFactorElement = document.getElementById("angleFactor");
-                        angleFactorElement.innerHTML = "Average Edge Angle: ";
-                        angleFactorElement.appendChild(document.createTextNode(graphInfo.angleFactor));
-
-                    },
-                    error: (error) => {
-                        document.getElementById("overlay").style.display = "none";
-                        alert('Error');document.getElementById("overlay").style.display = "none";
-
-                    }
-                });
-                
-                var numCyclesElement = document.getElementById("componentInMostCycles");
-                numCyclesElement.innerHTML = "Number of Cycles:" + `<div class="spinner-border spinner-border-sm mx-1" role="status">
-                                                                        <span class="sr-only"></span>
-                                                                    </div>
-                                                                    `;            
-                numCyclesElement.innerHTML += "<br> Node appearing in most cycles:"  + `<div class="spinner-border spinner-border-sm  mx-1" role="status">
-                                                                                            <span class="sr-only"></span>
-                                                                                        </div>
-                                                                                        `; ;
-
-                $("#breakCycleButton").prop('disabled', true);
-                
-                $.ajax({
-                    type: "POST",
-                    url: "/get_cycles_info/",
-                    data:{
-                        pathwayName: $("#pathwaysList option:selected").text(),
-                        csrfmiddlewaretoken: csrf_token_value
-                    },
-                    success: (data) => {
-
-                        var numCyclesElement = document.getElementById("componentInMostCycles");
-                        
-                        $("#breakCycleButton").prop('disabled', false);
-                        
-                        console.log(data.numCycles)
-                        if (data.numCycles == 0)
-                        {
-                            $("#breakCycleButton").prop('disabled', true);
-                            numCyclesElement.innerHTML = "Number of Cycles: ";
-                            numCyclesElement.appendChild(document.createTextNode(data.numCycles));
-                            
-                            numCyclesElement.innerHTML += "<br> Node appearing in most cycles: None";
-                        }
-                        else
-                        {
-                            numCyclesElement.innerHTML = "Number of Cycles: ";
-                            numCyclesElement.appendChild(document.createTextNode(data.numCycles));
-                            
-                            numCyclesElement.innerHTML += "<br> Node appearing in most cycles: ";
-                            numCyclesElement.appendChild(document.createTextNode(data.nodeInMostCycles.id + " " + data.nodeInMostCycles.name));
-
-                            nodeInMostCycles = data.nodeInMostCycles.id;
-
-                        }
-
-                    },
-                    error: (error) => {
-                        $("#breakCycleButton").prop('disabled', false);
-                        alert('Error');
-                    }
-                });
-
-
-            }
+            if (cid == 0) getGraphInfo();
             
             interactWithNetwork(network);
             
@@ -1156,7 +1046,6 @@
                 url: '/recompute_positions/',
                 data: {
                     name: $("#pathwaysList option:selected").text(),
-                    relative: $('#divideIntoCarousel').is(':checked'),
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {
@@ -1184,7 +1073,6 @@
                 data: {
                     name: $("#pathwaysList option:selected").text(),
                     threshhold: $("#degreeThreshhold").val(),
-                    relative: $('#divideIntoCarousel').is(':checked'),
                     csrfmiddlewaretoken: csrf_token_value
                 },
                 success: function (response) {

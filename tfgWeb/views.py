@@ -260,7 +260,7 @@ def getCompoundNames(G):
 
    compounds = dict()
    for node in G.nodes():
-      if node[0] != 'R':
+      if G.nodes[node]['node_type'] != 'reaction':
          # print(getNodeLabel(node))
          label = getNodeLabel(node)
          if not label in compounds:
@@ -292,7 +292,7 @@ def reset_graph(request):
       directory = os.path.join(dirname, 'static/inputGraphs', name)
       read_graph_from_file(G, directory)
       if not original: checkMaxCCSize(G)
-      
+
       poses = getGraphPositions(G)
 
       graphInfo = parseGraph(G,poses, getCompoundNames(G))

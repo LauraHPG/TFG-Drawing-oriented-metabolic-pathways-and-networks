@@ -19,6 +19,8 @@ from scipy.stats import hmean
 
 DEBUG = False
 
+MAX_SIZE_LARGE = 1000
+MAX_SIZE_MEDIUM = 300
 '''
 Reading the graph
 '''
@@ -63,8 +65,7 @@ def parseGraph(graph, node_positions, compounds):
         nodeInfo['id'] = node
         if graph.nodes[node]['node_type'] != 'reaction':
             nodeInfo['label'] = compounds[getNodeLabel(node)]
-        else:
-            nodeInfo['label'] = node
+        else: nodeInfo['label'] = getNodeLabel(node)
 
         nodeInfo['x'] = node_positions[node][0]
         nodeInfo['y'] = node_positions[node][1]
@@ -93,6 +94,7 @@ def parseGraph(graph, node_positions, compounds):
 
 def parseJsonToNx(graphInfo):
     # if DEBUG: print(graphInfo)
+    print("Parsing to NX")
     json_data = json.loads(graphInfo)
     graph = nx.DiGraph()
 
@@ -113,6 +115,8 @@ def parseJsonToNx(graphInfo):
         relationship = edge_info['relationship']
         graph.add_edge(from_node, to_node, relationship=relationship)
 
+    print("Finished parsing to NX")
+
     return graph
 
 '''
@@ -120,44 +124,35 @@ Graph Modifiers
 '''
 
 def checkMaxCCSize(graph):
-    splitHighDegreeComponents(graph,5)
 
-    # if len(graph.nodes()) > 999:
-    #     print("Large Graph")
-    #     H = graph.to_undirected()
-    #     S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
-    #     it = 0
-    #     while len(S[0].nodes()) > 1000:
-    #         print("It",it)
-    #         node, degree = getHighestDegreeNodes(graph)
-    #         splitHighDegreeComponents(graph,degree)
+    if len(graph.nodes()) >= MAX_SIZE_LARGE:
+        print("Large Graph")
+        res = checkMaxCCSizeRecursive(graph)
+        updateGraphFromSubgraphs(graph, res)
+    elif len(graph.nodes()) > MAX_SIZE_MEDIUM:
+        print("Medium Graph")
+        splitHighDegreeComponents(graph, 6, 'M')
+        checkMaxEdgeLength(graph)
+    else:
+        print("Small Graph")
+        splitHighDegreeComponents(graph, 6, 'S')
+        
 
-    #         if DEBUG: print("Largest CC size:", len(S[0].nodes()))
-    #         if DEBUG: print("Num CCs", len(S))
-    #         if DEBUG: print("Nodes info:", node,)
-    #         if DEBUG: print("Degree:", degree)
-    #         if DEBUG: print("Nodes:", len(graph.nodes()), "Edges:", len(graph.edges()))
-
-    #         H = graph.to_undirected()
-    #         S = [H.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
-    #         it += 1
-    # elif len(graph.nodes()) > 300:
-    #     print("Medium Graph")
-
-    #     splitHighDegreeComponents(graph,5)
-
-def splitHighDegreeComponents(graph, threshhold):
+def splitHighDegreeComponents(graph, threshhold, duplicationLetter = 'D'):
 
     ordered_nodes = nodes_ordered_by_degree(graph)
     if DEBUG: print(f"Initial number of nodes: {graph.number_of_nodes()}")
     for node, degree in ordered_nodes:
         if degree >= threshhold and graph.nodes[node]['node_type'] != 'reaction':
-                duplicateNode(graph, node)
+                duplicateNode(graph, node, duplicationLetter)
 
     if DEBUG: print(f"Final number of nodes: {graph.number_of_nodes()}")
 
 
-def duplicateNode(graph, node):
+def duplicateNode(graph, node, letter = 'D'):
+    # print("         DuplicateNode", node)
+    # print("         Before:", len(graph.in_edges()) + len(graph.out_edges()))
+
     if graph.nodes[node]['status'] != 'duplicated':
         out_edges = graph.out_edges([node])
         in_edges = graph.in_edges([node])
@@ -165,18 +160,22 @@ def duplicateNode(graph, node):
 
         i = 0
         for out_edge in out_edges:
-            new_node = "D" + str(i) + '_' + node
+            new_node = letter + str(i) + '_' + node
             i += 1
             graph.add_edge(new_node, out_edge[1], relationship='substrate-reaction')
             graph.add_node(new_node, node_type=node_type, status='duplicated')
 
         for in_edge in in_edges:
-            new_node = "D" + str(i) + '_'  + node
+            new_node = letter + str(i) + '_'  + node
             i += 1
             graph.add_edge(in_edge[0], new_node, relationship='reaction-substrate')
             graph.add_node(new_node, node_type=node_type, status='duplicated')
 
         graph.remove_node(node)
+
+    # print("         After:", len(graph.in_edges()) + len(graph.out_edges()))
+
+
 
 
 def removeCyclesByNodeInMostCycles(graph):
@@ -316,7 +315,7 @@ def nodes_ordered_by_degree(graph, nodes=None):
         nodes = graph.nodes()
 
     # Calculate the degree for each node and create a list of (node, degree) tuples
-    degree_list = [(node, degree) for node, degree in graph.degree(nodes) if not node.startswith('R')]
+    degree_list = [(node, degree) for node, degree in graph.degree(nodes) if not graph.nodes[node]['node_type'] == 'reaction']
 
     # Sort the list by degree in descending order
     degree_list.sort(key=lambda x: x[1], reverse=True)
@@ -425,7 +424,7 @@ def getNumCCs(graph):
 def getGraphInfo(graph,poses):
     numNodes = len(graph.nodes())
     if DEBUG: print("Num Nodes:", numNodes)
-    numEdges = len(graph.edges())
+    numEdges = len(graph.in_edges()) + len(graph.out_edges())
     if DEBUG: print("Num Edges:", numEdges)
     numCrossings = countCrossings(graph,poses)
     H = graph.to_undirected()
@@ -439,6 +438,7 @@ def getGraphInfo(graph,poses):
     infoEdgeLengths = computeDistances(graph, poses)
     infoEdgeAngles = computeAngles(graph, poses)
 
+    print(numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC, infoEdgeLengths, infoEdgeAngles)
     return numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC, infoEdgeLengths, infoEdgeAngles
 
 def getCyclesInfo(graph):
@@ -571,7 +571,9 @@ def getConnectedComponents(graph, n):
     return subGraph
 
 def getNodeLabel(name):
-    return name.split("_")[-1]
+    if "_" in name:
+        return name.split("_")[-1]
+    else: return name
  
 
 def retrieveNodeNames():
@@ -743,3 +745,63 @@ def getGraphPositions(graph, N = 1.5):
     return poses
 
 
+
+# Function to update the original graph
+def updateGraphFromSubgraphs(original_graph, subgraphs):
+    original_graph.clear()  # Clear the original graph's nodes and edges
+    
+    for i, subgraph in enumerate(subgraphs):
+        # Prefix to add to each node in the subgraph
+        prefix = f'K{i}_'
+        
+        # Create a mapping of old node labels to new node labels with prefix
+        node_mapping = {node: f'{prefix}{node}' for node in subgraph.nodes()}
+        
+        # Add nodes with the new labels
+        for old_node, new_node in node_mapping.items():
+            original_graph.add_node(new_node, **subgraph.nodes[old_node])
+        
+        # Add edges with the new labels
+        for (u, v, data) in subgraph.edges(data=True):
+            original_graph.add_edge(node_mapping[u], node_mapping[v], **data)
+
+def getNumEdges(graph):
+    return len(graph.in_edges()) + len(graph.out_edges())
+
+
+def checkMaxCCSizeRecursive(graph):
+
+    H = graph.to_undirected()
+    S = [graph.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+
+    if len(S) == 1 and len(S[0].nodes()) < MAX_SIZE_LARGE:
+        return S
+
+    processed_graphs = []
+    for subGraph in S:
+        if len(subGraph.nodes()) >= MAX_SIZE_LARGE:
+            dirSubGraph = subGraph.to_directed()
+            _, degree = getHighestDegreeNode(dirSubGraph)
+            splitHighDegreeComponents(dirSubGraph, degree, 'L')
+            
+            H = dirSubGraph.to_undirected()
+            S = [dirSubGraph.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+
+            for sg in S:
+                processed_graphs.extend(checkMaxCCSizeRecursive(sg))
+        else:
+            processed_graphs.append(subGraph)
+
+    return processed_graphs
+
+def checkMaxEdgeLength(graph):
+    pass
+
+def getNumIsolatedReactions(graph):
+    H = graph.to_undirected()
+    S = [graph.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+    res = 0
+    for s in S:
+        numReactions = [node for node in s.nodes() if graph.nodes[node]['node_type'] == 'reaction']
+        if len(numReactions) == 1: res += 1  
+    return res
