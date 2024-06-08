@@ -292,6 +292,7 @@ def reset_graph(request):
       directory = os.path.join(dirname, 'static/inputGraphs', name)
       read_graph_from_file(G, directory)
       if not original: checkMaxCCSize(G)
+      
       poses = getGraphPositions(G)
 
       graphInfo = parseGraph(G,poses, getCompoundNames(G))
@@ -358,6 +359,7 @@ def default_sugiyama(request):
 
       name = request.POST.get('name')
       G = nx.DiGraph()
+
       try:
          pathway = Pathway.objects.get(name=name)  
          
@@ -372,6 +374,9 @@ def default_sugiyama(request):
          pthwy.graphInfo = graphInfo
          pthwy.save()
 
+         info = pthwy.graphInfo.replace("'", '"')
+
+         return JsonResponse({'graphInfo':info})
       except:
 
          dirname = os.path.dirname(__file__)
