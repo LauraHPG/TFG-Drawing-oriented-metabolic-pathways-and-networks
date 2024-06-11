@@ -257,14 +257,20 @@
                         <div>
                             <h4>Split high degree components</h4>
                             <p id="highestDegree"></p>
-                            <form id="splitHighDegreeForm">
+                            <form id="splitAllHighDegreeForm">
                                 <p id="selectedValue"></p>
 
-
-                                    <ul id="highestDegreeNode"></ul>
-                                
                                 <input type="range" class="form-range" min="2" id="degreeThreshhold">
                                 <input type="submit" value="Split" class="btn btn-outline-primary" />
+
+                            </form>
+                            <form id="splitSomeHighDegreeForm">
+
+                                <p id="highestDegreeNodesTitle"></p>
+                                <div id="highestDegreeNodes"></div><br>
+
+                                <input id="highestDegreeNodesButton" type="submit" value="Split Selected" class="btn btn-outline-primary" />
+
                             </form>
                             <hr>
                             <h4>Break cycle</h4>
@@ -423,6 +429,7 @@
 
             // Attach the handler
             resizer.addEventListener('mousedown', mouseDownHandler);
+            
         });
 
         $.ajax({
@@ -497,6 +504,8 @@
                     if(selectedNode[0] == 'R'){
                         $("#reverseSelectedReaction").prop('disabled', false);
                         selectedReactionIdHeader.textContent = "Selected Reaction: " + selectedNode;
+                        selectedNodeIdHeader.textContent = "No compound selected";
+                        $("#duplicateSelectedNodeButton").prop('disabled', true);
                         nodeIdHeader.textContent = selectedNode;
                         isCompound = false;
                     }
@@ -581,7 +590,7 @@
                 else
                 {
                     document.getElementById('nodeInfo').hidden = true;
-                    selectedNodeIdHeader.textContent = "No node selected";
+                    selectedNodeIdHeader.textContent = "No compound selected";
                     nodeIdHeader.textContent = "No node selected";
                     selectedReactionIdHeader.textContent = "No reaction selected";
                     $("#duplicateSelectedNodeButton").prop('disabled', true);
@@ -745,19 +754,27 @@
                     numCCsElement.innerHTML = "Number of Connected Components: ";
                     numCCsElement.appendChild(document.createTextNode(graphInfo.numCCs));
                     
-                    document.getElementById("selectedValue").innerHTML = "Split nodes with degree greater than " + graphInfo.highestDegree;
-                    var highestDegreeNodeList = document.getElementById("highestDegreeNode");
-                    highestDegreeNodeList.innerHTML = "";
+                    document.getElementById("selectedValue").innerHTML = "Split all nodes with degree greater than " + graphInfo.highestDegree;
+                    document.getElementById("highestDegreeNodesTitle").innerHTML = "Nodes with degree " + graphInfo.highestDegree;
+                    // var highestDegreeNodeList = document.getElementById("highestDegreeNode");
+                    // highestDegreeNodeList.innerHTML = "";
+                    
+                    
+                    var highestDegreeNodesList = document.getElementById("highestDegreeNodes");
+                    highestDegreeNodesList.innerHTML = "";
                     var highestDegreeNodes = graphInfo.highestDegreeNodes;
 
                     for(var i = 0; i < highestDegreeNodes.length; ++i)
                     {
-                        var li = document.createElement("li");
-                        li.appendChild(document.createTextNode(highestDegreeNodes[i]));
-                        highestDegreeNodeList.appendChild(li);
+                        console.log(highestDegreeNodes[i])
+                        var parts = highestDegreeNodes[i].split(':');
+                        id = parts[0];
+                        name = parts[1];
+                        $('#highestDegreeNodes').append(`<input class="form-check-input" type="checkbox" id="` + id + `" />
+                                                 <label class="form-check-label" for="` + id+ `">`+ name + `</label><br />`);
 
                     }  
-                            
+                                
                     
                     document.getElementById("degreeThreshhold").max = graphInfo.highestDegree;
                     document.getElementById("degreeThreshhold").value = graphInfo.highestDegree;
@@ -775,12 +792,11 @@
                     
                     
                     var avgEdgeLengthElement = document.getElementById("avgEdgeLength");
-                    avgEdgeLengthElement.innerHTML = "Average Edge Length: ";
-                    avgEdgeLengthElement.appendChild(document.createTextNode(graphInfo.avgEdgeLength));
-                    
+                    avgEdgeLengthElement.innerHTML = "Average Edge Length: " + graphInfo.avgEdgeLength[0] + "<br>Max Edge Length: " + graphInfo.avgEdgeLength[1] + "<br>Sum Edge Lengths: " + graphInfo.avgEdgeLength[2];
+
                     var angleFactorElement = document.getElementById("angleFactor");
-                    angleFactorElement.innerHTML = "Average Edge Angle: ";
-                    angleFactorElement.appendChild(document.createTextNode(graphInfo.angleFactor));
+                    angleFactorElement.innerHTML = "Average Angle [0-pi]: " + graphInfo.angleFactor[0] + " <br>Std Angle: " + graphInfo.angleFactor[1] + "<br>Horizontal lines (%): " + graphInfo.angleFactor[2];
+
 
                     $("#breakCycleButton").prop('disabled', true);
                     
@@ -903,6 +919,11 @@
 
         function loadGraph(response)
         {
+
+            $("#duplicateSelectedNodeButton").prop('disabled', true);
+            $("#reverseSelectedReaction").prop('disabled', true);
+
+            
             const graphInfo = JSON.parse(response.graphInfo);
             if (!$('#divideIntoCarousel').is(':checked'))
             {
@@ -1016,7 +1037,6 @@
             })
         })
 
-
         $("#recomputePositions").submit(function (e) {
             // preventing from page reload and default actions
             e.preventDefault();
@@ -1043,7 +1063,7 @@
             })
         })
 
-        $("#splitHighDegreeForm").submit(function (e) {
+        $("#splitAllHighDegreeForm").submit(function (e) {
             // preventing from page reload and default actions
             e.preventDefault();
             // serialize the data for sending the form data.
@@ -1068,6 +1088,42 @@
                 }
 
             })
+        })
+    
+        $("#splitSomeHighDegreeForm").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            document.getElementById("overlay").style.display = "block";
+            // make POST ajax call
+            var checkedCheckboxes = $('#splitSomeHighDegreeForm input[type="checkbox"]:checked');
+                var ids = [];
+                checkedCheckboxes.each(function(){
+                    console.log("Duplicating: " + $(this).attr('id'));
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/duplicate_node/',
+                        data: {
+                            name: $("#pathwaysList option:selected").text(),
+                            node: $(this).attr('id'),
+                            csrfmiddlewaretoken: csrf_token_value
+                        },
+                        success: function (response) {
+                            loadGraph(response)
+                        },
+                        error: function (response) {
+                            // alert the error if any error occured
+                            alert('You cannot duplicate an already duplicated compound.');
+                            document.getElementById("overlay").style.display = "none";
+
+                        }
+
+                    })
+
+                });
+            
         })
 
         $("#breakCycle").submit(function (e) {
@@ -1153,7 +1209,6 @@
             })
         })
 
-        
         $('#defaultSugiyama').submit(function (e) {
             // preventing from page reload and default actions
             e.preventDefault();
@@ -1224,8 +1279,6 @@
                 loadConnectedComponent(inputNodes, inputEdges, cid, false);
             }
         })
-
-        // <li class="list-group-item">Cras justo odio</li>
 
     </script>
     {% endblock javascript %}
