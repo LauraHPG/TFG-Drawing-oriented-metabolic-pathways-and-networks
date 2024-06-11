@@ -132,10 +132,15 @@ def checkMaxCCSize(graph):
     elif len(graph.nodes()) > MAX_SIZE_MEDIUM:
         print("Medium Graph")
         splitHighDegreeComponents(graph, 6, 'M')
-        checkMaxEdgeLength(graph)
     else:
         print("Small Graph")
         splitHighDegreeComponents(graph, 6, 'S')
+ 
+        node = getNodeInMostCycles(graph)
+        while node:
+            duplicateNode(graph, node, 'S')
+            node = getNodeInMostCycles(graph)
+
         
 
 def splitHighDegreeComponents(graph, threshhold, duplicationLetter = 'D'):
@@ -150,8 +155,6 @@ def splitHighDegreeComponents(graph, threshhold, duplicationLetter = 'D'):
 
 
 def duplicateNode(graph, node, letter = 'D'):
-    # print("         DuplicateNode", node)
-    # print("         Before:", len(graph.in_edges()) + len(graph.out_edges()))
 
     if graph.nodes[node]['status'] != 'duplicated':
         out_edges = graph.out_edges([node])
@@ -173,7 +176,6 @@ def duplicateNode(graph, node, letter = 'D'):
 
         graph.remove_node(node)
 
-    # print("         After:", len(graph.in_edges()) + len(graph.out_edges()))
 
 
 
@@ -393,7 +395,7 @@ def countCrossings(graph,pos):
                 # segments_y.append(((pos[edge[0]][0],pos[edge[0]][1]), (pos[edge[1]][0],pos[edge[1]][1])))
 
         numCrossings = bent.isect_segments(segments_x, validate=True)
-        print(f"{len(numCrossings)} in CC {i}")
+        if DEBUG: print(f"{len(numCrossings)} in CC {i}")
         totalNumCrossings += len(numCrossings)
         # try:
         # except:
@@ -424,7 +426,7 @@ def getNumCCs(graph):
 def getGraphInfo(graph,poses):
     numNodes = len(graph.nodes())
     if DEBUG: print("Num Nodes:", numNodes)
-    numEdges = len(graph.in_edges()) + len(graph.out_edges())
+    numEdges = len(graph.edges())
     if DEBUG: print("Num Edges:", numEdges)
     numCrossings = countCrossings(graph,poses)
     H = graph.to_undirected()
@@ -746,27 +748,11 @@ def getGraphPositions(graph, N = 1.5):
 
 
 
-# Function to update the original graph
 def updateGraphFromSubgraphs(original_graph, subgraphs):
     original_graph.clear()  # Clear the original graph's nodes and edges
-    
-    for i, subgraph in enumerate(subgraphs):
-        # Prefix to add to each node in the subgraph
-        prefix = f'K{i}_'
-        
-        # Create a mapping of old node labels to new node labels with prefix
-        node_mapping = {node: f'{prefix}{node}' for node in subgraph.nodes()}
-        
-        # Add nodes with the new labels
-        for old_node, new_node in node_mapping.items():
-            original_graph.add_node(new_node, **subgraph.nodes[old_node])
-        
-        # Add edges with the new labels
-        for (u, v, data) in subgraph.edges(data=True):
-            original_graph.add_edge(node_mapping[u], node_mapping[v], **data)
-
-def getNumEdges(graph):
-    return len(graph.in_edges()) + len(graph.out_edges())
+    for subgraph in subgraphs:
+        original_graph.add_nodes_from(subgraph.nodes(data=True))
+        original_graph.add_edges_from(subgraph.edges(data=True))
 
 
 def checkMaxCCSizeRecursive(graph):
@@ -793,9 +779,6 @@ def checkMaxCCSizeRecursive(graph):
             processed_graphs.append(subGraph)
 
     return processed_graphs
-
-def checkMaxEdgeLength(graph):
-    pass
 
 def getNumIsolatedReactions(graph):
     H = graph.to_undirected()
