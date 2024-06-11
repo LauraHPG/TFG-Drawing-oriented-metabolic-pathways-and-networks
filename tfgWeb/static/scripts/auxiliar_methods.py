@@ -1,13 +1,11 @@
 import networkx as nx
 import sys
+import os
 
 import grandalf
 from grandalf.layouts import SugiyamaLayout
 
-try:
-    from . import poly_point_isect as bent
-except:
-    import poly_point_isect as bent
+import poly_point_isect as bent
 
 import json
 import requests
