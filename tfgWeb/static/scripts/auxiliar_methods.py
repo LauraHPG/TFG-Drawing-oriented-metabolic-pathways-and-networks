@@ -15,6 +15,24 @@ import numpy as np
 import math
 from scipy.stats import hmean
 
+from queue import PriorityQueue
+
+import signal
+from contextlib import contextmanager
+
+class TimeoutException(Exception): pass
+
+@contextmanager
+def time_limit(seconds):
+    def signal_handler(signum, frame):
+        raise TimeoutException("Timed out!")
+    signal.signal(signal.SIGALRM, signal_handler)
+    signal.alarm(seconds)
+    try:
+        yield
+    finally:
+        signal.alarm(0)
+
 DEBUG = False
 
 MAX_SIZE_LARGE = 1000
@@ -26,6 +44,7 @@ def read_graph(graph, check = True):
     nx.set_node_attributes(graph, {})
     path = sys.argv[1]
     info = read_graph_from_file(graph, path)
+
     if check:
         checkMaxCCSize(graph)
 
@@ -124,22 +143,58 @@ Graph Modifiers
 def checkMaxCCSize(graph):
 
     if len(graph.nodes()) >= MAX_SIZE_LARGE:
-        print("Large Graph")
-        res = checkMaxCCSizeRecursive(graph)
+        # print("Large Graph")
+        res = checkLargeGraph(graph)
         updateGraphFromSubgraphs(graph, res)
+
+        res = checkMediumGraph(graph)
+        updateGraphFromSubgraphs(graph, res)
+
+        removeAllCycles(graph)
+
     elif len(graph.nodes()) > MAX_SIZE_MEDIUM:
-        print("Medium Graph")
-        splitHighDegreeComponents(graph, 6, 'M')
-    else:
-        print("Small Graph")
-        splitHighDegreeComponents(graph, 6, 'S')
- 
-        node = getNodeInMostCycles(graph)
-        while node:
-            duplicateNode(graph, node, 'S')
-            node = getNodeInMostCycles(graph)
+        # print("Medium Graph")
+
+        res = checkMediumGraph(graph)
+        updateGraphFromSubgraphs(graph, res)
+        
+        removeAllCycles(graph)
 
         
+
+    else:
+        # print("Small Graph")
+
+        checkSmallGraph(graph)
+        
+        removeAllCycles(graph)
+
+        
+def removeAllCycles(graph):
+    H = graph.to_undirected()
+    S = [graph.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+    res = []
+    for s in S:
+        numReactions = [node for node in s.nodes() if graph.nodes[node]['node_type'] == 'reaction']
+
+        if len(numReactions) > 1:
+            try:
+                with time_limit(20):
+                    node = getNodeInMostCycles(s)   
+
+                while node:
+                    duplicateNode(s, node)
+                    duplicateNode(graph, node)
+                    try:
+                        with time_limit(10):
+                            node = getNodeInMostCycles(s)                
+                    except TimeoutException as e:
+                        print("Timed out!")
+
+            except TimeoutException as e:
+                print("Timed out!")
+
+            
 
 def splitHighDegreeComponents(graph, threshhold, duplicationLetter = 'D'):
 
@@ -230,6 +285,7 @@ def removeCyclesByNodeInMostCycles(graph):
 
         if DEBUG: print(f"Final number of nodes: {graph.number_of_nodes()}")
         cycles = nx.recursive_simple_cycles(graph)
+        
         if DEBUG: print(f"Number of cycles: {len(cycles)}")
         if len(cycles) == 0 : return
 
@@ -350,8 +406,9 @@ def getNodeInMostCycles(graph):
 
     if DEBUG: print("(Node in most cycles, number of cycles it appears in): ", sortedAppearances[0])
 
-    return sortedAppearances[0][0]
-
+    if len(sortedAppearances) != 0:
+        return sortedAppearances[0][0]
+    return None
 
 def get_color(node_type, status):
     if node_type == 'reaction':
@@ -420,7 +477,16 @@ def getNumCCs(graph):
     H = graph.to_undirected()
     return  nx.number_connected_components(H)
 
-
+def getFrequencies(graph):
+    H = graph.to_undirected()
+    numNodesCC = [len(H.subgraph(c).nodes()) for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+    frequencies = dict()
+    for n in numNodesCC:
+        if n in frequencies:
+            frequencies[n] += 1
+        else:
+            frequencies[n] = 1
+    return frequencies
 def getGraphInfo(graph,poses):
     numNodes = len(graph.nodes())
     if DEBUG: print("Num Nodes:", numNodes)
@@ -430,6 +496,12 @@ def getGraphInfo(graph,poses):
     H = graph.to_undirected()
     numCCs = nx.number_connected_components(H)
     numNodesCC = [len(H.subgraph(c).nodes()) for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+    frequencies = dict()
+    for n in numNodesCC:
+        if n in frequencies:
+            frequencies[n] += 1
+        else:
+            frequencies[n] = 1
     isConnected(graph)
 
     highestDegreeNodes, highestDegree = getHighestDegreeNodes(graph)
@@ -438,8 +510,8 @@ def getGraphInfo(graph,poses):
     infoEdgeLengths = computeDistances(graph, poses)
     infoEdgeAngles = computeAngles(graph, poses)
 
-    print(numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC, infoEdgeLengths, infoEdgeAngles)
-    return numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC, infoEdgeLengths, infoEdgeAngles
+    return numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, infoEdgeLengths, infoEdgeAngles, frequencies
+    # return numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC, infoEdgeLengths, infoEdgeAngles
 
 def getCyclesInfo(graph):
     numCycles = len(nx.recursive_simple_cycles(graph))
@@ -712,6 +784,7 @@ def staggerLayers(poses):
 
 
 def getGraphPositions(graph, N = 1.5):
+    freqs = dict()
     connected = isConnected(graph)
     poses = {}
     changeSourceAndSinkNodeType(graph)
@@ -720,6 +793,8 @@ def getGraphPositions(graph, N = 1.5):
     if connected:
         poses = sugiyama(graph, N)
         defineNodeCID(graph, graph.nodes(), 0)
+
+        freqs[len(graph.nodes())] = 1
 
     else:
             H = graph.to_undirected()
@@ -730,6 +805,12 @@ def getGraphPositions(graph, N = 1.5):
             for cid, c in enumerate(S):
                 subGraph = graph.subgraph(c).copy()
                 subGraph.to_directed()
+
+                if len(subGraph.nodes()) in freqs:
+                    freqs[len(subGraph.nodes())]+= 1
+                else:
+                    freqs[len(subGraph.nodes())] = 1
+
                 new_poses = sugiyama(subGraph)
                 
                 for pos in new_poses:
@@ -742,6 +823,7 @@ def getGraphPositions(graph, N = 1.5):
 
                 defineNodeCID(graph, subGraph.nodes(), cid)
 
+    print(freqs)
     return poses
 
 
@@ -753,30 +835,87 @@ def updateGraphFromSubgraphs(original_graph, subgraphs):
         original_graph.add_edges_from(subgraph.edges(data=True))
 
 
-def checkMaxCCSizeRecursive(graph):
+def checkLargeGraph(graph):
+    q = PriorityQueue()
 
     H = graph.to_undirected()
     S = [graph.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
 
-    if len(S) == 1 and len(S[0].nodes()) < MAX_SIZE_LARGE:
-        return S
+    for s in S:
+        size = len(s.nodes())
+        q.put((size*(-1),s))
+    
+    subGraph = q.get()[1]
+    size = len(subGraph.nodes())
+    while size >=  MAX_SIZE_LARGE:
+        _, degree = getHighestDegreeNode(subGraph)
+        splitHighDegreeComponents(subGraph, degree, 'L')
 
-    processed_graphs = []
-    for subGraph in S:
-        if len(subGraph.nodes()) >= MAX_SIZE_LARGE:
-            dirSubGraph = subGraph.to_directed()
-            _, degree = getHighestDegreeNode(dirSubGraph)
-            splitHighDegreeComponents(dirSubGraph, degree, 'L')
-            
-            H = dirSubGraph.to_undirected()
-            S = [dirSubGraph.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+        H = subGraph.to_undirected()
+        S = [subGraph.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
 
-            for sg in S:
-                processed_graphs.extend(checkMaxCCSizeRecursive(sg))
-        else:
-            processed_graphs.append(subGraph)
+        for s in S:
+            size = len(s.nodes())
+            q.put((size*(-1),s))
+        
+        subGraph = q.get()[1]
+        size = len(subGraph.nodes())
+    
+    result = [subGraph]
 
-    return processed_graphs
+    while not q.empty():
+        result.append(q.get()[1])
+
+    return result
+
+def checkMediumGraph(graph):
+    q = PriorityQueue()
+
+    H = graph.to_undirected()
+    S = [graph.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+
+    suma = 0
+    for s in S:
+        size = len(s.nodes())
+        q.put((size*(-1),s))
+    
+    subGraph = q.get()[1]
+    size = len(subGraph.nodes())
+    while size >=  MAX_SIZE_MEDIUM:
+        degree = getConnectedThreshold(subGraph)
+        splitHighDegreeComponents(subGraph, degree, 'M')
+
+        H = subGraph.to_undirected()
+        S = [subGraph.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+
+        for s in S:
+            size = len(s.nodes())
+            q.put((size*(-1),s))
+        
+        subGraph = q.get()[1]
+        size = len(subGraph.nodes())
+    
+    result = [subGraph]
+
+    while not q.empty():
+        result.append(q.get()[1])
+
+    return result
+
+def checkSmallGraph(graph):
+    degree = getConnectedThreshold(graph)
+    splitHighDegreeComponents(graph, degree, 'S')
+    
+    while degree > 12:
+        print(degree)
+
+        H = graph.to_undirected()
+        S = [graph.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
+        
+        degree = getConnectedThreshold(S[0])
+        splitHighDegreeComponents(graph, degree, 'S')
+
+
 
 def getNumIsolatedReactions(graph):
     H = graph.to_undirected()
@@ -786,3 +925,18 @@ def getNumIsolatedReactions(graph):
         numReactions = [node for node in s.nodes() if graph.nodes[node]['node_type'] == 'reaction']
         if len(numReactions) == 1: res += 1  
     return res
+
+def getConnectedThreshold(graph):
+
+    _, i = getHighestDegreeNode(graph)
+    H = graph.copy()
+
+    while True:
+        splitHighDegreeComponents(H,i)
+
+        if getNumCCs(H) != 1:
+            
+            return i
+        H = graph.copy()
+
+        i -= 1 
