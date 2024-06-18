@@ -20,18 +20,21 @@ from queue import PriorityQueue
 import signal
 from contextlib import contextmanager
 
-class TimeoutException(Exception): pass
+try:
+    class TimeoutException(Exception): pass
 
-@contextmanager
-def time_limit(seconds):
-    def signal_handler(signum, frame):
-        raise TimeoutException("Timed out!")
-    signal.signal(signal.SIGALRM, signal_handler)
-    signal.alarm(seconds)
-    try:
-        yield
-    finally:
-        signal.alarm(0)
+    @contextmanager
+    def time_limit(seconds):
+        def signal_handler(signum, frame):
+            raise TimeoutException("Timed out!")
+        signal.signal(signal.SIGALRM, signal_handler)
+        signal.alarm(seconds)
+        try:
+            yield
+        finally:
+            signal.alarm(0)
+except:
+    print("No timeout for removing cycles.")
 
 DEBUG = False
 
@@ -173,26 +176,33 @@ def checkMaxCCSize(graph):
 def removeAllCycles(graph):
     H = graph.to_undirected()
     S = [graph.subgraph(c).copy() for c in sorted(nx.connected_components(H), key=len, reverse=True)]
-    res = []
     for s in S:
         numReactions = [node for node in s.nodes() if graph.nodes[node]['node_type'] == 'reaction']
 
         if len(numReactions) > 1:
             try:
-                with time_limit(20):
-                    node = getNodeInMostCycles(s)   
+                try:
+                    with time_limit(20):
+                        node = getNodeInMostCycles(s)   
 
+                    while node:
+                        duplicateNode(s, node)
+                        duplicateNode(graph, node)
+                        try:
+                            with time_limit(10):
+                                node = getNodeInMostCycles(s)                
+                        except TimeoutException as e:
+                            print("Timed out!")
+
+                except TimeoutException as e:
+                    print("Timed out!")
+            except:
+                node = getNodeInMostCycles(s)   
                 while node:
                     duplicateNode(s, node)
                     duplicateNode(graph, node)
-                    try:
-                        with time_limit(10):
-                            node = getNodeInMostCycles(s)                
-                    except TimeoutException as e:
-                        print("Timed out!")
 
-            except TimeoutException as e:
-                print("Timed out!")
+                    node = getNodeInMostCycles(s)                
 
             
 
@@ -395,20 +405,18 @@ def getNodeInMostCycles(graph):
     appearances = {}
     for cycle in cycles:
         for node in cycle:
-            if node[0] == 'C':
+            if graph.nodes[node]['node_type'] == 'component' and graph.nodes[node]['status'] == 'original':
                 if node in appearances:
                     appearances[node] += 1
                 else:
                     appearances[node] = 1
 
 
-    sortedAppearances = sorted(appearances.items(), key=lambda x:x[1],reverse=True)
-
+    # sortedAppearances = sorted(appearances.items(), key=lambda x:x[1],reverse=True)
+    sortedAppearances = sorted(appearances.items(), key=lambda x: (-x[1], x[0]))
     if DEBUG: print("(Node in most cycles, number of cycles it appears in): ", sortedAppearances[0])
 
-    if len(sortedAppearances) != 0:
-        return sortedAppearances[0][0]
-    return None
+    return sortedAppearances[0][0]
 
 def get_color(node_type, status):
     if node_type == 'reaction':
@@ -510,8 +518,8 @@ def getGraphInfo(graph,poses):
     infoEdgeLengths = computeDistances(graph, poses)
     infoEdgeAngles = computeAngles(graph, poses)
 
-    return numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, infoEdgeLengths, infoEdgeAngles, frequencies
-    # return numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC, infoEdgeLengths, infoEdgeAngles
+    # return numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, infoEdgeLengths, infoEdgeAngles, frequencies
+    return numNodes, numEdges, numCrossings, numCCs, highestDegreeNodes, highestDegree, numNodesCC, infoEdgeLengths, infoEdgeAngles
 
 def getCyclesInfo(graph):
     numCycles = len(nx.recursive_simple_cycles(graph))
@@ -823,7 +831,6 @@ def getGraphPositions(graph, N = 1.5):
 
                 defineNodeCID(graph, subGraph.nodes(), cid)
 
-    print(freqs)
     return poses
 
 

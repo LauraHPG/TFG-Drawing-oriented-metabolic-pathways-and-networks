@@ -100,6 +100,11 @@
             filter: invert(100%);
         }
 
+        .fixed-element {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+        }
     </style>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -114,6 +119,10 @@
     <div id="overlay"></div> 
 
     <h1 >Drawing Metabolic Pathways and Networks</h1>
+    <form id="updateCompounds" class="fixed-element">
+        <input type="submit" value="Update Compounds" class="btn btn-primary">            
+
+    </form>
 
     <div style="display: flex">
         <label class="form-label"> </label> 
@@ -432,24 +441,6 @@
             
         });
 
-/*
-        $.ajax({
-            type: 'POST',
-            url: '/update_compounds/',
-            data: {
-                csrfmiddlewaretoken: csrf_token_value
-            },
-            success: function (response) {
-                console.log("Compounds updated")
-            },
-            error: function (response) {
-                // alert the error if any error occured
-                alert('Error');document.getElementById("overlay").style.display = "none";
-
-            }
-
-        })
-            */
 
         var nodeInMostCycles, selectedNode;
         var inputNodes, inputEdges;
@@ -1281,6 +1272,34 @@
                 loadConnectedComponent(inputNodes, inputEdges, cid, false);
             }
         })
+
+        $('#updateCompounds').submit(function (e) {
+            e.preventDefault();
+
+            document.getElementById("overlay").style.display = "block";
+
+            $.ajax({
+            type: 'POST',
+            url: '/update_compounds/',
+            data: {
+                csrfmiddlewaretoken: csrf_token_value
+            },
+            success: function (response) {
+                alert("Compounds updated")
+                document.getElementById("overlay").style.display = "none";
+
+            },
+            error: function (response) {
+                // alert the error if any error occured
+                alert('Error');
+                document.getElementById("overlay").style.display = "none";
+
+            }
+
+        })
+           
+        })
+
 
     </script>
     {% endblock javascript %}
